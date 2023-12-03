@@ -60,7 +60,7 @@ var locationsPlacesData = [
             title: 'Dobsinska Ice Cave', snippet: 'UNESCO World Heritage site'),
       ),
     },
-    locationName: 'Interesting Places in Slovakia',
+    locationName: 'Places in Slovakia',
     bounds: LatLngBounds(
       southwest: const LatLng(47.5, 16.8),
       northeast: const LatLng(49.6, 22.6),

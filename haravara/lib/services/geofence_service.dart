@@ -1,6 +1,13 @@
+import 'dart:async';
+
 import 'package:geofence_service/geofence_service.dart';
+import 'package:haravara/models/geofence_message.dart';
+import 'package:haravara/services/eventBus.dart';
 
 class GeoFenceService {
+  final _geofenceStreamController = StreamController<Geofence>();
+  final _activityStreamController = StreamController<Activity>();
+  final eventBus = EventBus();
   GeofenceService createGeofenceService() {
     return GeofenceService.instance.setup(
         interval: 5000,
@@ -13,30 +20,31 @@ class GeoFenceService {
         geofenceRadiusSortType: GeofenceRadiusSortType.DESC);
   }
 
-  // This function is to be called when the geofence status is changed.
   Future<void> onGeofenceStatusChanged(
       Geofence geofence,
       GeofenceRadius geofenceRadius,
       GeofenceStatus geofenceStatus,
       Location location) async {
-    print('geofence: ${geofence.toJson()}');
-    print('geofenceRadius: ${geofenceRadius.toJson()}');
-    print('geofenceStatus: ${geofenceStatus.toString()}');
-    var _geofenceStreamController;
+    // print('geofence: ${geofence.toJson()}');
+    // print('geofenceRadius: ${geofenceRadius.toJson()}');
+    // print('geofenceStatus: ${geofenceStatus.toString()}');
     _geofenceStreamController.sink.add(geofence);
+    sendData(GeofenceMessage(
+        geofence: geofence,
+        geofenceRadius: geofenceRadius,
+        geofenceStatus: geofenceStatus));
   }
 
 // This function is to be called when the activity has changed.
   void onActivityChanged(Activity prevActivity, Activity currActivity) {
     print('prevActivity: ${prevActivity.toJson()}');
     print('currActivity: ${currActivity.toJson()}');
-    var _activityStreamController;
     _activityStreamController.sink.add(currActivity);
   }
 
 // This function is to be called when the location has changed.
   void onLocationChanged(Location location) {
-    print('location: ${location.toJson()}');
+    // print('location: ${location.toJson()}');
   }
 
 // This function is to be called when a location services status change occurs
@@ -54,5 +62,10 @@ class GeoFenceService {
     }
 
     print('ErrorCode: $errorCode');
+  }
+
+  void sendData(GeofenceMessage message) {
+    print('data sent');
+    eventBus.sendEvent(message);
   }
 }

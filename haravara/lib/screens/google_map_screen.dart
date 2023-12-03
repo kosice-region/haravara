@@ -6,7 +6,9 @@ import 'package:geofence_service/models/geofence_radius_sort_type.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/data/geofence_list.dart';
 import 'package:haravara/data/location_places_data.dart';
+import 'package:haravara/models/geofence_message.dart';
 import 'package:haravara/models/location_places.dart';
+import 'package:haravara/services/eventBus.dart';
 import 'package:haravara/services/geofence_service.dart';
 import 'package:haravara/services/google_map_service.dart';
 import 'package:haravara/widgets/location_button.dart';
@@ -31,6 +33,8 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
   Set<Marker> _markers = Set<Marker>();
   Set<Polyline> _polylines = Set<Polyline>();
   late GeofenceService _geofenceService;
+  GeofenceMessage? geofenceMessage;
+  final eventBus = EventBus();
 
   int _polylineIdCounter = 1;
   String? distance;
@@ -111,7 +115,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
   @override
   void initState() {
     super.initState();
-    getCurrentLocation();
+    // getCurrentLocation();
     _geofenceService = GeoFenceService().createGeofenceService();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _geofenceService.addGeofenceStatusChangeListener(
@@ -126,6 +130,10 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       _geofenceService
           .start(geofenceList)
           .catchError(GeoFenceService().onError);
+
+      eventBus.on<GeofenceMessage>().listen((message) {
+        geofenceMessage = message;
+      });
     });
   }
 
@@ -176,31 +184,48 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height * 0.15,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: locationsPlacesData.map((locationPlace) {
-                          return Column(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Column(
                             children: [
-                              LocationButton(
-                                locationPlace: locationPlace,
-                                onPressed: (locationPlace) {
-                                  _goToPlace(
-                                    locationPlace.cameraPosition,
-                                    locationPlace.bounds,
-                                    locationPlace.markers,
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children:
+                                    locationsPlacesData.map((locationPlace) {
+                                  return Row(
+                                    children: [
+                                      LocationButton(
+                                        locationPlace: locationPlace,
+                                        onPressed: (locationPlace) {
+                                          _goToPlace(
+                                            locationPlace.cameraPosition,
+                                            locationPlace.bounds,
+                                            locationPlace.markers,
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(width: 10),
+                                    ],
                                   );
-                                },
+                                }).toList(),
                               ),
-                              const SizedBox(width: 5),
+                              const SizedBox(height: 5),
                             ],
-                          );
-                        }).toList(),
+                          ),
+                        ),
                       ),
-                    ),
+                      if (geofenceMessage != null &&
+                          geofenceMessage?.geofenceStatus ==
+                              GeofenceStatus.ENTER)
+                        Center(
+                          child: Text(
+                              'You have enter in ${geofenceMessage?.geofenceRadius.length} meters of location ${geofenceMessage?.geofence.id}'),
+                        )
+                    ],
                   ),
                 ),
               ],
@@ -223,5 +248,21 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     setState(() {
       _markers = makers;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _geofenceService.removeGeofenceStatusChangeListener(
+        GeoFenceService().onGeofenceStatusChanged);
+    _geofenceService
+        .removeLocationChangeListener(GeoFenceService().onLocationChanged);
+    _geofenceService.removeLocationServicesStatusChangeListener(
+        GeoFenceService().onLocationServicesStatusChanged);
+    _geofenceService
+        .removeActivityChangeListener(GeoFenceService().onActivityChanged);
+    _geofenceService.removeStreamErrorListener(GeoFenceService().onError);
+    _geofenceService.clearAllListeners();
+    _geofenceService.stop();
   }
 }
