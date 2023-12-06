@@ -1,23 +1,60 @@
-import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/location_places.dart';
+import 'package:haravara/services/event_bus.dart';
+
+final eventBus = EventBus();
 
 var locationsPlacesData = [
   LocationPlaces(
     markers: {
-      const Marker(
-        markerId: MarkerId('kosice_place1'),
-        position: LatLng(48.7204, 21.2575),
-        infoWindow: InfoWindow(
-            title: 'St. Elisabeth Cathedral',
-            snippet: 'Historic cathedral in Košice'),
+      LocationPlaceMarker(
+        markerID: 'kosice_place1',
+        position: const LatLng(48.7204, 21.2575),
+        infoWindow: const InfoWindow(
+          title: 'St. Elisabeth Cathedral',
+          snippet: 'Historic cathedral in Košice',
+        ),
+        onTapAction: (pos) {
+          print('Marker 1 tapped at ${pos.latitude}, ${pos.longitude}!');
+          eventBus.sendEvent(pos);
+        },
       ),
-      const Marker(
-        markerId: MarkerId('kosice_place2'),
-        position: LatLng(48.7132, 21.2653),
-        infoWindow: InfoWindow(
-            title: 'Košice State Theater',
-            snippet: 'Cultural landmark in Košice'),
+      LocationPlaceMarker(
+        markerID: 'kosice_place2',
+        position: const LatLng(48.7132, 21.2653),
+        infoWindow: const InfoWindow(
+          title: 'Košice State Theater',
+          snippet: 'Cultural landmark in Košice',
+        ),
+        onTapAction: (pos) {
+          print('Marker 2 tapped at ${pos.latitude}, ${pos.longitude}!');
+          eventBus.sendEvent(pos);
+        },
+      ),
+      LocationPlaceMarker(
+        markerID: 'kosice_place3',
+        position: const LatLng(48.69730512001355, 21.232595643832145),
+        infoWindow: const InfoWindow(
+          title: 'Košice Jedlikova 9',
+          snippet: 'Accommodation',
+        ),
+        onTapAction: (pos) {
+          print('Marker 3 tapped at ${pos.latitude}, ${pos.longitude}!');
+          eventBus.sendEvent(pos);
+        },
+      ),
+      LocationPlaceMarker(
+        markerID: 'kosice_place4',
+        position: const LatLng(48.71679125194989, 21.25050390811236),
+        infoWindow: const InfoWindow(
+          title: 'Kosice Business Centre',
+          snippet: 'InfoBip',
+        ),
+        onTapAction: (pos) {
+          print('Marker 4 tapped at ${pos.latitude}, ${pos.longitude}!');
+          eventBus.sendEvent(pos);
+        },
       ),
     },
     locationName: 'Košice, Slovakia',
@@ -26,38 +63,59 @@ var locationsPlacesData = [
       northeast: const LatLng(48.7300, 21.2800),
     ),
     cameraPosition: const CameraPosition(
-      target:
-          LatLng(48.7167, 21.2617), // Set the initial camera target for Košice
-      zoom: 15.0, // Set the initial zoom level for Košice
+      target: LatLng(48.7167, 21.2617),
+      zoom: 15.0,
     ),
   ),
   LocationPlaces(
     markers: {
-      const Marker(
-        markerId: MarkerId('slovakia_place1'),
-        position: LatLng(48.1414, 17.1169),
-        infoWindow: InfoWindow(
-            title: 'Bratislava Castle',
-            snippet: 'Historic castle in Bratislava'),
+      LocationPlaceMarker(
+        markerID: 'slovakia_place1',
+        position: const LatLng(48.1414, 17.1169),
+        infoWindow: const InfoWindow(
+          title: 'Bratislava Castle',
+          snippet: 'Historic castle in Bratislava',
+        ),
+        onTapAction: (pos) {
+          print(
+              'Marker 1 in Slovakia tapped at ${pos.latitude}, ${pos.longitude}!');
+        },
       ),
-      const Marker(
-        markerId: MarkerId('slovakia_place2'),
-        position: LatLng(49.2992, 19.9496),
-        infoWindow: InfoWindow(
-            title: 'Tatra Mountains',
-            snippet: 'Slovakia\'s beautiful mountain range'),
+      LocationPlaceMarker(
+        markerID: 'slovakia_place2',
+        position: const LatLng(49.2992, 19.9496),
+        infoWindow: const InfoWindow(
+          title: 'Tatra Mountains',
+          snippet: 'Slovakia\'s beautiful mountain range',
+        ),
+        onTapAction: (pos) {
+          print(
+              'Marker 2 in Slovakia tapped at ${pos.latitude}, ${pos.longitude}!');
+        },
       ),
-      const Marker(
-        markerId: MarkerId('slovakia_place3'),
-        position: LatLng(48.8543, 18.0884),
-        infoWindow: InfoWindow(
-            title: 'Bojnice Castle', snippet: 'Romantic castle in Bojnice'),
+      LocationPlaceMarker(
+        markerID: 'slovakia_place3',
+        position: const LatLng(48.8543, 18.0884),
+        infoWindow: const InfoWindow(
+          title: 'Bojnice Castle',
+          snippet: 'Romantic castle in Bojnice',
+        ),
+        onTapAction: (pos) {
+          print(
+              'Marker 3 in Slovakia tapped at ${pos.latitude}, ${pos.longitude}!');
+        },
       ),
-      const Marker(
-        markerId: MarkerId('slovakia_place4'),
-        position: LatLng(48.5880, 19.6083),
-        infoWindow: InfoWindow(
-            title: 'Dobsinska Ice Cave', snippet: 'UNESCO World Heritage site'),
+      LocationPlaceMarker(
+        markerID: 'slovakia_place4',
+        position: const LatLng(48.5880, 19.6083),
+        infoWindow: const InfoWindow(
+          title: 'Dobsinska Ice Cave',
+          snippet: 'UNESCO World Heritage site',
+        ),
+        onTapAction: (pos) {
+          print(
+              'Marker 4 in Slovakia tapped at ${pos.latitude}, ${pos.longitude}!');
+        },
       ),
     },
     locationName: 'Places in Slovakia',
@@ -66,79 +124,8 @@ var locationsPlacesData = [
       northeast: const LatLng(49.6, 22.6),
     ),
     cameraPosition: const CameraPosition(
-      target: LatLng(48.5, 18.5), // Set the initial camera target for Slovakia
-      zoom: 7.0, // Set the initial zoom level for Slovakia
-    ),
-  ),
-  LocationPlaces(
-    markers: {
-      const Marker(
-        markerId: MarkerId('marker1'),
-        position: LatLng(37.7749, -122.4194),
-        infoWindow: InfoWindow(title: 'Marker 1', snippet: 'Sample marker 1'),
-      ),
-      const Marker(
-        markerId: MarkerId('marker2'),
-        position: LatLng(37.6849, -122.4194),
-        infoWindow: InfoWindow(title: 'Marker 2', snippet: 'Sample marker 2'),
-      ),
-    },
-    locationName: 'San Francisco, CA',
-    bounds: LatLngBounds(
-      southwest: const LatLng(37.6, -122.6),
-      northeast: const LatLng(37.9, -122.2),
-    ),
-    cameraPosition: const CameraPosition(
-      target: LatLng(37.7749, -122.4194), // Set the initial camera target
-      zoom: 12.0, // Set the initial zoom level
-    ),
-  ),
-  LocationPlaces(
-    markers: {
-      const Marker(
-        markerId: MarkerId('marker3'),
-        position: LatLng(40.7128, -74.0060),
-        infoWindow: InfoWindow(title: 'Marker 3', snippet: 'Sample marker 3'),
-      ),
-      const Marker(
-        markerId: MarkerId('marker4'),
-        position: LatLng(
-            40.7128, -74.1000), // Adjust the coordinates to position it farther
-        infoWindow: InfoWindow(title: 'Marker 4', snippet: 'Sample marker 4'),
-      ),
-    },
-    locationName: 'New York, NY',
-    bounds: LatLngBounds(
-      southwest: const LatLng(40.4774, -74.2591),
-      northeast: const LatLng(40.9176, -73.7004),
-    ),
-    cameraPosition: const CameraPosition(
-      target: LatLng(40.7128, -74.0060), // Set the initial camera target
-      zoom: 10.0, // Set the initial zoom level
-    ),
-  ),
-  LocationPlaces(
-    markers: {
-      const Marker(
-        markerId: MarkerId('marker5'),
-        position: LatLng(34.0522, -118.2437),
-        infoWindow: InfoWindow(title: 'Marker 5', snippet: 'Sample marker 5'),
-      ),
-      const Marker(
-        markerId: MarkerId('marker6'),
-        position:
-            LatLng(34.0522, -118.2847), // Adjusted coordinates for separation
-        infoWindow: InfoWindow(title: 'Marker 6', snippet: 'Sample marker 6'),
-      ),
-    },
-    locationName: 'Los Angeles, CA',
-    bounds: LatLngBounds(
-      southwest: const LatLng(33.4774, -118.2591),
-      northeast: const LatLng(34.9176, -117.7004),
-    ),
-    cameraPosition: const CameraPosition(
-      target: LatLng(34.0522, -118.2437), // Set the initial camera target
-      zoom: 10.0, // Set the initial zoom level
+      target: LatLng(48.5, 18.5),
+      zoom: 7.0,
     ),
   ),
 ];
