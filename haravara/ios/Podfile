@@ -29,7 +29,7 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
   # pod 'GoogleMaps'
-  pod 'GoogleMaps', '8.3.0'
+  pod 'GoogleMaps', '8.3.1'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do

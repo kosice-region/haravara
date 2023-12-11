@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -17,7 +18,7 @@ class LocationPlaceMarker extends Marker {
   final String markerID;
   final LatLng position;
   final InfoWindow infoWindow;
-  final void Function(LatLng pos) onTapAction;
+  final void Function(Marker) onTapAction;
 
   LocationPlaceMarker({
     required this.markerID,
@@ -29,10 +30,10 @@ class LocationPlaceMarker extends Marker {
           position: position,
           infoWindow: infoWindow,
           onTap: () {
-            onTapAction(LatLng(
-              position.latitude,
-              position.longitude,
-            ));
+            onTapAction(Marker(
+                markerId: MarkerId(markerID),
+                position: LatLng(position.latitude, position.longitude),
+                infoWindow: infoWindow));
           },
         );
 }

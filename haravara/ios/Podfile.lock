@@ -1,4 +1,7 @@
 PODS:
+  - awesome_notifications (0.8.1):
+    - Flutter
+    - IosAwnCore (~> 0.8.0)
   - fl_location (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -13,16 +16,21 @@ PODS:
   - google_maps_flutter_ios (0.0.1):
     - Flutter
     - GoogleMaps (< 9.0)
-  - GoogleMaps (8.3.0):
-    - GoogleMaps/Maps (= 8.3.0)
-  - GoogleMaps/Base (8.3.0)
-  - GoogleMaps/Maps (8.3.0):
+  - GoogleMaps (8.3.1):
+    - GoogleMaps/Maps (= 8.3.1)
+  - GoogleMaps/Base (8.3.1)
+  - GoogleMaps/Maps (8.3.1):
     - GoogleMaps/Base
+  - IosAwnCore (0.8.0)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
 
 DEPENDENCIES:
+  - awesome_notifications (from `.symlinks/plugins/awesome_notifications/ios`)
   - fl_location (from `.symlinks/plugins/fl_location/ios`)
   - Flutter (from `Flutter`)
   - flutter_activity_recognition (from `.symlinks/plugins/flutter_activity_recognition/ios`)
@@ -30,14 +38,18 @@ DEPENDENCIES:
   - geofence_service (from `.symlinks/plugins/geofence_service/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
-  - GoogleMaps (= 8.3.0)
+  - GoogleMaps (= 8.3.1)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 SPEC REPOS:
   trunk:
     - GoogleMaps
+    - IosAwnCore
 
 EXTERNAL SOURCES:
+  awesome_notifications:
+    :path: ".symlinks/plugins/awesome_notifications/ios"
   fl_location:
     :path: ".symlinks/plugins/fl_location/ios"
   Flutter:
@@ -52,10 +64,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   google_maps_flutter_ios:
     :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
+  awesome_notifications: db394d2e061e4583ba0f738ddea611e3986cc3fb
   fl_location: 68b4a6c4aad2a453493ff66f196e0748280cf43e
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_activity_recognition: 5c3b026997742b01e82424ef257db9640822ad77
@@ -63,9 +78,11 @@ SPEC CHECKSUMS:
   geofence_service: e007ddec3cf8b85531e8f7b202c1ceabca669d64
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   google_maps_flutter_ios: 590249c67f34f422122c232f2a626192adbc78ee
-  GoogleMaps: 54762190c9741867d03e4e4218672ab5a0a8096b
+  GoogleMaps: b47b67bd63d708477d6ff457da2d695c0d8ceb5f
+  IosAwnCore: ed1b2b6d84962a758354dbacd9ce525c72ce28a9
+  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
 
-PODFILE CHECKSUM: 26ca290d40e5ef83c89be456277c10a46cce94e3
+PODFILE CHECKSUM: 7a2256c01a85ed53032ef8f1e71de5df2bec364d
 
 COCOAPODS: 1.14.3

@@ -15,9 +15,10 @@ var locationsPlacesData = [
           title: 'St. Elisabeth Cathedral',
           snippet: 'Historic cathedral in Košice',
         ),
-        onTapAction: (pos) {
-          print('Marker 1 tapped at ${pos.latitude}, ${pos.longitude}!');
-          eventBus.sendEvent(pos);
+        onTapAction: (marker) {
+          print(
+              'Marker 1 tapped at ${marker.position.latitude}, ${marker.position.longitude}!');
+          eventBus.sendEvent(marker);
         },
       ),
       LocationPlaceMarker(
@@ -27,9 +28,10 @@ var locationsPlacesData = [
           title: 'Košice State Theater',
           snippet: 'Cultural landmark in Košice',
         ),
-        onTapAction: (pos) {
-          print('Marker 2 tapped at ${pos.latitude}, ${pos.longitude}!');
-          eventBus.sendEvent(pos);
+        onTapAction: (marker) {
+          print(
+              'Marker 2 tapped at ${marker.position.latitude}, ${marker.position.longitude}!');
+          eventBus.sendEvent(marker);
         },
       ),
       LocationPlaceMarker(
@@ -39,9 +41,10 @@ var locationsPlacesData = [
           title: 'Košice Jedlikova 9',
           snippet: 'Accommodation',
         ),
-        onTapAction: (pos) {
-          print('Marker 3 tapped at ${pos.latitude}, ${pos.longitude}!');
-          eventBus.sendEvent(pos);
+        onTapAction: (marker) {
+          print(
+              'Marker 3 tapped at ${marker.position.latitude}, ${marker.position.longitude}!');
+          eventBus.sendEvent(marker);
         },
       ),
       LocationPlaceMarker(
@@ -51,9 +54,10 @@ var locationsPlacesData = [
           title: 'Kosice Business Centre',
           snippet: 'InfoBip',
         ),
-        onTapAction: (pos) {
-          print('Marker 4 tapped at ${pos.latitude}, ${pos.longitude}!');
-          eventBus.sendEvent(pos);
+        onTapAction: (marker) {
+          print(
+              'Marker 4 tapped at ${marker.position.latitude}, ${marker.position.longitude}!');
+          eventBus.sendEvent(marker);
         },
       ),
     },
@@ -70,15 +74,45 @@ var locationsPlacesData = [
   LocationPlaces(
     markers: {
       LocationPlaceMarker(
+        markerID: 'bratislava_castle',
+        position: const LatLng(
+            48.1427, 17.0997), // Approximate location of Bratislava Castle
+        infoWindow: const InfoWindow(
+          title: 'Bratislava Castle',
+          snippet: 'Iconic castle overlooking the Danube',
+        ),
+        onTapAction: (marker) {
+          print(
+              'Bratislava Castle marker tapped at ${marker.position.latitude}, ${marker.position.longitude}!');
+          eventBus.sendEvent(marker);
+        },
+      ),
+      // Add more markers for other places around Bratislava Castle if necessary
+    },
+    locationName: 'Bratislava Castle, Slovakia',
+    bounds: LatLngBounds(
+      southwest: const LatLng(
+          48.1350, 17.0900), // Southwest corner of the boundary box
+      northeast: const LatLng(
+          48.1500, 17.1100), // Northeast corner of the boundary box
+    ),
+    cameraPosition: const CameraPosition(
+      target: LatLng(48.1427, 17.0997), // Camera centered on Bratislava Castle
+      zoom: 15.0, // Adjust zoom level as needed
+    ),
+  ),
+  LocationPlaces(
+    markers: {
+      LocationPlaceMarker(
         markerID: 'slovakia_place1',
         position: const LatLng(48.1414, 17.1169),
         infoWindow: const InfoWindow(
           title: 'Bratislava Castle',
           snippet: 'Historic castle in Bratislava',
         ),
-        onTapAction: (pos) {
+        onTapAction: (marker) {
           print(
-              'Marker 1 in Slovakia tapped at ${pos.latitude}, ${pos.longitude}!');
+              'Marker 1 in Slovakia tapped at ${marker.position.latitude}, ${marker.position.longitude}!');
         },
       ),
       LocationPlaceMarker(
@@ -88,9 +122,9 @@ var locationsPlacesData = [
           title: 'Tatra Mountains',
           snippet: 'Slovakia\'s beautiful mountain range',
         ),
-        onTapAction: (pos) {
+        onTapAction: (marker) {
           print(
-              'Marker 2 in Slovakia tapped at ${pos.latitude}, ${pos.longitude}!');
+              'Marker 2 in Slovakia tapped at ${marker.position.latitude}, ${marker.position.longitude}!');
         },
       ),
       LocationPlaceMarker(
@@ -100,9 +134,9 @@ var locationsPlacesData = [
           title: 'Bojnice Castle',
           snippet: 'Romantic castle in Bojnice',
         ),
-        onTapAction: (pos) {
+        onTapAction: (marker) {
           print(
-              'Marker 3 in Slovakia tapped at ${pos.latitude}, ${pos.longitude}!');
+              'Marker 3 in Slovakiatapped at ${marker.position.latitude}, ${marker.position.longitude}!');
         },
       ),
       LocationPlaceMarker(
@@ -112,9 +146,9 @@ var locationsPlacesData = [
           title: 'Dobsinska Ice Cave',
           snippet: 'UNESCO World Heritage site',
         ),
-        onTapAction: (pos) {
+        onTapAction: (marker) {
           print(
-              'Marker 4 in Slovakia tapped at ${pos.latitude}, ${pos.longitude}!');
+              'Marker 4 in Slovakia tapped at ${marker.position.latitude}, ${marker.position.longitude}!');
         },
       ),
     },

@@ -5,12 +5,6 @@
       location = "group:../../../../gpxgenerator_path.gpx">
    </FileRef>
    <FileRef
-      location = "group:../../../../gpxgenerator_path.gpx">
-   </FileRef>
-   <FileRef
-      location = "group:../../../../gpxgenerator_path.gpx">
-   </FileRef>
-   <FileRef
       location = "group:Runner.xcodeproj">
    </FileRef>
    <FileRef
