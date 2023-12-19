@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/models/location_place.dart';
 import 'package:haravara/models/location_places.dart';
@@ -27,20 +28,18 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    final heightSize = (MediaQuery.of(context).size.height);
-    final widthSize = (MediaQuery.of(context).size.width);
     return Column(
       children: [
         Center(
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.height * 0.27,
+            width: 370.w,
+            height: 257.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: const Color.fromARGB(255, 254, 248, 248),
+              color: const Color.fromARGB(255, 248, 65, 65),
             ),
             child: Card(
-              elevation: 0,
+              elevation: 3,
               margin: EdgeInsets.zero,
               child: Column(
                 children: <Widget>[
@@ -52,7 +51,7 @@ class _BottomBarState extends State<BottomBar> {
                         textAlign: TextAlign.center,
                         style: GoogleFonts.titanOne(
                           color: Colors.amber,
-                          fontSize: widthSize * 0.06,
+                          fontSize: 30.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -60,47 +59,37 @@ class _BottomBarState extends State<BottomBar> {
                         '${widget.location.quantity.toString()} locations',
                         style: GoogleFonts.titanOne(
                             color: const Color.fromARGB(255, 187, 137, 196),
-                            fontSize: widthSize * 0.043,
+                            fontSize: 20.sp,
                             fontWeight: FontWeight.w300),
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.02,
+                  SizedBox(height: 18.h),
+                  Row(
+                    children: [
+                      SizedBox(width: 42.w),
+                      SizedBox(
+                        width: 140.w,
+                        height: 100.h,
+                        child: Image.asset(widget.location.images[0],
+                            fit: BoxFit.cover),
+                      ),
+                      SizedBox(width: 15.w),
+                      SizedBox(
+                        width: 140.w,
+                        height: 100.h,
+                        child: Image.asset(widget.location.images[1],
+                            fit: BoxFit.cover),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: widthSize * 0.01,
-                      horizontal: heightSize * 0.02,
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.33,
-                          height: MediaQuery.of(context).size.height * 0.10,
-                          child: Image.asset(widget.location.images[0],
-                              fit: BoxFit.cover),
-                        ),
-                        const SizedBox(width: 10),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.33,
-                          height: MediaQuery.of(context).size.height * 0.10,
-                          child: Image.asset(widget.location.images[1],
-                              fit: BoxFit.cover),
-                        ),
-                      ],
-                    ),
-                  ),
+                  SizedBox(height: 10.h),
                   Flexible(
                     fit: FlexFit.loose,
                     flex: 1,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 6, 17, 114),
-                        padding: EdgeInsets.symmetric(
-                          vertical: heightSize * 0.008,
-                          horizontal: widthSize * 0.05,
-                        ),
                       ),
                       onPressed: () =>
                           widget.onPressed(widget.location.locationPlaces),
@@ -108,7 +97,7 @@ class _BottomBarState extends State<BottomBar> {
                         'Select',
                         style: GoogleFonts.titanOne(
                             color: Colors.white,
-                            fontSize: widthSize * 0.04,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.bold),
                       ),
                     ),

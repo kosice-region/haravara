@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:haravara/screens/google_map_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:haravara/screens/auth.dart';
 import 'package:haravara/screens/google_map_second_screen.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:haravara/services/auth_service.dart';
 import 'package:haravara/services/notification_controller.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   AwesomeNotifications().initialize(
       null,
       [
@@ -27,7 +32,9 @@ void main() async {
   if (!await AwesomeNotifications().isNotificationAllowed()) {
     AwesomeNotifications().requestPermissionToSendNotifications();
   }
-  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const App());
 }
 
@@ -39,9 +46,12 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  get future => null;
+
   @override
   void initState() {
     // Only after at least the action method is set, the notification events are delivered
+    super.initState();
     AwesomeNotifications().setListeners(
         onActionReceivedMethod: NotificationController.onActionReceivedMethod,
         onNotificationCreatedMethod:
@@ -50,35 +60,45 @@ class _AppState extends State<App> {
             NotificationController.onNotificationDisplayedMethod,
         onDismissActionReceivedMethod:
             NotificationController.onDismissActionReceivedMethod);
-
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FlutterChat',
-      theme: ThemeData().copyWith(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 63, 17, 177)),
-      ),
-      // home: const GoogleMapScreen(),
-      home: const GoogleMapSecondScreen(),
-      // home: Scaffold(
-      //   floatingActionButton: FloatingActionButton(
-      //     onPressed: () {
-      //       AwesomeNotifications().createNotification(
-      //         content: NotificationContent(
-      //           id: 1,
-      //           channelKey: 'basic_channel',
-      //           title: '123',
-      //           body: '321',
-      //         ),
-      //       );
-      //     },
-      //     child: const Icon(Icons.notification_add),
-      //   ),
-      // ),
+    return ScreenUtilInit(
+      designSize: const Size(430, 932),
+      minTextAdapt: true,
+      builder: (_, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Haravara',
+          theme: ThemeData().copyWith(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 63, 17, 177),
+            ),
+          ),
+          home: const AuthScreen(),
+          // home: StreamBuilder<bool>(
+          //   stream: AuthService().findUserByPhoneId(),
+          //   builder: (context, snapshot) {
+          //     if (snapshot.connectionState == ConnectionState.waiting) {
+          //       // Handle waiting state
+          //       return const CircularProgressIndicator();
+          //     } else if (snapshot.hasError) {
+          //       return Text('Error: ${snapshot.error}');
+          //     } else if (snapshot.hasData) {
+          //       // Handle data state
+          //       bool userExists = snapshot.data!;
+          //       if (userExists) {
+          //         return GoogleMapSecondScreen();
+          //       } else {
+          //         return AuthScreen();
+          //       }
+          //     }
+          //     return Container();
+          //   },
+          // ),
+        );
+      },
     );
   }
 }

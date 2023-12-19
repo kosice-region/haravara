@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geofence_service/geofence_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/data/geofence_list.dart';
@@ -213,8 +213,8 @@ class _GoogleMapSecondScreenState extends State<GoogleMapSecondScreen> {
           ? Stack(
               children: <Widget>[
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.9989,
-                  width: MediaQuery.of(context).size.width,
+                  height: 932.h,
+                  width: 430.w,
                   child: GoogleMap(
                     initialCameraPosition: CameraPosition(
                       target: sourceLocation!,
@@ -230,65 +230,86 @@ class _GoogleMapSecondScreenState extends State<GoogleMapSecondScreen> {
                     onMapCreated: (GoogleMapController controller) {
                       _controller.complete(controller);
                     },
+                    cameraTargetBounds: CameraTargetBounds(
+                      LatLngBounds(
+                        northeast: const LatLng(
+                            49.633475481391486, 22.746856634101785),
+                        southwest: const LatLng(
+                            47.742173546241645, 16.708306537445612),
+                      ),
+                    ),
                     myLocationEnabled: true,
                     myLocationButtonEnabled: true,
-                    compassEnabled: true,
                     mapToolbarEnabled: true,
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).size.height * 0.33,
-                    ),
+                    padding: EdgeInsets.only(bottom: 8.h, right: 8.w),
                   ),
                 ),
+                if (smallestDistanceLength != null &&
+                    smallestDistanceLength! <= 25.0)
+                  AnimatedPositioned(
+                    duration: const Duration(seconds: 1),
+                    bottom: 310.h,
+                    left: 100.w,
+                    child: AnimatedContainer(
+                      duration: const Duration(seconds: 2),
+                      curve: Curves.easeInOut,
+                      child: Image.asset(
+                        'assets/Hero.jpeg',
+                        fit: BoxFit.fill,
+                        width: 200.w,
+                        height: 222.h,
+                      ),
+                    ),
+                  ),
                 Positioned(
-                    top: MediaQuery.of(context).size.height * 0.66,
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: isPickingLocation
-                        ? SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.41,
-                            child: PageView.builder(
-                              controller:
-                                  PageController(initialPage: initialPage),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: locationPlaces.length,
-                              itemBuilder: (context, index) {
-                                return BottomBar(
-                                  location: locationPlaces[index],
-                                  onPressed: (locationPlace) {
-                                    initialPage = index;
-                                    lastPickedLocation = index;
-                                    _goToPlace(
-                                      locationPlace.cameraPosition,
-                                      locationPlace.bounds,
-                                      locationPlace.markers,
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                          )
-                        : isPickingMarker
-                            ? SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.41,
-                                child: MarkerPickBottomBar(
-                                  title: pickedMarker!.infoWindow.title!,
-                                  body: pickedMarker!.infoWindow.snippet!,
-                                  onPressed: onConfirmLocation,
-                                ),
-                              )
-                            : isLocationConfirmed
-                                ? SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.41,
-                                    child: PickedLocationBottomBar(
-                                      distance: smallestDistanceLength,
-                                      location: pickedMarker!.infoWindow.title!,
-                                      onStop: onStopNavigation,
-                                    ),
-                                  )
-                                : SizedBox()),
+                  top: 600.h,
+                  bottom: 50.h,
+                  left: 0,
+                  right: 0,
+                  child: isPickingLocation
+                      ? SizedBox(
+                          child: PageView.builder(
+                            controller:
+                                PageController(initialPage: initialPage),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: locationPlaces.length,
+                            itemBuilder: (context, index) {
+                              return BottomBar(
+                                location: locationPlaces[index],
+                                onPressed: (locationPlace) {
+                                  initialPage = index;
+                                  lastPickedLocation = index;
+                                  _goToPlace(
+                                    locationPlace.cameraPosition,
+                                    locationPlace.bounds,
+                                    locationPlace.markers,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      : isPickingMarker
+                          ? SizedBox(
+                              height: 391.h,
+                              child: MarkerPickBottomBar(
+                                title: pickedMarker!.infoWindow.title!,
+                                body: pickedMarker!.infoWindow.snippet!,
+                                onPressed: onConfirmLocation,
+                              ),
+                            )
+                          : isLocationConfirmed
+                              ? SizedBox(
+                                  height: 382.h,
+                                  child: PickedLocationBottomBar(
+                                    distance: smallestDistanceLength,
+                                    location: pickedMarker!.infoWindow.title!,
+                                    onStop: onStopNavigation,
+                                    onPrize: onStopNavigation,
+                                  ),
+                                )
+                              : SizedBox(),
+                ),
               ],
             )
           : const CircularProgressIndicator(),
@@ -337,6 +358,7 @@ class _GoogleMapSecondScreenState extends State<GoogleMapSecondScreen> {
       locationPlace.markers,
     );
     setState(() {
+      smallestDistanceLength = null;
       isPickingLocation = true;
       isLocationConfirmed = false;
       isPickingMarker = false;

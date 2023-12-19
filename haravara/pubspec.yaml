@@ -41,6 +41,13 @@ dependencies:
   geofence_service: ^5.0.0
   awesome_notifications: ^0.8.2
   google_fonts: ^6.1.0
+  flutter_screenutil: ^5.9.0
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
+  cloud_firestore: ^4.13.6
+  device_info_plus: ^9.1.1
+  uuid: ^4.2.2
+  device_imei: ^0.0.4+2
 
 dev_dependencies:
   flutter_test:
@@ -66,10 +73,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - images/KosiceFirst.jpeg
-    - images/KosiceSecond.jpeg
-    - images/HradFirst.jpeg
-    - images/HradSecond.jpeg
+    - assets/KosiceFirst.jpeg
+    - assets/KosiceSecond.jpeg
+    - assets/HradFirst.jpeg
+    - assets/HradSecond.jpeg
+    - assets/Hero.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
