@@ -1,4 +1,3 @@
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/location_places.dart';
 import 'package:haravara/services/event_bus.dart';
@@ -87,18 +86,15 @@ var locationsPlacesData = [
           eventBus.sendEvent(marker);
         },
       ),
-      // Add more markers for other places around Bratislava Castle if necessary
     },
     locationName: 'Bratislava Castle, Slovakia',
     bounds: LatLngBounds(
-      southwest: const LatLng(
-          48.1350, 17.0900), // Southwest corner of the boundary box
-      northeast: const LatLng(
-          48.1500, 17.1100), // Northeast corner of the boundary box
+      southwest: const LatLng(48.1350, 17.0900),
+      northeast: const LatLng(48.1500, 17.1100),
     ),
     cameraPosition: const CameraPosition(
-      target: LatLng(48.1427, 17.0997), // Camera centered on Bratislava Castle
-      zoom: 15.0, // Adjust zoom level as needed
+      target: LatLng(48.1427, 17.0997),
+      zoom: 15.0,
     ),
   ),
   LocationPlaces(

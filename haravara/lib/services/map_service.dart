@@ -3,11 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:haravara/models/place.dart';
+import 'package:haravara/models/place_marker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
-class GoogleMapService {
+class MapService {
   final String key = 'AIzaSyCgHVN9XIIgGyCxlDYvOloDIkEcArxMkRw';
 
   LatLngBounds boundsFromLatLngList(List<LatLng> list) {
@@ -25,6 +27,31 @@ class GoogleMapService {
     }
     return LatLngBounds(
         northeast: LatLng(x1!, y1!), southwest: LatLng(x0!, y0!));
+  }
+
+  Future<Set<Marker>> getMarkers(List<Place> places) async {
+    List<Future<Marker>> markerFutures = [];
+
+    for (Place place in places) {
+      LatLng primaryPos = LatLng(
+        place.geoData.primary.coordinates[0],
+        place.geoData.primary.coordinates[1],
+      );
+      markerFutures.add(
+        PlaceMarker.createWithDefaultIcon(
+          markerID: place.name,
+          position: primaryPos,
+          infoWindow: InfoWindow(
+            title: place.name,
+            snippet: place.detail.description,
+          ),
+          onTapAction: (p0) {
+            // TODO
+          },
+        ),
+      );
+    }
+    return Future.wait(markerFutures).then((markers) => markers.toSet());
   }
 
   Future<LatLng> getCurrentLocation() async {

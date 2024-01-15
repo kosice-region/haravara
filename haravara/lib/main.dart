@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/screens/auth.dart';
+import 'package:haravara/screens/google_map_screen.dart';
 import 'package:haravara/screens/google_map_second_screen.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:haravara/services/auth_service.dart';
+import 'package:haravara/services/database_service.dart';
 import 'package:haravara/services/notification_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
+// w
+var status = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AwesomeNotifications().initialize(
@@ -35,7 +41,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const App());
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  status = prefs.getBool('isLoggedIn') ?? false;
+  print(status);
+  runApp(const ProviderScope(child: App()));
 }
 
 class App extends StatefulWidget {
@@ -76,27 +85,7 @@ class _AppState extends State<App> {
               seedColor: const Color.fromARGB(255, 63, 17, 177),
             ),
           ),
-          home: const AuthScreen(),
-          // home: StreamBuilder<bool>(
-          //   stream: AuthService().findUserByPhoneId(),
-          //   builder: (context, snapshot) {
-          //     if (snapshot.connectionState == ConnectionState.waiting) {
-          //       // Handle waiting state
-          //       return const CircularProgressIndicator();
-          //     } else if (snapshot.hasError) {
-          //       return Text('Error: ${snapshot.error}');
-          //     } else if (snapshot.hasData) {
-          //       // Handle data state
-          //       bool userExists = snapshot.data!;
-          //       if (userExists) {
-          //         return GoogleMapSecondScreen();
-          //       } else {
-          //         return AuthScreen();
-          //       }
-          //     }
-          //     return Container();
-          //   },
-          // ),
+          home: status ? const GoogleMapSecondScreen() : const AuthScreen(),
         );
       },
     );

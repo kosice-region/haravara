@@ -1,16 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geofence_service/geofence_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/data/geofence_list.dart';
 import 'package:haravara/data/location_places_markers_data.dart';
+import 'package:haravara/data/locations_places_data.dart';
 import 'package:haravara/models/geofence_message.dart';
+import 'package:haravara/models/location_places.dart';
+import 'package:haravara/screens/auth.dart';
 import 'package:haravara/services/event_bus.dart';
-import 'package:haravara/services/google_map_service.dart';
+import 'package:haravara/services/map_service.dart';
 import 'package:haravara/services/notification_service.dart';
-import 'package:haravara/widgets/location_button.dart';
+import 'package:haravara/widgets/bottom_bar.dart';
+import 'package:haravara/widgets/marker_pick_bottom_bar.dart';
+import 'package:haravara/widgets/picked_location_bottom_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleMapScreen extends StatefulWidget {
   const GoogleMapScreen({
@@ -23,12 +29,17 @@ class GoogleMapScreen extends StatefulWidget {
 
 class _GoogleMapScreenState extends State<GoogleMapScreen> {
   LatLng? sourceLocation;
-  LatLng? pickedLocation;
+  Marker? pickedMarker;
   bool isLocationConfirmed = false;
-  bool isPickingLocation = false;
+  bool isPickingLocation = true;
+  bool isPickingMarker = false;
+  int? lastPickedLocation;
+  int initialPage = 0;
   final Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _markers = <Marker>{};
   GeofenceMessage? geofenceMessage;
+  double? smallestDistanceLength;
+
   final _geofenceStreamController = StreamController<Geofence>();
   final _activityStreamController = StreamController<Activity>();
   final eventBus = EventBus();
@@ -52,36 +63,49 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     print('geofenceRadius: ${geofenceRadius.toJson()}');
     print('geofenceStatus: ${geofenceStatus.toString()}');
     _geofenceStreamController.sink.add(geofence);
-    double? smallestEnterLength;
+    double? smallestLength;
     GeofenceStatus? radiusStatus;
     for (var radius in geofence.radius) {
       print('Radius: ${radius.length} meters, Status: ${radius.status}');
       if (radius.status == GeofenceStatus.ENTER) {
-        if (smallestEnterLength == null ||
-            radius.length < smallestEnterLength) {
-          smallestEnterLength = radius.length;
+        if (smallestLength == null || radius.length < smallestLength) {
+          smallestLength = radius.length;
           radiusStatus = radius.toJson()['status'];
         }
       }
     }
-    print('SMALLEST LENGTH WITH ENTRY STATUS ${smallestEnterLength}');
+    if (smallestLength == null) {
+      for (var radius in geofence.radius) {
+        print('Radius: ${radius.length} meters, Status: ${radius.status}');
+        if (radius.status == GeofenceStatus.DWELL) {
+          if (smallestLength == null || radius.length < smallestLength) {
+            smallestLength = radius.length;
+            radiusStatus = radius.toJson()['status'];
+          }
+        }
+      }
+    }
+
+    print('SMALLEST LENGTH  ${smallestLength}');
     print('STATUS ${radiusStatus}');
 
     setState(() {
-      if (smallestEnterLength != null) {
+      if (smallestLength != null) {
         geofenceMessage = GeofenceMessage(
-            geofenceLength: smallestEnterLength,
+            geofenceLength: smallestLength,
             geofenceRadius: geofenceRadius,
             geofenceStatus: radiusStatus!);
+        smallestDistanceLength = smallestLength;
       } else {
         geofenceMessage = GeofenceMessage(
             geofenceLength: -1.0,
             geofenceRadius: geofenceRadius,
             geofenceStatus: radiusStatus!);
+        smallestDistanceLength = -1.0;
       }
     });
     NotificationService()
-        .sendNotification('Haravara', smallestEnterLength.toString());
+        .sendNotification('Haravara', smallestLength.toString());
   }
 
   void _onActivityChanged(Activity prevActivity, Activity currActivity) {
@@ -112,19 +136,21 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
   }
 
   void getCurrentLocation() async {
-    sourceLocation = await GoogleMapService().getCurrentLocation();
+    sourceLocation = await MapService().getCurrentLocation();
     print(sourceLocation);
     setState(() {});
   }
 
   void onConfirmLocation() async {
     setState(() {
+      isPickingMarker = false;
       isPickingLocation = false;
       isLocationConfirmed = true;
       _markers = {
         Marker(
           markerId: const MarkerId('picked_location'),
-          position: pickedLocation!,
+          position: LatLng(pickedMarker!.position.latitude,
+              pickedMarker!.position.longitude),
           infoWindow: const InfoWindow(
             title: 'Test location',
             snippet: 'Test location',
@@ -135,15 +161,18 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(
       CameraUpdate.newLatLngBounds(
-          GoogleMapService()
-              .boundsFromLatLngList([sourceLocation!, pickedLocation!]),
+          MapService().boundsFromLatLngList([
+            sourceLocation!,
+            LatLng(pickedMarker!.position.latitude,
+                pickedMarker!.position.longitude)
+          ]),
           25),
     );
     setState(() {
       _geofenceService.addGeofence(Geofence(
         id: 'picked_location',
-        latitude: pickedLocation!.latitude,
-        longitude: pickedLocation!.longitude,
+        latitude: pickedMarker!.position.latitude,
+        longitude: pickedMarker!.position.longitude,
         radius: [
           GeofenceRadius(id: 'radius_200m', length: 200),
           GeofenceRadius(id: 'radius_100m', length: 100),
@@ -168,11 +197,12 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       _geofenceService.addStreamErrorListener(_onError);
       _geofenceService.start(geofenceList).catchError(_onError);
     });
-    eventBus.on<LatLng>().listen((event) {
+    eventBus.on<Marker>().listen((event) {
       if (event != null) {
         setState(() {
-          pickedLocation = event;
-          isPickingLocation = true;
+          pickedMarker = event;
+          isPickingLocation = false;
+          isPickingMarker = true;
         });
       }
     });
@@ -181,104 +211,121 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height * 0.80,
-            child: sourceLocation == null
-                ? const CircularProgressIndicator()
-                : GoogleMap(
+      body: sourceLocation != null
+          ? Stack(
+              children: <Widget>[
+                SizedBox(
+                  height: 932.h,
+                  width: 430.w,
+                  child: GoogleMap(
                     initialCameraPosition: CameraPosition(
                       target: sourceLocation!,
                       zoom: 16,
                     ),
                     markers: {..._markers},
                     onTap: (value) {
-                      getCurrentLocation();
+                      setState(() {
+                        isPickingMarker = false;
+                        isPickingLocation = true;
+                      });
                     },
                     onMapCreated: (GoogleMapController controller) {
                       _controller.complete(controller);
                     },
+                    cameraTargetBounds: CameraTargetBounds(
+                      LatLngBounds(
+                        northeast: const LatLng(
+                            49.633475481391486, 22.746856634101785),
+                        southwest: const LatLng(
+                            47.742173546241645, 16.708306537445612),
+                      ),
+                    ),
                     myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
+                    mapToolbarEnabled: true,
+                    padding: EdgeInsets.only(bottom: 8.h, right: 8.w),
                   ),
-          ),
-          SizedBox(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height * 0.20,
-            child: Column(
-              children: [
-                if (!isLocationConfirmed)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Column(
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: locationsPlacesData.map((locationPlace) {
-                              return Row(
-                                children: [
-                                  LocationButton(
-                                    locationPlace: locationPlace,
-                                    onPressed: (locationPlace) {
-                                      _goToPlace(
-                                        locationPlace.cameraPosition,
-                                        locationPlace.bounds,
-                                        locationPlace.markers,
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(width: 10),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 5),
-                        ],
+                ),
+                if (smallestDistanceLength != null &&
+                    smallestDistanceLength! <= 25.0)
+                  AnimatedPositioned(
+                    duration: const Duration(seconds: 1),
+                    bottom: 310.h,
+                    left: 100.w,
+                    child: AnimatedContainer(
+                      duration: const Duration(seconds: 2),
+                      curve: Curves.easeInOut,
+                      child: Image.asset(
+                        'assets/Hero.jpeg',
+                        fit: BoxFit.fill,
+                        width: 200.w,
+                        height: 222.h,
                       ),
                     ),
                   ),
-                if (isLocationConfirmed)
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        onStopNavigation();
-                      },
-                      child: const Text('Do u want to stop navigation?'),
-                    ),
-                  ),
-                if (isPickingLocation)
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        onConfirmLocation();
-                      },
-                      child:
-                          const Text('Do u wanna navigate to this position?'),
-                    ),
-                  ),
-                if (geofenceMessage != null &&
-                    geofenceMessage?.geofenceLength != -1.0)
-                  Center(
-                    child: Text(
-                        'R_LNGTH ${geofenceMessage!.geofenceLength}, R_STATUS ${geofenceMessage!.geofenceStatus.toString()}',
-                        maxLines: 3,
-                        textAlign: TextAlign.center),
-                  ),
-                if (geofenceMessage != null &&
-                    geofenceMessage?.geofenceLength == -1.0)
-                  const Center(
-                    child: Text('You have left from radius',
-                        maxLines: 3, textAlign: TextAlign.center),
-                  ),
-                const SizedBox(height: 5),
+                Positioned(
+                  top: 600.h,
+                  bottom: 50.h,
+                  left: 0,
+                  right: 0,
+                  child: isPickingLocation
+                      ? SizedBox(
+                          child: PageView.builder(
+                            controller:
+                                PageController(initialPage: initialPage),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: locationPlaces.length,
+                            itemBuilder: (context, index) {
+                              return BottomBar(
+                                location: locationPlaces[index],
+                                onPressed: (locationPlace) {
+                                  initialPage = index;
+                                  lastPickedLocation = index;
+                                  _goToPlace(
+                                    locationPlace.cameraPosition,
+                                    locationPlace.bounds,
+                                    locationPlace.markers,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      : isPickingMarker
+                          ? SizedBox(
+                              height: 391.h,
+                              child: MarkerPickBottomBar(
+                                title: pickedMarker!.infoWindow.title!,
+                                body: pickedMarker!.infoWindow.snippet!,
+                                onPressed: onConfirmLocation,
+                              ),
+                            )
+                          : isLocationConfirmed
+                              ? SizedBox(
+                                  height: 382.h,
+                                  child: PickedLocationBottomBar(
+                                    distance: smallestDistanceLength,
+                                    location: pickedMarker!.infoWindow.title!,
+                                    onStop: onStopNavigation,
+                                    onPrize: onStopNavigation,
+                                  ),
+                                )
+                              : SizedBox(),
+                ),
+                Positioned(
+                    top: 50.h,
+                    right: 10.w,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.logout,
+                        size: 40,
+                        color: Colors.black,
+                      ),
+                      onPressed: onLogout,
+                    ))
               ],
-            ),
-          ),
-        ],
-      ),
+            )
+          : const CircularProgressIndicator(),
     );
   }
 
@@ -317,10 +364,28 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
   }
 
   void onStopNavigation() async {
+    LocationPlaces locationPlace = locationsPlacesData[lastPickedLocation!];
+    _goToPlace(
+      locationPlace.cameraPosition,
+      locationPlace.bounds,
+      locationPlace.markers,
+    );
     setState(() {
+      smallestDistanceLength = null;
+      isPickingLocation = true;
       isLocationConfirmed = false;
+      isPickingMarker = false;
       geofenceMessage = null;
       _geofenceService.clearGeofenceList();
     });
+  }
+
+  void onLogout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', false);
+    prefs.remove('email');
+    prefs.remove('id');
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const AuthScreen()));
   }
 }
