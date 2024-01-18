@@ -1,13 +1,14 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/models/place_marker.dart';
+import 'package:haravara/services/event_bus.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'dart:math' show asin, cos, max, min, pi, sin, sqrt;
+
+final eventBus = EventBus();
 
 class MapService {
   final String key = 'AIzaSyCgHVN9XIIgGyCxlDYvOloDIkEcArxMkRw';
@@ -39,19 +40,66 @@ class MapService {
       );
       markerFutures.add(
         PlaceMarker.createWithDefaultIcon(
-          markerID: place.name,
+          markerID: place.id,
           position: primaryPos,
           infoWindow: InfoWindow(
             title: place.name,
             snippet: place.detail.description,
           ),
-          onTapAction: (p0) {
-            // TODO
+          onTapAction: (marker) {
+            eventBus.sendEvent(marker);
           },
         ),
       );
     }
     return Future.wait(markerFutures).then((markers) => markers.toSet());
+  }
+
+  double calculateDistance(LatLng point1, LatLng point2) {
+    var p = 0.017453292519943295; // Константа для преобразования в радианы
+    var c = cos;
+    var a = 0.5 -
+        c((point2.latitude - point1.latitude) * p) / 2 +
+        c(point1.latitude * p) *
+            c(point2.latitude * p) *
+            (1 - c((point2.longitude - point1.longitude) * p)) /
+            2;
+    return 12742 * asin(sqrt(a)); // 2 * радиус Земли (6371 km)
+  }
+
+  LatLngBounds findBounds(List<LatLng> points) {
+    double maxDistance = 0.0;
+    LatLng point1 = LatLng(00, 0), point2 = LatLng(0, 0);
+
+    for (int i = 0; i < points.length; i++) {
+      for (int j = i + 1; j < points.length; j++) {
+        double distance = calculateDistance(points[i], points[j]);
+        if (distance > maxDistance) {
+          maxDistance = distance;
+          point1 = points[i];
+          point2 = points[j];
+        }
+      }
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(min(point1.latitude, point2.latitude),
+          min(point1.longitude, point2.longitude)),
+      northeast: LatLng(max(point1.latitude, point2.latitude),
+          max(point1.longitude, point2.longitude)),
+    );
+  }
+
+  CameraPosition calculateInitialCameraPosition(List<LatLng> points) {
+    var bounds = findBounds(points);
+    var centerLat = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
+    var centerLng =
+        (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
+
+    return CameraPosition(
+      target: LatLng(centerLat, centerLng),
+      zoom: 7.80,
+    );
   }
 
   Future<LatLng> getCurrentLocation() async {

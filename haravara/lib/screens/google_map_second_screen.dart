@@ -9,6 +9,7 @@ import 'package:haravara/data/geofence_list.dart';
 import 'package:haravara/data/location_places_markers_data.dart';
 import 'package:haravara/data/locations_places_data.dart';
 import 'package:haravara/models/geofence_message.dart';
+import 'package:haravara/models/location_place.dart';
 import 'package:haravara/models/location_places.dart';
 import 'package:haravara/models/place_marker.dart';
 import 'package:haravara/screens/auth.dart';
@@ -25,8 +26,16 @@ import 'package:haravara/models/place.dart';
 
 class GoogleMapSecondScreen extends ConsumerStatefulWidget {
   const GoogleMapSecondScreen({
+    required this.places,
+    required this.markers,
+    required this.cameraTargetBounds,
+    required this.cameraPosition,
     Key? key,
   }) : super(key: key);
+  final List<Place> places;
+  final Set<Marker> markers;
+  final LatLngBounds cameraTargetBounds;
+  final CameraPosition cameraPosition;
 
   @override
   ConsumerState<GoogleMapSecondScreen> createState() =>
@@ -34,60 +43,69 @@ class GoogleMapSecondScreen extends ConsumerStatefulWidget {
 }
 
 class _GoogleMapSecondScreenState extends ConsumerState<GoogleMapSecondScreen> {
+  final eventBus = EventBus();
   LatLng? sourceLocation;
   late List<Place> places;
   Set<Marker> _markers = <Marker>{};
   final Completer<GoogleMapController> _controller = Completer();
-  void getCurrentLocation() async {
-    sourceLocation = await MapService().getCurrentLocation();
-    print(sourceLocation);
-    setState(() {});
-  }
-
-  void getPlaces() async {
-    sourceLocation = await MapService().getCurrentLocation();
-    await DatabaseService().getAllPlaces(ref);
-    places = ref.watch(PlacesProvider);
-    _markers = await MapService().getMarkers(places);
-    setState(() {});
-  }
+  bool isMarkerPicking = true;
+  bool isMarkerPicked = false;
+  late Marker pickedMarker;
+  late Place pickedLocation;
 
   @override
   void initState() {
     super.initState();
     getCurrentLocation();
-    getPlaces();
+    _markers = widget.markers;
+    places = widget.places;
+    eventBus.on<Marker>().listen((tappedMarker) {
+      if (tappedMarker != null && mounted) {
+        setState(() {
+          pickedMarker = tappedMarker;
+          pickedLocation = places
+              .where((place) => place.id == pickedMarker.markerId.value)
+              .first;
+          isMarkerPicked = true;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return sourceLocation == null && _markers.isEmpty
-        ? const CircularProgressIndicator()
-        : SizedBox(
-            height: 932.h,
-            width: 430.w,
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: sourceLocation!,
-                zoom: 16,
-              ),
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-              cameraTargetBounds: CameraTargetBounds(
-                LatLngBounds(
-                  northeast:
-                      const LatLng(49.633475481391486, 22.746856634101785),
-                  southwest:
-                      const LatLng(47.742173546241645, 16.708306537445612),
-                ),
-              ),
-              markers: _markers,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              mapToolbarEnabled: true,
-              padding: EdgeInsets.only(bottom: 8.h, right: 8.w),
+    return Scaffold(
+      body: Stack(children: [
+        SizedBox(
+          height: 932.h,
+          width: 430.w,
+          child: GoogleMap(
+            initialCameraPosition: widget.cameraPosition,
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
+            cameraTargetBounds: CameraTargetBounds(widget.cameraTargetBounds),
+            markers: _markers,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+            mapToolbarEnabled: true,
+            padding: EdgeInsets.only(bottom: 285.h, right: 1.w, left: 10.w),
+          ),
+        ),
+        if (isMarkerPicked)
+          Positioned(
+            top: 520.h,
+            child: BottomBar(
+              place: pickedLocation,
+              onPressed: () {},
             ),
-          );
+          ),
+      ]),
+    );
+  }
+
+  void getCurrentLocation() async {
+    sourceLocation = await MapService().getCurrentLocation();
+    setState(() {});
   }
 }

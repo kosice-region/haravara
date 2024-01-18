@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haravara/screens/auth.dart';
-import 'package:haravara/screens/google_map_screen.dart';
-import 'package:haravara/screens/google_map_second_screen.dart';
+import 'package:haravara/screens/compass.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:haravara/services/auth_service.dart';
-import 'package:haravara/services/database_service.dart';
 import 'package:haravara/services/notification_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,15 +73,12 @@ class _AppState extends State<App> {
       designSize: const Size(430, 932),
       minTextAdapt: true,
       builder: (_, child) {
-        return MaterialApp(
+        return const MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Haravara',
-          theme: ThemeData().copyWith(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 63, 17, 177),
-            ),
-          ),
-          home: status ? const GoogleMapSecondScreen() : const AuthScreen(),
+          // home: status ? const MapScreen() : const AuthScreen(),
+          home: Compass(),
+          // home: const AuthScreen(),
         );
       },
     );

@@ -7,7 +7,6 @@ class PlaceMarker extends Marker {
   final InfoWindow infoWindow;
   final void Function(Marker) onTapAction;
 
-  // Default asset path for the icon
   static const String _defaultIconPath = 'assets/Icon.jpeg';
 
   PlaceMarker._({
@@ -35,7 +34,7 @@ class PlaceMarker extends Marker {
     required void Function(Marker) onTapAction,
   }) async {
     final icon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(48, 48)),
+      const ImageConfiguration(size: Size(4, 4)),
       _defaultIconPath,
     );
 

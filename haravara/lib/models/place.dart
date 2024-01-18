@@ -1,4 +1,7 @@
+import 'package:uuid/uuid.dart';
+
 class Place {
+  final String id;
   final String name;
   final bool active;
   final int created;
@@ -7,6 +10,7 @@ class Place {
   final GeoData geoData;
 
   Place({
+    required this.id,
     required this.name,
     required this.active,
     required this.created,
@@ -19,9 +23,10 @@ class Place {
     return 'Place(name: $name, latitude: ${geoData.primary.coordinates}';
   }
 
-  factory Place.fromSnapshot(Map<dynamic, dynamic> snapshot) {
+  factory Place.fromSnapshot(Map<dynamic, dynamic> snapshot, String key) {
     String? name = snapshot['name'] as String?;
     return Place(
+      id: key,
       name: name ?? 'NULL',
       active: snapshot['active'] as bool,
       created: snapshot['created'] as int,
@@ -42,7 +47,9 @@ class Detail {
     var imageList = snapshot['images'] as List;
     List<Image> images = imageList.map((i) => Image.fromSnapshot(i)).toList();
     return Detail(
-        description: snapshot['description'] as String, images: images);
+      description: snapshot['description'] as String,
+      images: images,
+    );
   }
 }
 

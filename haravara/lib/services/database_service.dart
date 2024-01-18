@@ -65,7 +65,7 @@ class DatabaseService {
       Map<dynamic, dynamic> PlacesData =
           snapshot.value as Map<dynamic, dynamic>;
       PlacesData.forEach((key, value) {
-        Place place = Place.fromSnapshot(value);
+        Place place = Place.fromSnapshot(value, key);
         placesList.add(place);
       });
     }
