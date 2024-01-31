@@ -32,3 +32,10 @@ Hlavnými sprievodcami aplikácie by mali byť naše tri postavičky - duch Kaš
 4.	pripomínať mu, pred každým víkendom/prázdninami/voľnými dňami, že je načase vyraziť na pátračku 
  
 1.	okrem samotnej pátračky, by sme uvítali, keby súčasťou aplikácie boli aj hry a krátke kvízy, ktorými si vie dieťa /rodina/ skrátiť čas pri čakaní na autobus/vlak.. cestu autom… https://www.haravara.sk/kvizy/ / https://www.haravara.sk/pexeso/ 
+
+Besides:
+
+Figma Link: https://www.figma.com/file/ocG4c3524hsJiEU5HOLy2J/HARAVARA?type=design&node-id=1%3A2&mode=design&t=0KjgYOxSIsgZG5Iy-1
+
+
+
