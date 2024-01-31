@@ -21,19 +21,15 @@ import 'package:haravara/widgets/bottom_bar.dart';
 import 'package:haravara/widgets/marker_pick_bottom_bar.dart';
 import 'package:haravara/widgets/picked_location_bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:haravara/providers/places_provider.dart';
+import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/models/place.dart';
 
 class GoogleMapSecondScreen extends ConsumerStatefulWidget {
   const GoogleMapSecondScreen({
-    required this.places,
-    required this.markers,
     required this.cameraTargetBounds,
     required this.cameraPosition,
     Key? key,
   }) : super(key: key);
-  final List<Place> places;
-  final Set<Marker> markers;
   final LatLngBounds cameraTargetBounds;
   final CameraPosition cameraPosition;
 
@@ -45,8 +41,6 @@ class GoogleMapSecondScreen extends ConsumerStatefulWidget {
 class _GoogleMapSecondScreenState extends ConsumerState<GoogleMapSecondScreen> {
   final eventBus = EventBus();
   LatLng? sourceLocation;
-  late List<Place> places;
-  Set<Marker> _markers = <Marker>{};
   final Completer<GoogleMapController> _controller = Completer();
   bool isMarkerPicking = true;
   bool isMarkerPicked = false;
@@ -57,13 +51,12 @@ class _GoogleMapSecondScreenState extends ConsumerState<GoogleMapSecondScreen> {
   void initState() {
     super.initState();
     getCurrentLocation();
-    _markers = widget.markers;
-    places = widget.places;
     eventBus.on<Marker>().listen((tappedMarker) {
       if (tappedMarker != null && mounted) {
         setState(() {
           pickedMarker = tappedMarker;
-          pickedLocation = places
+          pickedLocation = ref
+              .watch(placesProvider)
               .where((place) => place.id == pickedMarker.markerId.value)
               .first;
           isMarkerPicked = true;
@@ -74,6 +67,7 @@ class _GoogleMapSecondScreenState extends ConsumerState<GoogleMapSecondScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, designSize: const Size(430, 932));
     return Scaffold(
       body: Stack(children: [
         SizedBox(
@@ -85,16 +79,31 @@ class _GoogleMapSecondScreenState extends ConsumerState<GoogleMapSecondScreen> {
               _controller.complete(controller);
             },
             cameraTargetBounds: CameraTargetBounds(widget.cameraTargetBounds),
-            markers: _markers,
+            markers: ref.watch(markersProvider),
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
             mapToolbarEnabled: true,
             padding: EdgeInsets.only(bottom: 285.h, right: 1.w, left: 10.w),
           ),
         ),
+        Positioned(
+          top: 80.h,
+          left: 20.w,
+          child: Center(
+            child: IconButton(
+              icon: Icon(
+                Icons.close,
+                size: 50.dg,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        ),
         if (isMarkerPicked)
           Positioned(
-            top: 520.h,
+            top: 634.h,
             child: BottomBar(
               place: pickedLocation,
               onPressed: () {},

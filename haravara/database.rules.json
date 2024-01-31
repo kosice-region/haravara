@@ -1,0 +1,6 @@
+{
+  "rules": {
+    ".read": true,  // 2024-1-6
+    ".write": true
+  }
+}

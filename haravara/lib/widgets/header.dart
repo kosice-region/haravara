@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:haravara/services/screen_router.dart';
+import 'package:haravara/widgets/header_menu.dart';
 
 class Header extends StatefulWidget {
-  const Header({super.key, required this.showMenu});
   final bool showMenu;
+  final Color backGroundColor;
+
+  const Header({
+    super.key,
+    this.showMenu = true,
+    this.backGroundColor = const Color.fromARGB(255, 91, 187, 75),
+  });
   @override
   State<Header> createState() => _HeaderState();
 }
@@ -11,56 +19,64 @@ class Header extends StatefulWidget {
 class _HeaderState extends State<Header> {
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, designSize: const Size(255, 516));
     return Padding(
-        padding: EdgeInsets.only(top: 80.h),
+        padding: const EdgeInsets.only(top: 27).r,
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(width: 30.w),
+                25.horizontalSpace,
                 Image(
                   image: const AssetImage('assets/logo-haravara.png'),
                   fit: BoxFit.cover,
-                  width: 140.w,
-                  height: 90.h,
+                  width: 91.94.w,
+                  height: 64.h,
                 ),
-                SizedBox(width: 150.w),
+                60.horizontalSpace,
                 if (widget.showMenu)
-                  Container(
-                    height: 55.h,
-                    width: 65.w,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: const Color.fromARGB(255, 177, 235, 183),
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(height: 13.h),
-                        SizedBox(
-                          height: 4.h,
-                          width: 43.w,
-                          child: const ColoredBox(
-                            color: Colors.black,
+                  GestureDetector(
+                    onTap: () {
+                      ScreenRouter()
+                          .routeToNextScreen(context, const HeaderMenu());
+                    },
+                    child: Container(
+                      height: 43.h,
+                      width: 58.w,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(14)).r,
+                        color: widget.backGroundColor,
+                      ),
+                      child: Column(
+                        children: [
+                          8.70.verticalSpace,
+                          SizedBox(
+                            height: 3.5.h,
+                            width: 35.48.w,
+                            child: const ColoredBox(
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 10.h),
-                        SizedBox(
-                          height: 4.h,
-                          width: 43.w,
-                          child: const ColoredBox(
-                            color: Colors.black,
+                          8.33.verticalSpace,
+                          SizedBox(
+                            height: 3.5.h,
+                            width: 35.48.w,
+                            child: const ColoredBox(
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 10.h),
-                        SizedBox(
-                          height: 4.h,
-                          width: 43.w,
-                          child: const ColoredBox(
-                            color: Colors.black,
+                          8.33.verticalSpace,
+                          SizedBox(
+                            height: 3.5.h,
+                            width: 35.48.w,
+                            child: const ColoredBox(
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   )
               ],

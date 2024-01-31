@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/models/user.dart';
-import 'package:haravara/providers/places_provider.dart';
+import 'package:haravara/providers/map_providers.dart';
 
 FirebaseDatabase database = FirebaseDatabase.instance;
 DatabaseReference usersRef = database.ref('users');
@@ -62,14 +63,14 @@ class DatabaseService {
     List<Place> placesList = [];
 
     if (snapshot.exists) {
-      Map<dynamic, dynamic> PlacesData =
+      Map<dynamic, dynamic> placesData =
           snapshot.value as Map<dynamic, dynamic>;
-      PlacesData.forEach((key, value) {
+      placesData.forEach((key, value) {
         Place place = Place.fromSnapshot(value, key);
         placesList.add(place);
       });
     }
-    ref.read(PlacesProvider.notifier).addPlaces(placesList);
+    ref.read(placesProvider.notifier).addPlaces(placesList);
   }
 }
 

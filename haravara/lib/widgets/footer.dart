@@ -3,17 +3,17 @@ import 'package:flutter/widgets.dart' as Flutter;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Footer extends StatelessWidget {
-  const Footer({super.key});
-
+  const Footer({this.boxFit = BoxFit.cover, super.key, required this.height});
+  final int height;
+  final BoxFit boxFit;
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-
     return SizedBox(
-      width: MediaQuery.of(context).size.width,
+      width: 271.w,
       child: Flutter.Image.asset(
         'assets/background.png',
-        fit: BoxFit.cover,
+        fit: boxFit,
+        height: height.h,
       ),
     );
   }

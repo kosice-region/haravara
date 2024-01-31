@@ -29,7 +29,7 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   lauchMap() async {
-    MapType map = MapType.google;
+    MapType map = MapType.apple;
     bool isMapSelected = true;
 
     if (Platform.isIOS) {

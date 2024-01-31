@@ -1,5 +1,4 @@
 import 'package:geofence_service/models/geofence.dart';
-import 'package:geofence_service/models/geofence_radius.dart';
 
 final geofenceList = <Geofence>[
   // Geofence(

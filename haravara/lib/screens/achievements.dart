@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/widgets/achievement.dart';
 import 'package:haravara/widgets/header.dart';
+import 'package:haravara/widgets/header_menu.dart';
 
 class AchievementsScreen extends StatefulWidget {
   const AchievementsScreen({super.key});
@@ -14,27 +15,36 @@ class AchievementsScreen extends StatefulWidget {
 class _AchievementsScreenState extends State<AchievementsScreen> {
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    ScreenUtil.init(context, designSize: const Size(255, 516));
     return Scaffold(
+      endDrawer: HeaderMenu(),
       body: Column(
         children: [
-          const Header(showMenu: true),
-          SizedBox(height: screenHeight.h * 0.05),
-          Text(
-            'TVOJE PEČIATKY',
-            style: GoogleFonts.titanOne(
-                color: const Color.fromARGB(255, 86, 162, 73), fontSize: 28.sp),
+          Padding(
+            padding: const EdgeInsets.only(top: 8).r,
+            child: Column(
+              children: [
+                const Header(showMenu: true),
+                14.verticalSpace,
+                Text(
+                  'TVOJE PEČIATKY',
+                  style: GoogleFonts.titanOne(
+                      color: const Color.fromARGB(255, 86, 162, 73),
+                      fontSize: 15.sp),
+                ),
+                10.verticalSpace,
+              ],
+            ),
           ),
           Expanded(
-            child: GridView(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5.0,
-                  mainAxisSpacing: 30.0),
+            child: GridView.count(
+              crossAxisCount: 2,
+              childAspectRatio: (5 / 4.h),
               children: const [
-                Achievement(),
-                Achievement(),
-                Achievement(),
+                Achievement(title: 'Dom sv.Alzbety'),
+                Achievement(title: 'Obisovsky hrad', isClosed: false),
+                Achievement(title: 'Kosicky hrad', isClosed: false),
+                Achievement(title: 'Vcely raja', isClosed: true),
               ],
             ),
           ),

@@ -9,13 +9,14 @@ import 'package:flutter/widgets.dart' as Flutter;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/place.dart';
-import 'package:haravara/providers/places_provider.dart';
+import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/screens/google_map_second_screen.dart';
 import 'package:haravara/services/database_service.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/widgets/footer.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:haravara/widgets/header_menu.dart';
 import 'package:page_transition/page_transition.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
@@ -26,124 +27,134 @@ class MapScreen extends ConsumerStatefulWidget {
 }
 
 class _MapScreenState extends ConsumerState<MapScreen> {
-  LatLng? sourceLocation;
-  late List<Place> places = [];
   Set<Marker> _markers = <Marker>{};
   final Completer<GoogleMapController> _controller = Completer();
   LatLngBounds bounds = LatLngBounds(
-    southwest: const LatLng(48.8004156, 20.2895598), // The southwestern corner
-    northeast: const LatLng(
-        48.91778829644273, 22.199326541275667), // The northeastern corner
+    southwest: const LatLng(48.8004156, 20.2895598),
+    northeast: const LatLng(48.91778829644273, 22.199326541275667),
   );
   late CameraPosition cameraPosition;
 
   @override
   void initState() {
     super.initState();
-    getPlaces();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    ScreenUtil.init(context, designSize: const Size(255, 516));
+
     return Scaffold(
-      body: Column(
-        children: [
-          const Header(showMenu: true),
-          SizedBox(height: screenHeight * 0.129809.h),
-          Center(
-            child: Text(
-              'MAPA PEČIATOK',
-              style: GoogleFonts.titanOne(
-                  fontSize: 30.sp,
-                  color: const Color.fromARGB(255, 1, 199, 67)),
-            ),
-          ),
-          SizedBox(height: 10.h),
-          Container(
-            height: 200.h,
-            width: 380.w,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-            child: GestureDetector(
-              child: GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: const CameraPosition(
-                  target: LatLng(48.859101948221365, 21.244443170637833),
-                  zoom: 7.80,
-                ),
-                markers: _markers,
-                cameraTargetBounds: CameraTargetBounds(bounds),
-                myLocationEnabled: false,
-                myLocationButtonEnabled: false,
-                mapToolbarEnabled: false,
-                zoomControlsEnabled: false,
+      endDrawer: const HeaderMenu(),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 12).h,
+        child: Column(
+          children: [
+            const Header(),
+            30.verticalSpace,
+            Center(
+              child: Text(
+                'MAPA PEČIATOK',
+                style: GoogleFonts.titanOne(
+                    fontSize: 17.sp,
+                    color: const Color.fromARGB(255, 1, 199, 67)),
               ),
             ),
-          ),
-          SizedBox(height: screenHeight * 0.0214.h),
-          if (Platform.isIOS)
-            Column(
-              children: [
-                CupertinoButton(
+            10.verticalSpace,
+            Container(
+              height: 110.h,
+              width: 225.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(4.r)),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(4.r)),
+                child: GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: const CameraPosition(
+                    target: LatLng(48.859101948221365, 21.244443170637833),
+                    zoom: 8,
+                  ),
+                  markers: ref.watch(markersProvider),
+                  cameraTargetBounds: CameraTargetBounds(bounds),
+                  myLocationEnabled: false,
+                  myLocationButtonEnabled: false,
+                  mapToolbarEnabled: false,
+                  zoomControlsEnabled: false,
+                ),
+              ),
+            ),
+            14.verticalSpace,
+            if (Platform.isIOS)
+              Column(
+                children: [
+                  CupertinoButton(
+                      onPressed: () {
+                        // places.isNotEmpty ? navigateToMap() : null;
+                        navigateToMap();
+                      },
+                      color: const Color.fromARGB(255, 7, 179, 25),
+                      // color: places.isNotEmpty
+                      //     ? const Color.fromARGB(255, 7, 179, 25)
+                      //     : Colors.grey,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Text('Otvoriť mapu',
+                          style: GoogleFonts.titanOne(color: Colors.white))),
+                ],
+              ),
+            if (Platform.isAndroid)
+              Column(
+                children: [
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                          const Color.fromARGB(255, 7, 179, 25)),
+                    ),
                     onPressed: () {
-                      places.isNotEmpty ? showMapBottomSheet(context) : null;
+                      // places.isNotEmpty ? navigateToMap() : null;
+                      navigateToMap();
                     },
-                    color: places.isNotEmpty
-                        ? const Color.fromARGB(255, 7, 179, 25)
-                        : Colors.grey,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Text('Otvoriť mapu',
-                        style: GoogleFonts.titanOne(color: Colors.white))),
-                SizedBox(height: screenHeight * 0.022.h),
-              ],
-            ),
-          if (Platform.isAndroid)
-            Column(
-              children: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color>(
-                        places.isNotEmpty
-                            ? const Color.fromARGB(255, 7, 179, 25)
-                            : Colors.grey),
+                    child: Text(
+                      'Otvoriť mapu',
+                      style: GoogleFonts.titanOne(color: Colors.white),
+                    ),
                   ),
-                  onPressed: () {
-                    places.isNotEmpty ? showMapBottomSheet(context) : null;
-                  },
-                  child: Text(
-                    'Otvoriť mapu',
-                    style: GoogleFonts.titanOne(color: Colors.white),
+                  10.verticalSpace
+                ],
+              ),
+            Expanded(
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 0.h,
+                    child: const Footer(height: 175, boxFit: BoxFit.fill),
                   ),
-                ),
-                SizedBox(
-                  height: 10.h,
-                )
-              ],
-            ),
-          Expanded(
-            child: Stack(
-              children: [
-                const Footer(),
-                Positioned(
-                  child: Flutter.Image.asset(
-                    'assets/peopleMapScreen.png',
-                    height: 300,
-                    fit: BoxFit.cover,
+                  Positioned(
+                    bottom: 0.h,
+                    right: 1.w,
+                    left: 10.w,
+                    child: Flutter.Image.asset(
+                      'assets/peopleMapScreen.png',
+                      height: 170.h,
+                      width: 258.44.w,
+                      fit: BoxFit.fill,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   calculateBoundsAndInitialCameraPosition() async {
+    var places = ref.watch(placesProvider);
+    print(places);
     List<LatLng> latlng = [];
-    for (var element in places) {
+    for (var element in ref.watch(placesProvider)) {
       latlng.add(LatLng(element.geoData.primary.coordinates[0],
           element.geoData.primary.coordinates[1]));
     }
@@ -162,82 +173,31 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 
-  getPlaces() async {
-    sourceLocation = await MapService().getCurrentLocation();
-    await DatabaseService().getAllPlaces(ref);
-    places = ref.watch(PlacesProvider);
-    _markers = await MapService().getMarkers(places);
-    setState(() {});
-    await calculateBoundsAndInitialCameraPosition();
-  }
-
-  // navigateToMap() {
-  //   if (Platform.isAndroid) {
-  //     Navigator.push(
-  //       context,
-  //       PageTransition(
-  //         type: PageTransitionType.scale,
-  //         alignment: Alignment.bottomCenter,
-  //         duration: const Duration(seconds: 1),
-  //         child: GoogleMapSecondScreen(
-  //           places: places,
-  //           markers: _markers,
-  //           cameraPosition: cameraPosition,
-  //           cameraTargetBounds: bounds,
-  //         ),
-  //       ),
-  //     );
-  //   } else {
-  //     Navigator.push(
-  //       context,
-  //       CupertinoPageRoute(
-  //         builder: (context) => GoogleMapSecondScreen(
-  //           places: places,
-  //           markers: _markers,
-  //           cameraPosition: cameraPosition,
-  //           cameraTargetBounds: bounds,
-  //         ),
-  //       ),
-  //     );
-  //   }
-  // }
-
-  void showMapBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // Для полного открытия
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.9, // Начальный размер модального окна
-          maxChildSize: 1.0, // Максимальный размер (весь экран)
-          minChildSize: 0.3, // Минимальный размер
-          expand: false,
-          builder: (BuildContext context, ScrollController scrollController) {
-            return Container(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    width: 40,
-                    height: 5,
-                    margin: EdgeInsets.only(top: 10, bottom: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  Expanded(
-                      child: GoogleMapSecondScreen(
-                    places: places,
-                    cameraPosition: cameraPosition,
-                    cameraTargetBounds: bounds,
-                    markers: _markers,
-                  )),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
+  navigateToMap() {
+    calculateBoundsAndInitialCameraPosition();
+    if (Platform.isAndroid) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.scale,
+          alignment: Alignment.bottomCenter,
+          duration: const Duration(seconds: 1),
+          child: GoogleMapSecondScreen(
+            cameraPosition: cameraPosition,
+            cameraTargetBounds: bounds,
+          ),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (context) => GoogleMapSecondScreen(
+            cameraPosition: cameraPosition,
+            cameraTargetBounds: bounds,
+          ),
+        ),
+      );
+    }
   }
 }

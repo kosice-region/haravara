@@ -56,6 +56,8 @@ dependencies:
   page_transition: ^2.1.0
   cupertino_modal_sheet: ^1.1.0
   flutter_compass: ^0.8.0
+  swipeable_page_route: ^0.4.2
+  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:
@@ -85,10 +87,6 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/KosiceFirst.jpeg
-    - assets/KosiceSecond.jpeg
-    - assets/HradFirst.jpeg
-    - assets/HradSecond.jpeg
     - assets/Hero.jpeg
     - assets/Icon.jpeg
     - assets/nav-btn.png
@@ -97,6 +95,16 @@ flutter:
     - assets/peopleMapScreen.png
     - assets/compass.png
     - assets/cadrant.png
+    - assets/menu-icons/steps.png
+    - assets/menu-icons/map.png
+    - assets/menu-icons/calendar.png
+    - assets/menu-icons/mail.png
+    - assets/lupa.png
+    - assets/26.png
+    - assets/16.png
+    - assets/background-summary.png
+    - assets/budik.png
+    - assets/kaso-detective.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -12,9 +12,10 @@ import 'package:haravara/services/auth_service.dart';
 import 'package:haravara/services/database_service.dart';
 import 'package:haravara/widgets/footer.dart';
 import 'package:haravara/widgets/header.dart';
+import 'package:haravara/widgets/header_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter/widgets.dart' as Flutter;
+import 'package:flutter/widgets.dart';
 
 var uuid = const Uuid();
 final databaseService = DatabaseService();
@@ -29,7 +30,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
-  var _isLogin = true;
+  var _isLogin = false;
   var _enteredEmail = '';
   var _enteredPhone = '';
   var _enteredUsername = '';
@@ -76,6 +77,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, designSize: const Size(255, 516));
     Widget codeContent = TextFormField(
       decoration: const InputDecoration(
         labelText: 'Enter your code here',
@@ -94,205 +96,210 @@ class _AuthScreenState extends State<AuthScreen> {
         _enteredCode = value!;
       },
     );
-    print(MediaQuery.of(context).size.width.w * 0.9);
-    print(MediaQuery.of(context).size.height.h * 0.28);
-    ScreenUtil.init(context,
-        designSize: const Size(430, 932), minTextAdapt: true);
+
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Padding(
-          padding: EdgeInsets.only(top: 8.h),
+        resizeToAvoidBottomInset: false,
+        body: Padding(
+          padding: const EdgeInsets.only(top: 8).h,
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                const Header(showMenu: false),
-                SizedBox(height: 20.h),
-                Text(
-                  'PRIHLÁSENIE',
-                  style: GoogleFonts.titanOne(
-                      fontSize: 34.sp,
-                      color: const Color.fromARGB(255, 1, 199, 67),
-                      fontWeight: FontWeight.w500),
-                ),
-                SizedBox(height: 20.h),
-                LayoutBuilder(builder: (context, constraints) {
-                  return FractionallySizedBox(
-                    widthFactor: 0.9.w,
-                    child: AspectRatio(
-                      aspectRatio: constraints.maxWidth *
-                          2.3 /
-                          (constraints.maxWidth + (_isLogin ? 85 : 285)),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: const Color.fromARGB(255, 177, 235, 183),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color.fromARGB(255, 91, 187, 75)
-                                  .withOpacity(1),
-                              spreadRadius: 8,
-                              blurRadius: 5,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 30.h,
-                                    ),
-                                    SizedBox(
-                                      width: 300.w,
-                                      child: TextFormField(
-                                        autocorrect: false,
-                                        keyboardType:
-                                            TextInputType.emailAddress,
-                                        textCapitalization:
-                                            TextCapitalization.none,
-                                        style: const TextStyle(
-                                            color: Color.fromARGB(255, 0, 0, 0),
-                                            fontWeight: FontWeight.bold),
-                                        decoration: InputDecoration(
-                                          label: Center(
+                Column(
+                  children: [
+                    const Header(showMenu: false),
+                    15.verticalSpace,
+                    Text(
+                      'PRIHLÁSENIE',
+                      style: GoogleFonts.titanOne(
+                          fontSize: 18.sp,
+                          color: const Color.fromARGB(255, 86, 162, 73),
+                          fontWeight: FontWeight.w500),
+                    ),
+                    5.verticalSpace,
+                    Container(
+                      width: 220.w,
+                      height: _isLogin ? 100.h : 161.h,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(15)).r,
+                        color: const Color.fromARGB(255, 177, 235, 183),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(255, 91, 187, 75)
+                                .withOpacity(1),
+                            spreadRadius: 8,
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                children: [
+                                  3.verticalSpace,
+                                  SizedBox(
+                                    width: 166.w,
+                                    child: TextFormField(
+                                      autocorrect: false,
+                                      keyboardType: TextInputType.emailAddress,
+                                      textCapitalization:
+                                          TextCapitalization.none,
+                                      style: const TextStyle(
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                          fontWeight: FontWeight.bold),
+                                      decoration: InputDecoration(
+                                        label: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 15).r,
+                                          child: Center(
                                             child: Text(
                                               'E-MAIL PÁTRAČA',
                                               style: GoogleFonts.titanOne(
                                                 color: const Color.fromARGB(
                                                     255, 86, 162, 73),
                                                 fontWeight: FontWeight.w300,
-                                                fontSize: 20.sp,
+                                                fontSize: 11.sp,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: const Color.fromARGB(
+                                                255, 155, 221, 153),
+                                            width: 4.w,
+                                          ),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: const Color.fromARGB(
+                                                255, 155, 221, 153),
+                                            width: 4.w,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  if (!_isLogin) 10.verticalSpace,
+                                  if (!_isLogin)
+                                    SizedBox(
+                                      width: 166.w,
+                                      child: TextFormField(
+                                        autocorrect: true,
+                                        keyboardType: TextInputType.name,
+                                        textCapitalization:
+                                            TextCapitalization.characters,
+                                        style: const TextStyle(
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                            fontWeight: FontWeight.bold),
+                                        decoration: InputDecoration(
+                                          label: Center(
+                                            child: Text(
+                                              'POUŽÍVATEĽSKÉ MENO',
+                                              style: GoogleFonts.titanOne(
+                                                color: const Color.fromARGB(
+                                                    255, 86, 162, 73),
+                                                fontWeight: FontWeight.w300,
+                                                fontSize: 11.sp,
                                               ),
                                             ),
                                           ),
                                           enabledBorder: UnderlineInputBorder(
                                             borderSide: BorderSide(
                                               color: const Color.fromARGB(
-                                                  128, 86, 162, 73),
+                                                  255, 155, 221, 153),
                                               width: 4.w,
                                             ),
                                           ),
                                           focusedBorder: UnderlineInputBorder(
                                             borderSide: BorderSide(
                                               color: const Color.fromARGB(
-                                                  128, 86, 162, 73),
+                                                  255, 155, 221, 153),
                                               width: 4.w,
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                    if (!_isLogin)
-                                      SizedBox(
-                                        width: 300.w,
-                                        child: TextFormField(
-                                          autocorrect: true,
-                                          keyboardType: TextInputType.name,
-                                          textCapitalization:
-                                              TextCapitalization.characters,
-                                          style: const TextStyle(
-                                              color:
-                                                  Color.fromARGB(255, 0, 0, 0),
-                                              fontWeight: FontWeight.bold),
-                                          decoration: InputDecoration(
-                                            label: Center(
-                                              child: Text(
-                                                'POUŽÍVATEĽSKÉ MENO',
-                                                style: GoogleFonts.titanOne(
-                                                  color: const Color.fromARGB(
-                                                      255, 86, 162, 73),
-                                                  fontWeight: FontWeight.w300,
-                                                  fontSize: 20.sp,
-                                                ),
-                                              ),
-                                            ),
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: const Color.fromARGB(
-                                                    128, 86, 162, 73),
-                                                width: 4.w,
-                                              ),
-                                            ),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: const Color.fromARGB(
-                                                    128, 86, 162, 73),
-                                                width: 4.w,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    SizedBox(height: _isLogin ? 20.h : 22.h),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        textStyle: GoogleFonts.titanOne(
-                                            fontSize: 20.sp),
-                                        foregroundColor: const Color.fromARGB(
-                                            255, 86, 162, 73),
-                                        backgroundColor: const Color.fromARGB(
-                                            255, 155, 221, 153),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(34.0),
-                                          side: BorderSide(
-                                              color: const Color.fromARGB(
-                                                  255, 91, 187, 75),
-                                              width: 4.0.w),
-                                        ),
-                                      ),
-                                      onPressed:
-                                          isCodeSent ? _submitCode : _submit,
-                                      child: SizedBox(
-                                        width: 150.w,
-                                        height: 50.h,
-                                        child: Center(
-                                            child: Text(_isLogin
-                                                ? 'PRIHLÁS SA'
-                                                : 'REGISTRÁCIA')),
+                                  10.verticalSpace,
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      textStyle:
+                                          GoogleFonts.titanOne(fontSize: 11.sp),
+                                      foregroundColor: const Color.fromARGB(
+                                          255, 86, 162, 73),
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 155, 221, 153),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: const BorderRadius.all(
+                                                Radius.circular(34))
+                                            .w,
+                                        side: BorderSide(
+                                            color: const Color.fromARGB(
+                                                255, 91, 187, 75),
+                                            width: 4.0.w),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                    onPressed:
+                                        isCodeSent ? _submitCode : _submit,
+                                    child: SizedBox(
+                                      width: 100.w,
+                                      height: 20.h,
+                                      child: Center(
+                                          child: Text(_isLogin
+                                              ? 'PRIHLÁS SA'
+                                              : 'REGISTRÁCIA')),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                }),
-                SizedBox(height: 10.h),
-                TextButton(
-                  child: Text('Nie si ešte prihlásený? ZAREGISTRUJ SA!',
-                      style: GoogleFonts.titanOne(
-                          fontSize: 16.sp,
-                          color: const Color.fromARGB(255, 86, 162, 73),
-                          fontWeight: FontWeight.w500)),
-                  onPressed: () {
-                    setState(() {
-                      _isLogin = !_isLogin;
-                    });
-                  },
+                    10.verticalSpace,
+                    TextButton(
+                      child: Text(
+                          !_isLogin
+                              ? "Máte už konto? Prihlás sa."
+                              : 'Nie si ešte prihlásený? ZAREGISTRUJ SA!',
+                          style: GoogleFonts.titanOne(
+                              fontSize: 10.sp,
+                              color: const Color.fromARGB(255, 86, 162, 73),
+                              fontWeight: FontWeight.w500)),
+                      onPressed: () {
+                        setState(() {
+                          _isLogin = !_isLogin;
+                        });
+                      },
+                    ),
+                  ],
                 ),
-                if (_isLogin) SizedBox(height: 72.h),
                 Expanded(
                   child: Stack(
                     children: [
-                      const Footer(),
                       Positioned(
-                        left: 170.w,
-                        child: Flutter.Image.asset(
+                        bottom: 0.h,
+                        child: const Footer(
+                          height: 160,
+                          boxFit: BoxFit.fill,
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0.h,
+                        left: 105.w,
+                        child: Image.asset(
                           'assets/Hero.jpeg',
-                          height: 340.h,
-                          width: 250.w,
-                          fit: BoxFit.cover,
+                          width: 138.w,
+                          height: 160.h,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     ],
@@ -300,8 +307,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ],
             ),
-          )),
-    );
+          ),
+        ));
   }
 
   Future<void> _handleLogin() async {

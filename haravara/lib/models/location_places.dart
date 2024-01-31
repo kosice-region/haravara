@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LocationPlaces {
@@ -16,7 +14,9 @@ class LocationPlaces {
 
 class LocationPlaceMarker extends Marker {
   final String markerID;
+  @override
   final LatLng position;
+  @override
   final InfoWindow infoWindow;
   final void Function(Marker) onTapAction;
 

@@ -1,7 +1,9 @@
+import 'package:flutter_riverpod/src/consumer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/models/place_marker.dart';
+import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/event_bus.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -30,14 +32,16 @@ class MapService {
         northeast: LatLng(x1!, y1!), southwest: LatLng(x0!, y0!));
   }
 
-  Future<Set<Marker>> getMarkers(List<Place> places) async {
+  Future<void> getMarkers(WidgetRef ref) async {
     List<Future<Marker>> markerFutures = [];
+    List<Place> places = ref.watch(placesProvider);
 
     for (Place place in places) {
       LatLng primaryPos = LatLng(
         place.geoData.primary.coordinates[0],
         place.geoData.primary.coordinates[1],
       );
+
       markerFutures.add(
         PlaceMarker.createWithDefaultIcon(
           markerID: place.id,
@@ -52,7 +56,9 @@ class MapService {
         ),
       );
     }
-    return Future.wait(markerFutures).then((markers) => markers.toSet());
+
+    var markers = await Future.wait(markerFutures);
+    ref.read(markersProvider.notifier).setMarkers(markers.toSet());
   }
 
   double calculateDistance(LatLng point1, LatLng point2) {
@@ -69,7 +75,7 @@ class MapService {
 
   LatLngBounds findBounds(List<LatLng> points) {
     double maxDistance = 0.0;
-    LatLng point1 = LatLng(00, 0), point2 = LatLng(0, 0);
+    LatLng point1 = LatLng(0, 0), point2 = LatLng(0, 0);
 
     for (int i = 0; i < points.length; i++) {
       for (int j = i + 1; j < points.length; j++) {

@@ -2,23 +2,24 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/providers/current_screen_provider.dart';
+import 'package:haravara/screens/achievements.dart';
 import 'package:haravara/screens/auth.dart';
 import 'package:haravara/screens/map_screen.dart';
+import 'package:haravara/screens/news_screen.dart';
+import 'package:haravara/screens/summary_screen.dart';
 import 'package:haravara/services/screen_router.dart';
 import 'package:page_transition/page_transition.dart';
 
-class HeaderMenu extends StatefulWidget {
+class HeaderMenu extends ConsumerWidget {
   const HeaderMenu({super.key});
 
   @override
-  State<HeaderMenu> createState() => _HeaderMenuState();
-}
-
-class _HeaderMenuState extends State<HeaderMenu> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ScreenUtil.init(context, designSize: const Size(255, 516));
     return Scaffold(
       body: Stack(
         children: [
@@ -27,76 +28,112 @@ class _HeaderMenuState extends State<HeaderMenu> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 menuItem(context, 'NOVINKY', 'assets/menu-icons/mail.png',
-                    const MapScreen()),
+                    ScreenType.news, ref),
                 menuItem(context, 'MAPA', 'assets/menu-icons/map.png',
-                    const MapScreen()),
+                    ScreenType.map, ref),
                 menuItem(context, 'PECIATKY', 'assets/Icon.jpeg',
-                    const AuthScreen()),
+                    ScreenType.achievements, ref),
                 menuItem(context, 'SUTAZE', 'assets/menu-icons/calendar.png',
-                    const AuthScreen()),
+                    ScreenType.summary, ref),
                 menuItem(context, 'ODHLASIT SA', 'assets/menu-icons/steps.png',
-                    const AuthScreen()),
+                    ScreenType.auth, ref),
               ],
             ),
           ),
           Positioned(
-            top: 90.h,
-            right: 30.w,
-            child: CircleAvatar(
-              backgroundColor: Colors.green,
-              child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-          ),
+              top: 60.h,
+              right: 30.w,
+              child: Container(
+                width: 39.w,
+                height: 39.h,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(50)).r,
+                  color: const Color.fromARGB(255, 91, 187, 75),
+                  boxShadow: [
+                    BoxShadow(
+                      color:
+                          const Color.fromARGB(255, 91, 187, 75).withOpacity(1),
+                      spreadRadius: 8,
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.black,
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              )),
         ],
       ),
     );
   }
 
-  Widget menuItem(
-      BuildContext context, String text, String path, Widget screen) {
+  Widget menuItem(context, String title, String imagePath,
+      ScreenType screenToRoute, WidgetRef ref) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 17.h, horizontal: 16.w),
-      child: FractionallySizedBox(
-        widthFactor: 0.9.w,
+      padding: const EdgeInsets.symmetric(vertical: 8).r,
+      child: SizedBox(
+        width: 134.w,
+        height: 38.h,
         child: TextButton(
           style: TextButton.styleFrom(
-            backgroundColor: Colors.green,
+            backgroundColor: const Color.fromARGB(255, 91, 187, 75),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.r),
+              borderRadius: const BorderRadius.all(Radius.circular(10)).w,
             ),
           ),
           onPressed: () {
-            ScreenRouter().routeToNextScreen(context, screen);
+            var currentScreen = ref.watch(currentScreenProvider);
+            print(currentScreen.toString());
+            print(screenToRoute.toString());
+            if (currentScreen != screenToRoute) {
+              ref
+                  .read(currentScreenProvider.notifier)
+                  .changeScreen(screenToRoute);
+              ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+                  context, ScreenRouter().getScreenWidget(screenToRoute));
+            } else {
+              Navigator.of(context).pop();
+            }
           },
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Flexible(
-                fit: FlexFit.loose,
-                child: Container(
-                  width: 70.w,
-                  height: 70.h,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(path),
-                      fit: BoxFit.cover,
+              Expanded(
+                flex: 1,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(imagePath),
+                            fit: BoxFit.fitHeight,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-              SizedBox(width: 20.w),
-              Expanded(
+              5.horizontalSpace,
+              Flexible(
+                flex: 3,
                 child: Text(
-                  text,
+                  title,
                   style: GoogleFonts.titanOne(
                     color: Colors.black,
-                    fontSize: 23.sp,
+                    fontSize: 12.sp,
                   ),
                   overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.start,
                 ),
               ),
             ],

@@ -1,4 +1,3 @@
-import 'package:uuid/uuid.dart';
 
 class Place {
   final String id;

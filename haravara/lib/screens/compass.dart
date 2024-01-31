@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 
 class Compass extends StatefulWidget {
@@ -43,6 +44,8 @@ class _CompassState extends State<Compass> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, designSize: const Size(430, 932));
+
     double direction =
         calculateCompassDirection(heading ?? 0, bearingToTarget ?? 0);
     print(direction);
