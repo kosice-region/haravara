@@ -24,6 +24,8 @@ jobs:
           channel: 'stable'
           architecture: x64
 
+      - run: cd haravara/
+
       - run: flutter build apk --release --split-per-abi
       - run: |
           flutter build ios --no-codesign
@@ -36,14 +38,6 @@ jobs:
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
+          artifacts: "path/to/your/flutter/project/build/app/outputs/apk/release/*,path/to/your/flutter/project/build/ios/iphoneos/app.ipa"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
-
-
-
-
-
-
-# push to master, main, develop
-# pull request on main master
