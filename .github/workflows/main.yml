@@ -39,6 +39,6 @@ jobs:
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "path/to/your/flutter/project/build/app/outputs/apk/release/*,path/to/your/flutter/project/build/ios/iphoneos/app.ipa"
+          artifacts: "haravara/build/app/outputs/apk/release/*,haravara/build/ios/iphoneos/app.ipa"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
