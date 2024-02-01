@@ -1,13 +1,15 @@
+# on:
+#   pull_request:
+#     branches:
+#       - main
+#       - master
+#   push:
+#     branches:
+#       - main
+#       - master
+#       - develop
 on:
-  pull_request:
-    branches:
-      - main
-      - master
-  push:
-    branches:
-      - main
-      - master
-      - develop
+  workflow_dispatch:
 name: "Build & Release"
 defaults:
       run:
