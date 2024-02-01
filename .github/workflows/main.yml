@@ -15,6 +15,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Change to Flutter project directory
+        run: cd haravara/
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
@@ -23,8 +25,6 @@ jobs:
         with:
           channel: 'stable'
           architecture: x64
-
-      - run: cd haravara/
 
       - run: flutter build apk --release --split-per-abi
       - run: |
