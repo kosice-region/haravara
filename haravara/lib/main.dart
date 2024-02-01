@@ -81,8 +81,6 @@ class _ConsumerAppState extends ConsumerState<ConsumerApp> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Haravara',
-          // home: status ? const MapScreen() : const AuthScreen(),
-          // home: Compass(),
           home: FutureBuilder(
             future: _initFuture,
             builder: (context, snapshot) {
