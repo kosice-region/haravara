@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:haravara/widgets/header.dart';
 
 class Compass extends StatefulWidget {
   const Compass({super.key});
@@ -44,48 +45,58 @@ class _CompassState extends State<Compass> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, designSize: const Size(430, 932));
+    ScreenUtil.init(context, designSize: const Size(255, 516));
 
     double direction =
         calculateCompassDirection(heading ?? 0, bearingToTarget ?? 0);
+
     print(direction);
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      body: Stack(
         children: [
-          Text(
-            "${bearingToTarget ?? 'null'}",
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 26.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            "${direction.toStringAsFixed(1)}",
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 26.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            height: 50.0,
+          Image.asset(
+            'assets/clouds.png',
+            fit: BoxFit.cover,
+            height: double.infinity,
+            width: double.infinity,
+            alignment: Alignment.center,
           ),
           Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Stack(
-              alignment: Alignment.center,
+            padding: const EdgeInsets.only(top: 8).h,
+            child: Column(
               children: [
-                Image.asset("assets/cadrant.png"),
-                Transform.rotate(
-                  angle: (direction * (pi / 180)),
-                  child: Image.asset(
-                    "assets/compass.png",
-                    scale: 1.1,
+                const Header(backGroundColor: Color.fromARGB(255, 70, 68, 205)),
+                40.verticalSpace,
+                Container(
+                  width: 230.w,
+                  height: 230.h,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 144, 198, 238),
+                    borderRadius:
+                        BorderRadius.all(const Radius.circular(120).r),
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 5.0.w,
+                    ),
                   ),
+                  child: Stack(children: [
+                    Positioned(
+                      bottom: 1.h,
+                      top: 1.h,
+                      right: 1.w,
+                      left: 1.w,
+                      child: Image.asset("assets/cadrant.png"),
+                    ),
+                    Center(
+                      child: Transform.rotate(
+                        angle: (direction * (pi / 180)),
+                        child: Image.asset(
+                          "assets/compass.png",
+                          scale: 1.1,
+                        ),
+                      ),
+                    )
+                  ]),
                 ),
               ],
             ),
