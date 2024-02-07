@@ -15,7 +15,11 @@ import 'package:haravara/services/screen_router.dart';
 import 'package:page_transition/page_transition.dart';
 
 class HeaderMenu extends ConsumerWidget {
-  const HeaderMenu({super.key});
+  const HeaderMenu(
+      {super.key,
+      this.backGroundColor = const Color.fromARGB(255, 91, 187, 75)});
+
+  final Color backGroundColor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,6 +39,8 @@ class HeaderMenu extends ConsumerWidget {
                     ScreenType.achievements, ref),
                 menuItem(context, 'SUTAZE', 'assets/menu-icons/calendar.png',
                     ScreenType.summary, ref),
+                menuItem(context, 'COMPASS', 'assets/menu-icons/steps.png',
+                    ScreenType.compass, ref),
                 menuItem(context, 'ODHLASIT SA', 'assets/menu-icons/steps.png',
                     ScreenType.auth, ref),
               ],
@@ -48,11 +54,10 @@ class HeaderMenu extends ConsumerWidget {
                 height: 39.h,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(50)).r,
-                  color: const Color.fromARGB(255, 91, 187, 75),
+                  color: backGroundColor,
                   boxShadow: [
                     BoxShadow(
-                      color:
-                          const Color.fromARGB(255, 91, 187, 75).withOpacity(1),
+                      color: backGroundColor.withOpacity(1),
                       spreadRadius: 8,
                       blurRadius: 8,
                       offset: const Offset(0, 3),
@@ -84,7 +89,7 @@ class HeaderMenu extends ConsumerWidget {
         height: 38.h,
         child: TextButton(
           style: TextButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 91, 187, 75),
+            backgroundColor: backGroundColor,
             shape: RoundedRectangleBorder(
               borderRadius: const BorderRadius.all(Radius.circular(10)).w,
             ),

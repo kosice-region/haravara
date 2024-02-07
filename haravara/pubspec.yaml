@@ -107,6 +107,7 @@ flutter:
     - assets/kaso-detective.png
     - assets/haravara-main.jpg
     - assets/clouds.png
+    - assets/mayka_shows.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
