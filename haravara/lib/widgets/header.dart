@@ -38,8 +38,11 @@ class _HeaderState extends State<Header> {
                 if (widget.showMenu)
                   GestureDetector(
                     onTap: () {
-                      ScreenRouter()
-                          .routeToNextScreen(context, const HeaderMenu());
+                      ScreenRouter().routeToNextScreen(
+                          context,
+                          HeaderMenu(
+                            backGroundColor: widget.backGroundColor,
+                          ));
                     },
                     child: Container(
                       height: 43.h,

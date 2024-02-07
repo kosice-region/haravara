@@ -3,7 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:haravara/screens/auth.dart';
 import 'package:haravara/screens/compass.dart';
+import 'package:haravara/screens/map_screen.dart';
 import 'package:haravara/screens/news_screen.dart';
 import 'package:haravara/screens/splash_screen.dart';
 import 'package:haravara/services/database_service.dart';
@@ -85,7 +88,9 @@ class _ConsumerAppState extends ConsumerState<ConsumerApp> {
             future: _initFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                return const NewsScreen();
+                return const Compass(
+                  targetLocation: LatLng(48.697295, 21.233280),
+                );
               } else {
                 return const SplashScreen();
               }

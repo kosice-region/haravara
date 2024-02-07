@@ -5,9 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:haravara/widgets/header.dart';
+import 'package:haravara/widgets/header_menu.dart';
 
 class Compass extends StatefulWidget {
-  const Compass({super.key});
+  const Compass({super.key, required this.targetLocation});
+
+  final LatLng targetLocation;
 
   @override
   State<Compass> createState() => _CompassState();
@@ -17,12 +23,20 @@ class _CompassState extends State<Compass> {
   double? heading = 0;
   late StreamSubscription<CompassEvent> compassSubscription;
   double? bearingToTarget;
+  double distanceToTarget = 0;
+  Timer? distanceUpdateTimer;
+
+  late double targetLat;
+  late double targetLng;
 
   @override
   void initState() {
+    targetLat = widget.targetLocation.latitude;
+    targetLng = widget.targetLocation.longitude;
     super.initState();
     _initializeCompass();
     _setBearingToTarget();
+    _startDistanceUpdateTimer();
   }
 
   void _initializeCompass() {
@@ -34,9 +48,6 @@ class _CompassState extends State<Compass> {
   }
 
   Future<void> _setBearingToTarget() async {
-    double targetLat = 48.69703247300475;
-    double targetLng = 21.231576007988867;
-
     Position position = await _getCurrentLocation();
     bearingToTarget = _calculateBearing(
         position.latitude, position.longitude, targetLat, targetLng);
@@ -44,47 +55,87 @@ class _CompassState extends State<Compass> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, designSize: const Size(430, 932));
+    ScreenUtil.init(context, designSize: const Size(255, 516));
 
     double direction =
         calculateCompassDirection(heading ?? 0, bearingToTarget ?? 0);
-    print(direction);
+
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      endDrawer: const HeaderMenu(
+        backGroundColor: Color.fromARGB(255, 70, 68, 205),
+      ),
+      body: Stack(
         children: [
-          Text(
-            "${bearingToTarget ?? 'null'}",
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 26.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            "${direction.toStringAsFixed(1)}",
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 26.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(
-            height: 50.0,
+          Image.asset(
+            'assets/clouds.png',
+            fit: BoxFit.cover,
+            height: double.infinity,
+            width: double.infinity,
+            alignment: Alignment.center,
           ),
           Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Stack(
-              alignment: Alignment.center,
+            padding: const EdgeInsets.only(top: 8).h,
+            child: Column(
               children: [
-                Image.asset("assets/cadrant.png"),
-                Transform.rotate(
-                  angle: (direction * (pi / 180)),
-                  child: Image.asset(
-                    "assets/compass.png",
-                    scale: 1.1,
+                const Header(backGroundColor: Color.fromARGB(255, 70, 68, 205)),
+                40.verticalSpace,
+                Container(
+                  width: 230.w,
+                  height: 230.h,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 144, 198, 238),
+                    borderRadius:
+                        BorderRadius.all(const Radius.circular(120).r),
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 5.0.w,
+                    ),
+                  ),
+                  child: Stack(children: [
+                    Positioned(
+                      bottom: 1.h,
+                      top: 1.h,
+                      right: 1.w,
+                      left: 1.w,
+                      child: Image.asset("assets/cadrant.png"),
+                    ),
+                    Center(
+                      child: Transform.rotate(
+                        angle: (direction * (pi / 180)),
+                        child: Image.asset(
+                          "assets/compass.png",
+                          scale: 1.1,
+                        ),
+                      ),
+                    ),
+                  ]),
+                ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Row(
+              children: [
+                20.horizontalSpace,
+                Image.asset(
+                  'assets/mayka_shows.png',
+                  width: 90.w,
+                  height: 147.h,
+                ),
+                Container(
+                  width: 117.w,
+                  height: 43.h,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 70, 68, 205),
+                    borderRadius: BorderRadius.all(Radius.circular(15.r)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${distanceToTarget.toStringAsFixed(0)} M',
+                      style: GoogleFonts.titanOne(
+                          color: Colors.white, fontSize: 24.sp),
+                    ),
                   ),
                 ),
               ],
@@ -134,5 +185,38 @@ class _CompassState extends State<Compass> {
     direction = (direction + 360) % 360;
 
     return direction;
+  }
+
+  Future<double> calculateDistance(double startLatitude, double startLongitude,
+      double endLatitude, double endLongitude) async {
+    double distanceInMeters = Geolocator.distanceBetween(
+      startLatitude,
+      startLongitude,
+      endLatitude,
+      endLongitude,
+    );
+    return distanceInMeters;
+  }
+
+  void _startDistanceUpdateTimer() {
+    distanceUpdateTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
+      Position currentPosition = await _getCurrentLocation();
+      double distance = await calculateDistance(
+        currentPosition.latitude,
+        currentPosition.longitude,
+        targetLat,
+        targetLng,
+      );
+      setState(() {
+        distanceToTarget = distance;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    compassSubscription.cancel();
+    distanceUpdateTimer?.cancel();
+    super.dispose();
   }
 }

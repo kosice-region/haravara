@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/screens/achievements.dart';
 import 'package:haravara/screens/auth.dart';
@@ -9,15 +10,24 @@ import 'package:haravara/screens/news_screen.dart';
 import 'package:haravara/screens/summary_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-enum ScreenType { news, map, summary, auth, compass, achievements }
+enum ScreenType {
+  news,
+  map,
+  summary,
+  auth,
+  compass,
+  achievements,
+}
 
+// TODO: IDEA HOW TO PASS LATLNG DATA INTO COMPASS
 Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.news: const NewsScreen(),
   ScreenType.map: const MapScreen(),
   ScreenType.summary: const SummaryScreen(),
-  ScreenType.compass: const Compass(),
+  ScreenType.compass:
+      const Compass(targetLocation: LatLng(48.697295, 21.233280)),
   ScreenType.achievements: const AchievementsScreen(),
-  ScreenType.auth: const AuthScreen()
+  ScreenType.auth: const AuthScreen(),
 };
 
 @Riverpod(keepAlive: true)
