@@ -20,37 +20,55 @@ class Compass extends StatefulWidget {
 }
 
 class _CompassState extends State<Compass> {
-  double? heading = 0;
+  double? heading;
   late StreamSubscription<CompassEvent> compassSubscription;
   double? bearingToTarget;
   double distanceToTarget = 0;
-  Timer? distanceUpdateTimer;
+  late StreamSubscription<Position> positionStream;
 
   late double targetLat;
   late double targetLng;
 
   @override
   void initState() {
+    super.initState();
     targetLat = widget.targetLocation.latitude;
     targetLng = widget.targetLocation.longitude;
-    super.initState();
     _initializeCompass();
-    _setBearingToTarget();
-    _startDistanceUpdateTimer();
+    _initializeLocationStream();
   }
 
   void _initializeCompass() {
     compassSubscription = FlutterCompass.events!.listen((event) {
-      setState(() {
-        heading = event.heading;
-      });
+      setState(() => heading = event.heading);
     });
   }
 
-  Future<void> _setBearingToTarget() async {
-    Position position = await _getCurrentLocation();
+  void _initializeLocationStream() {
+    positionStream = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 5,
+    )).listen(
+      (position) {
+        _updateDistanceAndBearing(position);
+      },
+      onError: (e) {},
+    );
+  }
+
+  Future<void> _updateDistanceAndBearing(Position position) async {
     bearingToTarget = _calculateBearing(
         position.latitude, position.longitude, targetLat, targetLng);
+    double distance = await calculateDistance(
+      position.latitude,
+      position.longitude,
+      targetLat,
+      targetLng,
+    );
+    setState(() {
+      distanceToTarget = distance;
+    });
   }
 
   @override
@@ -132,7 +150,9 @@ class _CompassState extends State<Compass> {
                   ),
                   child: Center(
                     child: Text(
-                      '${distanceToTarget.toStringAsFixed(0)} M',
+                      distanceToTarget > 1000
+                          ? '${(distanceToTarget / 1000).toStringAsFixed(0)} KM'
+                          : '${distanceToTarget.toStringAsFixed(0)} M',
                       style: GoogleFonts.titanOne(
                           color: Colors.white, fontSize: 24.sp),
                     ),
@@ -198,25 +218,10 @@ class _CompassState extends State<Compass> {
     return distanceInMeters;
   }
 
-  void _startDistanceUpdateTimer() {
-    distanceUpdateTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
-      Position currentPosition = await _getCurrentLocation();
-      double distance = await calculateDistance(
-        currentPosition.latitude,
-        currentPosition.longitude,
-        targetLat,
-        targetLng,
-      );
-      setState(() {
-        distanceToTarget = distance;
-      });
-    });
-  }
-
   @override
   void dispose() {
     compassSubscription.cancel();
-    distanceUpdateTimer?.cancel();
+    positionStream.cancel();
     super.dispose();
   }
 }

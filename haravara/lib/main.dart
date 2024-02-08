@@ -4,18 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:haravara/screens/auth.dart';
 import 'package:haravara/screens/compass.dart';
-import 'package:haravara/screens/map_screen.dart';
-import 'package:haravara/screens/news_screen.dart';
 import 'package:haravara/screens/splash_screen.dart';
-import 'package:haravara/services/database_service.dart';
 import 'package:haravara/services/init_service.dart';
-import 'package:haravara/services/map_service.dart';
 import 'package:haravara/services/notification_controller.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'firebase_options.dart';
 
 var status = false;
 void main() async {
