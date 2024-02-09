@@ -50,21 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAWQxdg9xk6I7zmaOnDVN2Ai1F2ik0DNyg',
-    appId: '1:1016878443919:android:7b67afb5c8c03e0010effa',
-    messagingSenderId: '1016878443919',
-    projectId: 'haravara-62a06',
-    databaseURL: 'https://haravara-62a06-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'haravara-62a06.appspot.com',
+    apiKey: 'AIzaSyA42tddFRuMxnfpcs_CWmSlyNXObe508Rs',
+    appId: '1:712533028686:android:585e62d7bbd12b0c09381f',
+    messagingSenderId: '712533028686',
+    projectId: 'haravara-dev',
+    databaseURL: 'https://haravara-dev-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'haravara-dev.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAHeIGEinyvjwBoAofKY6LuPMEiW3MPv3E',
-    appId: '1:1016878443919:ios:36fdabeb3da86ed610effa',
-    messagingSenderId: '1016878443919',
-    projectId: 'haravara-62a06',
-    databaseURL: 'https://haravara-62a06-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'haravara-62a06.appspot.com',
+    apiKey: 'AIzaSyBlEhfBZIUpNkBZYzrKRWrryD1DBtIttIY',
+    appId: '1:712533028686:ios:5618656c50241f0509381f',
+    messagingSenderId: '712533028686',
+    projectId: 'haravara-dev',
+    databaseURL: 'https://haravara-dev-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'haravara-dev.appspot.com',
     iosBundleId: 'com.example.haravara',
   );
 }
