@@ -6,7 +6,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/place.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-@riverpod
 class PlacesNotifier extends StateNotifier<List<Place>> {
   PlacesNotifier() : super([]);
 
@@ -20,7 +19,6 @@ final placesProvider =
   return PlacesNotifier();
 });
 
-@riverpod
 class MarkersNotifier extends StateNotifier<Set<Marker>> {
   MarkersNotifier() : super({});
 

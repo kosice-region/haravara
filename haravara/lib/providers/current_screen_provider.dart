@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:haravara/models/place.dart';
 import 'package:haravara/screens/achievements.dart';
 import 'package:haravara/screens/auth.dart';
 import 'package:haravara/screens/compass.dart';
@@ -27,10 +26,10 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.compass:
       const Compass(targetLocation: LatLng(48.697295, 21.233280)),
   ScreenType.achievements: const AchievementsScreen(),
-  ScreenType.auth: const AuthScreen(),
+  // ScreenType.auth: const AuthScreen(),
 };
 
-@Riverpod(keepAlive: true)
+// @Riverpod(keepAlive: true)
 class CurrentScreenNotifier extends StateNotifier<ScreenType> {
   CurrentScreenNotifier() : super(ScreenType.news);
 

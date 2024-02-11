@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/models/place.dart';
 import 'package:flutter/widgets.dart' as Flutter;
+import 'package:haravara/providers/map_providers.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -76,7 +77,7 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    bool isOneImage = widget.place.detail.images.length == 1;
+    // bool isOneImage = widget.place.detail.images.length == 1;
     return Column(
       children: [
         Center(
@@ -114,7 +115,8 @@ class _BottomBarState extends State<BottomBar> {
                     ),
                   ),
                   SizedBox(height: 10.h),
-                  if (isOneImage)
+                  // if (isOneImage)
+                  if (true)
                     Row(
                       children: [
                         SizedBox(width: 20.w),
@@ -123,22 +125,23 @@ class _BottomBarState extends State<BottomBar> {
                           height: 140.h,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(30.0),
-                            child: Flutter.Image.network(
-                              widget.place.detail.images[0].url,
+                            child: Image.file(
+                              File(widget.place.placeImages!.location),
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
                         SizedBox(width: 50.w),
                         SizedBox(
-                            width: 180.w,
-                            height: 120.h,
-                            child: IconButton(
-                              icon: Flutter.Image.asset('assets/nav-btn.png'),
-                              onPressed: () {
-                                lauchMap();
-                              },
-                            )),
+                          width: 180.w,
+                          height: 120.h,
+                          child: IconButton(
+                            icon: Flutter.Image.asset('assets/nav-btn.png'),
+                            onPressed: () {
+                              lauchMap();
+                            },
+                          ),
+                        ),
                       ],
                     ),
                 ],

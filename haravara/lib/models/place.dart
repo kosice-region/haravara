@@ -1,110 +1,73 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
-class Place {
-  final String id;
-  final String name;
-  final bool active;
-  final int created;
-  final int updated;
-  final Detail detail;
-  final GeoData geoData;
+part 'place.freezed.dart';
+part 'place.g.dart';
 
-  Place({
-    required this.id,
-    required this.name,
-    required this.active,
-    required this.created,
-    required this.updated,
-    required this.detail,
-    required this.geoData,
-  });
-  @override
-  String toString() {
-    return 'Place(name: $name, latitude: ${geoData.primary.coordinates}';
-  }
+@freezed
+class Place with _$Place {
+  const factory Place({
+    String? id,
+    required bool active,
+    required int created,
+    required Detail detail,
+    required GeoData geoData,
+    required String name,
+    required int updated,
+    PlaceImageFromDB? placeImages,
+  }) = _Place;
 
-  factory Place.fromSnapshot(Map<dynamic, dynamic> snapshot, String key) {
-    String? name = snapshot['name'] as String?;
-    return Place(
-      id: key,
-      name: name ?? 'NULL',
-      active: snapshot['active'] as bool,
-      created: snapshot['created'] as int,
-      updated: snapshot['updated'] as int,
-      detail: Detail.fromSnapshot(snapshot['detail']),
-      geoData: GeoData.fromSnapshot(snapshot['geoData']),
-    );
-  }
+  factory Place.fromJson(Map<String, dynamic> json) => _$PlaceFromJson(json);
 }
 
-class Detail {
-  final String description;
-  final List<Image> images;
+@freezed
+class Detail with _$Detail {
+  const factory Detail({
+    required String description,
+  }) = _Detail;
 
-  Detail({required this.description, required this.images});
-
-  factory Detail.fromSnapshot(Map<dynamic, dynamic> snapshot) {
-    var imageList = snapshot['images'] as List;
-    List<Image> images = imageList.map((i) => Image.fromSnapshot(i)).toList();
-    return Detail(
-      description: snapshot['description'] as String,
-      images: images,
-    );
-  }
+  factory Detail.fromJson(Map<String, dynamic> json) => _$DetailFromJson(json);
 }
 
-class Image {
-  final String name;
-  final String url;
+@freezed
+class GeoData with _$GeoData {
+  const factory GeoData({
+    required Primary primary,
+  }) = _GeoData;
 
-  Image({required this.name, required this.url});
-
-  factory Image.fromSnapshot(Map<dynamic, dynamic> snapshot) {
-    return Image(
-      name: snapshot['name'] as String,
-      url: snapshot['url'] as String,
-    );
-  }
+  factory GeoData.fromJson(Map<String, dynamic> json) =>
+      _$GeoDataFromJson(json);
 }
 
-class GeoData {
-  final GeoPoint primary;
-  final GeoPoint? secondary;
+@freezed
+class Primary with _$Primary {
+  const factory Primary({
+    required List<double> coordinates,
+    required Fence fence,
+  }) = _Primary;
 
-  GeoData({required this.primary, this.secondary});
-
-  factory GeoData.fromSnapshot(Map<dynamic, dynamic> snapshot) {
-    return GeoData(
-      primary: GeoPoint.fromSnapshot(snapshot['primary']),
-      secondary: snapshot['secondary'] != null
-          ? GeoPoint.fromSnapshot(snapshot['secondary'])
-          : null,
-    );
-  }
+  factory Primary.fromJson(Map<String, dynamic> json) =>
+      _$PrimaryFromJson(json);
 }
 
-class GeoPoint {
-  final List<double> coordinates;
-  final Fence? fence;
+@freezed
+class Fence with _$Fence {
+  const factory Fence({
+    required int radius,
+  }) = _Fence;
 
-  GeoPoint({required this.coordinates, this.fence});
-
-  factory GeoPoint.fromSnapshot(Map<dynamic, dynamic> snapshot) {
-    var coords = snapshot['coordinates'] as List;
-    return GeoPoint(
-      coordinates: coords.map((c) => c as double).toList(),
-      fence: snapshot['fence'] != null
-          ? Fence.fromSnapshot(snapshot['fence'])
-          : null,
-    );
-  }
+  factory Fence.fromJson(Map<String, dynamic> json) => _$FenceFromJson(json);
 }
 
-class Fence {
-  final int radius;
+@freezed
+class PlaceImageFromDB with _$PlaceImageFromDB {
+  const factory PlaceImageFromDB({
+    String? placeId,
+    required String location,
+    required String stamp,
+  }) = _PlaceImageFromDB;
 
-  Fence({required this.radius});
-
-  factory Fence.fromSnapshot(Map<dynamic, dynamic> snapshot) {
-    return Fence(radius: snapshot['radius'] as int);
-  }
+  factory PlaceImageFromDB.fromJson(Map<String, dynamic> json) =>
+      _$PlaceImageFromDBFromJson(json);
 }

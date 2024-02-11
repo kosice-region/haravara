@@ -32,9 +32,8 @@ class MapService {
         northeast: LatLng(x1!, y1!), southwest: LatLng(x0!, y0!));
   }
 
-  Future<void> getMarkers(WidgetRef ref) async {
+  Future<Set<Marker>> getMarkers(List<Place> places) async {
     List<Future<Marker>> markerFutures = [];
-    List<Place> places = ref.watch(placesProvider);
 
     for (Place place in places) {
       LatLng primaryPos = LatLng(
@@ -44,7 +43,7 @@ class MapService {
 
       markerFutures.add(
         PlaceMarker.createWithDefaultIcon(
-          markerID: place.id,
+          markerID: place.id.toString(),
           position: primaryPos,
           infoWindow: InfoWindow(
             title: place.name,
@@ -56,9 +55,8 @@ class MapService {
         ),
       );
     }
-
     var markers = await Future.wait(markerFutures);
-    ref.read(markersProvider.notifier).setMarkers(markers.toSet());
+    return markers.toSet();
   }
 
   double calculateDistance(LatLng point1, LatLng point2) {
@@ -75,7 +73,7 @@ class MapService {
 
   LatLngBounds findBounds(List<LatLng> points) {
     double maxDistance = 0.0;
-    LatLng point1 = LatLng(0, 0), point2 = LatLng(0, 0);
+    LatLng point1 = const LatLng(0, 0), point2 = const LatLng(0, 0);
 
     for (int i = 0; i < points.length; i++) {
       for (int j = i + 1; j < points.length; j++) {

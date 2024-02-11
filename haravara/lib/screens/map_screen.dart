@@ -5,13 +5,12 @@ import 'package:cupertino_modal_sheet/cupertino_modal_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter/widgets.dart' as Flutter;
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:haravara/models/place.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/screens/google_map_second_screen.dart';
-import 'package:haravara/services/database_service.dart';
+import 'package:haravara/repositories/location_repository.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/widgets/footer.dart';
 import 'package:haravara/widgets/header.dart';
@@ -27,11 +26,10 @@ class MapScreen extends ConsumerStatefulWidget {
 }
 
 class _MapScreenState extends ConsumerState<MapScreen> {
-  Set<Marker> _markers = <Marker>{};
   final Completer<GoogleMapController> _controller = Completer();
   LatLngBounds bounds = LatLngBounds(
-    southwest: const LatLng(48.8004156, 20.2895598),
-    northeast: const LatLng(48.91778829644273, 22.199326541275667),
+    southwest: const LatLng(48.0722569, 19.8085628),
+    northeast: const LatLng(49.3252921, 23.3745267),
   );
   late CameraPosition cameraPosition;
 
@@ -44,7 +42,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
-
+    final places = ref.watch(placesProvider);
     return Scaffold(
       endDrawer: const HeaderMenu(),
       body: Padding(
@@ -91,13 +89,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 children: [
                   CupertinoButton(
                       onPressed: () {
-                        // places.isNotEmpty ? navigateToMap() : null;
-                        navigateToMap();
+                        places.isNotEmpty ? navigateToMap() : null;
                       },
-                      color: const Color.fromARGB(255, 7, 179, 25),
-                      // color: places.isNotEmpty
-                      //     ? const Color.fromARGB(255, 7, 179, 25)
-                      //     : Colors.grey,
+                      color: places.isNotEmpty
+                          ? const Color.fromARGB(255, 7, 179, 25)
+                          : Colors.grey,
                       borderRadius: BorderRadius.circular(20),
                       child: Text('Otvoriť mapu',
                           style: GoogleFonts.titanOne(color: Colors.white))),
@@ -107,9 +103,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               Column(
                 children: [
                   ElevatedButton(
-                    style: ButtonStyle(
+                    style: const ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll<Color>(
-                          const Color.fromARGB(255, 7, 179, 25)),
+                          Color.fromARGB(255, 7, 179, 25)),
                     ),
                     onPressed: () {
                       // places.isNotEmpty ? navigateToMap() : null;
@@ -134,7 +130,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     bottom: 0.h,
                     right: 1.w,
                     left: 10.w,
-                    child: Flutter.Image.asset(
+                    child: Image.asset(
                       'assets/peopleMapScreen.png',
                       height: 170.h,
                       width: 258.44.w,
@@ -152,11 +148,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   calculateBoundsAndInitialCameraPosition() async {
     var places = ref.watch(placesProvider);
-    print(places);
     List<LatLng> latlng = [];
-    for (var element in ref.watch(placesProvider)) {
-      latlng.add(LatLng(element.geoData.primary.coordinates[0],
-          element.geoData.primary.coordinates[1]));
+    for (var place in places) {
+      latlng.add(LatLng(place.geoData.primary.coordinates[0],
+          place.geoData.primary.coordinates[1]));
     }
     final latLngBounds = MapService().findBounds(latlng);
     final cameraPosition = MapService().calculateInitialCameraPosition(latlng);
@@ -169,7 +164,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       ),
     );
     controller.animateCamera(
-      CameraUpdate.newLatLngBounds(latLngBounds, 7),
+      CameraUpdate.newLatLngBounds(latLngBounds, 2),
     );
   }
 

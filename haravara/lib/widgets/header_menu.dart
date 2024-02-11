@@ -27,6 +27,13 @@ class HeaderMenu extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: [
+          Image.asset(
+            'assets/background_menu.png',
+            fit: BoxFit.cover,
+            height: double.infinity,
+            width: double.infinity,
+            alignment: Alignment.center,
+          ),
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,

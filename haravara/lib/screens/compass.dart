@@ -85,7 +85,7 @@ class _CompassState extends State<Compass> {
       body: Stack(
         children: [
           Image.asset(
-            'assets/clouds.png',
+            'assets/background_clouds.png',
             fit: BoxFit.cover,
             height: double.infinity,
             width: double.infinity,
