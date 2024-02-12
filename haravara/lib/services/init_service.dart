@@ -7,7 +7,6 @@ import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/services/places_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final PlacesService placesService = PlacesService();
 final MapService mapService = MapService();

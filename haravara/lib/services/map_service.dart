@@ -1,14 +1,17 @@
-import 'package:flutter_riverpod/src/consumer.dart';
+import 'dart:io';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/models/place_marker.dart';
-import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/event_bus.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'dart:math' show asin, cos, max, min, pi, sin, sqrt;
+import 'package:map_launcher/map_launcher.dart' as mapLauncher;
+import 'package:flutter/cupertino.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 final eventBus = EventBus();
 
@@ -157,5 +160,51 @@ class MapService {
       'distance': dJson['rows'][0]['elements'][0]['distance']['text'] as String,
     };
     return results;
+  }
+
+  lauchMap(context, Place place) async {
+    mapLauncher.MapType map = mapLauncher.MapType.apple;
+    bool isMapSelected = true;
+
+    if (Platform.isIOS) {
+      await showCupertinoModalPopup(
+        context: context,
+        builder: (BuildContext context) => CupertinoActionSheet(
+          title: const Text('Choose Map'),
+          actions: <Widget>[
+            CupertinoActionSheetAction(
+              child: const Text('Google Maps'),
+              onPressed: () {
+                Navigator.pop(context, 'Google Maps');
+                map = mapLauncher.MapType.google;
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: const Text('Apple Maps'),
+              onPressed: () {
+                Navigator.pop(context, 'Apple Maps');
+                map = mapLauncher.MapType.apple;
+              },
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context, 'Cancel');
+              isMapSelected = false;
+            },
+            child: const Text('Cancel'),
+          ),
+        ),
+      );
+    }
+    if (isMapSelected) {
+      await mapLauncher.MapLauncher.showMarker(
+        mapType: map,
+        coords: Coords(place.geoData.primary.coordinates[0],
+            place.geoData.primary.coordinates[1]),
+        title: place.name,
+      );
+    }
   }
 }

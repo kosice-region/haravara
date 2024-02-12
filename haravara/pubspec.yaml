@@ -118,7 +118,8 @@ flutter:
     - assets/mayka_shows.png
     - assets/background_menu.png
     - assets/background_news.png
-    - assets/background_news2.png
+    - assets/background-summary.png
+    - assets/compass_mini.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

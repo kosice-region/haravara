@@ -3,27 +3,29 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:haravara/models/place.dart';
+import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
 
-class Compass extends StatefulWidget {
-  const Compass({super.key, required this.targetLocation});
-
-  final LatLng targetLocation;
+class Compass extends ConsumerStatefulWidget {
+  const Compass({super.key});
 
   @override
-  State<Compass> createState() => _CompassState();
+  ConsumerState<Compass> createState() => _CompassState();
 }
 
-class _CompassState extends State<Compass> {
+class _CompassState extends ConsumerState<Compass> {
   double? heading;
   late StreamSubscription<CompassEvent> compassSubscription;
   double? bearingToTarget;
   double distanceToTarget = 0;
+  late Place pickedPlace;
   late StreamSubscription<Position> positionStream;
 
   late double targetLat;
@@ -32,10 +34,21 @@ class _CompassState extends State<Compass> {
   @override
   void initState() {
     super.initState();
-    targetLat = widget.targetLocation.latitude;
-    targetLng = widget.targetLocation.longitude;
     _initializeCompass();
     _initializeLocationStream();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _setPickedPlace();
+  }
+
+  void _setPickedPlace() {
+    String id = ref.watch(pickedPlaceProvider);
+    pickedPlace = ref.watch(placesProvider.notifier).getPlaceById(id);
+    targetLat = pickedPlace.geoData.primary.coordinates[0];
+    targetLng = pickedPlace.geoData.primary.coordinates[1];
   }
 
   void _initializeCompass() {

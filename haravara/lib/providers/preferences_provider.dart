@@ -45,7 +45,6 @@ class SetupNotifier extends StateNotifier<SetupModel> {
   final SharedPreferences pref;
 
   static SetupModel _initialSetup(SharedPreferences? pref) {
-    print(pref?.getBool("isFirstSetup"));
     bool isFirstSetup = pref?.getBool("isFirstSetup") ?? true;
     bool isLoggedIn = pref?.getBool("isLoggedIn") ?? false;
     String versionOfDatabase = pref?.getString("versionOfDatabase") ?? '1.0.0';
