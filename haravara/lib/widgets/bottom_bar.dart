@@ -1,152 +1,87 @@
-import 'dart:io';
+// import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:haravara/models/place.dart';
-import 'package:flutter/widgets.dart' as Flutter;
-import 'package:map_launcher/map_launcher.dart';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:flutter_svg/svg.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:haravara/models/place.dart';
+// import 'package:flutter/widgets.dart' as Flutter;
+// import 'package:map_launcher/map_launcher.dart';
+// import 'package:flutter/cupertino.dart';
 
-class BottomBar extends StatefulWidget {
-  const BottomBar({
-    super.key,
-    required this.onPressed,
-    required this.place,
-  });
-  final Place place;
-  final void Function() onPressed;
+// class BottomBar extends StatefulWidget {
+//   const BottomBar({
+//     super.key,
+//     required this.onPressed,
+//     required this.place,
+//   });
+//   final Place place;
+//   final void Function() onPressed;
 
-  @override
-  State<BottomBar> createState() => _BottomBarState();
-}
+//   @override
+//   State<BottomBar> createState() => _BottomBarState();
+// }
 
-class _BottomBarState extends State<BottomBar> {
-  @override
-  void initState() {
-    super.initState();
-  }
+// class _BottomBarState extends State<BottomBar> {
+//   @override
+//   void initState() {
+//     super.initState();
+//   }
 
-  lauchMap() async {
-    MapType map = MapType.apple;
-    bool isMapSelected = true;
+//   lauchMap() async {
+//     MapType map = MapType.apple;
+//     bool isMapSelected = true;
 
-    if (Platform.isIOS) {
-      await showCupertinoModalPopup(
-        context: context,
-        builder: (BuildContext context) => CupertinoActionSheet(
-          title: const Text('Choose Map'),
-          actions: <Widget>[
-            CupertinoActionSheetAction(
-              child: const Text('Google Maps'),
-              onPressed: () {
-                Navigator.pop(context, 'Google Maps');
-                map = MapType.google;
-              },
-            ),
-            CupertinoActionSheetAction(
-              child: const Text('Apple Maps'),
-              onPressed: () {
-                Navigator.pop(context, 'Apple Maps');
-                map = MapType.apple;
-              },
-            ),
-          ],
-          cancelButton: CupertinoActionSheetAction(
-            isDefaultAction: true,
-            onPressed: () {
-              Navigator.pop(context, 'Cancel');
-              isMapSelected = false;
-            },
-            child: const Text('Cancel'),
-          ),
-        ),
-      );
-    }
-    if (isMapSelected) {
-      await MapLauncher.showMarker(
-        mapType: map,
-        coords: Coords(widget.place.geoData.primary.coordinates[0],
-            widget.place.geoData.primary.coordinates[1]),
-        title: widget.place.name,
-      );
-    }
-  }
+//     if (Platform.isIOS) {
+//       await showCupertinoModalPopup(
+//         context: context,
+//         builder: (BuildContext context) => CupertinoActionSheet(
+//           title: const Text('Choose Map'),
+//           actions: <Widget>[
+//             CupertinoActionSheetAction(
+//               child: const Text('Google Maps'),
+//               onPressed: () {
+//                 Navigator.pop(context, 'Google Maps');
+//                 map = MapType.google;
+//               },
+//             ),
+//             CupertinoActionSheetAction(
+//               child: const Text('Apple Maps'),
+//               onPressed: () {
+//                 Navigator.pop(context, 'Apple Maps');
+//                 map = MapType.apple;
+//               },
+//             ),
+//           ],
+//           cancelButton: CupertinoActionSheetAction(
+//             isDefaultAction: true,
+//             onPressed: () {
+//               Navigator.pop(context, 'Cancel');
+//               isMapSelected = false;
+//             },
+//             child: const Text('Cancel'),
+//           ),
+//         ),
+//       );
+//     }
+//     if (isMapSelected) {
+//       await MapLauncher.showMarker(
+//         mapType: map,
+//         coords: Coords(widget.place.geoData.primary.coordinates[0],
+//             widget.place.geoData.primary.coordinates[1]),
+//         title: widget.place.name,
+//       );
+//     }
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    bool isOneImage = widget.place.detail.images.length == 1;
-    return Column(
-      children: [
-        Center(
-          child: Container(
-            width: 430.w,
-            height: 300.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(200),
-              color: Colors.white,
-            ),
-            child: Card(
-              elevation: 0,
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 10.h),
-                  Text(
-                    widget.place.name,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.titanOne(
-                      color: Colors.blue,
-                      fontSize: 25.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-                  Text(
-                    widget.place.detail.description,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.titanOne(
-                      color: Colors.grey,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  if (isOneImage)
-                    Row(
-                      children: [
-                        SizedBox(width: 20.w),
-                        SizedBox(
-                          width: 140.w,
-                          height: 140.h,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(30.0),
-                            child: Flutter.Image.network(
-                              widget.place.detail.images[0].url,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 50.w),
-                        SizedBox(
-                            width: 180.w,
-                            height: 120.h,
-                            child: IconButton(
-                              icon: Flutter.Image.asset('assets/nav-btn.png'),
-                              onPressed: () {
-                                lauchMap();
-                              },
-                            )),
-                      ],
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     ScreenUtil.init(context, designSize: const Size(255, 516));
+//     return showModalBottomSheet(
+//       context: context,
+//       builder: (context) {
+//         return SizedBox();
+//       },
+//     );
+//   }
+// }

@@ -1,34 +1,47 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:haravara/firebase_options.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:haravara/models/place.dart';
+import 'package:haravara/models/setup_model.dart';
 import 'package:haravara/providers/map_providers.dart';
-import 'package:haravara/services/database_service.dart';
+import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/services/map_service.dart';
-import 'package:haravara/services/notification_controller.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:haravara/services/places_service.dart';
+
+final PlacesService placesService = PlacesService();
+final MapService mapService = MapService();
 
 class Init {
   static initialize(WidgetRef ref) async {
     print("starting registering services");
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    await _requestLocationPermission();
-    await _initPlacesAndMarkers(ref);
+    SetupModel model = ref.watch(setupNotifierProvider);
+    print(model);
+    if (model.isFirstSetup) {
+      await _firstSetup(ref, model);
+    } else if (!model.isFirstSetup) {
+      await _defaultSetup(ref);
+    }
     print("finished registering services");
   }
 
-  static _initPlacesAndMarkers(WidgetRef ref) async {
-    await DatabaseService().getAllPlaces(ref);
-    await MapService().getMarkers(ref);
+  static _firstSetup(WidgetRef ref, SetupModel model) async {
+    await _requestLocationPermission();
+    await placesService.savePlacesLocally();
+    model.isFirstSetup = false;
+    ref.read(setupNotifierProvider.notifier).updateSetup(
+        model.isFirstSetup, model.isLoggedIn, model.versionOfDatabase);
+    _defaultSetup(ref);
+  }
+
+  static _defaultSetup(WidgetRef ref) async {
+    final List<Place> places = await placesService.loadPlaces();
+    final Set<Marker> markers = await mapService.getMarkers(places);
+    ref.read(placesProvider.notifier).addPlaces(places);
+    ref.read(markersProvider.notifier).setMarkers(markers);
   }
 
   static _requestLocationPermission() async {
-    bool serviceEnabled;
     LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {

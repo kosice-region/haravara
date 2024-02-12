@@ -1,14 +1,17 @@
-import 'package:flutter_riverpod/src/consumer.dart';
+import 'dart:io';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/models/place_marker.dart';
-import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/event_bus.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'dart:math' show asin, cos, max, min, pi, sin, sqrt;
+import 'package:map_launcher/map_launcher.dart' as mapLauncher;
+import 'package:flutter/cupertino.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 final eventBus = EventBus();
 
@@ -32,9 +35,8 @@ class MapService {
         northeast: LatLng(x1!, y1!), southwest: LatLng(x0!, y0!));
   }
 
-  Future<void> getMarkers(WidgetRef ref) async {
+  Future<Set<Marker>> getMarkers(List<Place> places) async {
     List<Future<Marker>> markerFutures = [];
-    List<Place> places = ref.watch(placesProvider);
 
     for (Place place in places) {
       LatLng primaryPos = LatLng(
@@ -44,7 +46,7 @@ class MapService {
 
       markerFutures.add(
         PlaceMarker.createWithDefaultIcon(
-          markerID: place.id,
+          markerID: place.id.toString(),
           position: primaryPos,
           infoWindow: InfoWindow(
             title: place.name,
@@ -56,9 +58,8 @@ class MapService {
         ),
       );
     }
-
     var markers = await Future.wait(markerFutures);
-    ref.read(markersProvider.notifier).setMarkers(markers.toSet());
+    return markers.toSet();
   }
 
   double calculateDistance(LatLng point1, LatLng point2) {
@@ -75,7 +76,7 @@ class MapService {
 
   LatLngBounds findBounds(List<LatLng> points) {
     double maxDistance = 0.0;
-    LatLng point1 = LatLng(0, 0), point2 = LatLng(0, 0);
+    LatLng point1 = const LatLng(0, 0), point2 = const LatLng(0, 0);
 
     for (int i = 0; i < points.length; i++) {
       for (int j = i + 1; j < points.length; j++) {
@@ -159,5 +160,51 @@ class MapService {
       'distance': dJson['rows'][0]['elements'][0]['distance']['text'] as String,
     };
     return results;
+  }
+
+  lauchMap(context, Place place) async {
+    mapLauncher.MapType map = mapLauncher.MapType.apple;
+    bool isMapSelected = true;
+
+    if (Platform.isIOS) {
+      await showCupertinoModalPopup(
+        context: context,
+        builder: (BuildContext context) => CupertinoActionSheet(
+          title: const Text('Choose Map'),
+          actions: <Widget>[
+            CupertinoActionSheetAction(
+              child: const Text('Google Maps'),
+              onPressed: () {
+                Navigator.pop(context, 'Google Maps');
+                map = mapLauncher.MapType.google;
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: const Text('Apple Maps'),
+              onPressed: () {
+                Navigator.pop(context, 'Apple Maps');
+                map = mapLauncher.MapType.apple;
+              },
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context, 'Cancel');
+              isMapSelected = false;
+            },
+            child: const Text('Cancel'),
+          ),
+        ),
+      );
+    }
+    if (isMapSelected) {
+      await mapLauncher.MapLauncher.showMarker(
+        mapType: map,
+        coords: Coords(place.geoData.primary.coordinates[0],
+            place.geoData.primary.coordinates[1]),
+        title: place.name,
+      );
+    }
   }
 }

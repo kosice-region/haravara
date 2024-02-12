@@ -2,12 +2,15 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:ui' as ui;
 
 class PlaceMarker extends Marker {
   final String markerID;
+  @override
   final LatLng position;
+  @override
   final InfoWindow infoWindow;
   final void Function(Marker) onTapAction;
 
@@ -47,7 +50,7 @@ class PlaceMarker extends Marker {
           .asUint8List();
     }
 
-    final Uint8List markerIcon = await getBytesFromAsset(90);
+    final Uint8List markerIcon = await getBytesFromAsset(120);
 
     return PlaceMarker._(
         markerID: markerID,

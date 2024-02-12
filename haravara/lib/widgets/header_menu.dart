@@ -1,18 +1,9 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/providers/current_screen_provider.dart';
-import 'package:haravara/screens/achievements.dart';
-import 'package:haravara/screens/auth.dart';
-import 'package:haravara/screens/map_screen.dart';
-import 'package:haravara/screens/news_screen.dart';
-import 'package:haravara/screens/summary_screen.dart';
 import 'package:haravara/services/screen_router.dart';
-import 'package:page_transition/page_transition.dart';
 
 class HeaderMenu extends ConsumerWidget {
   const HeaderMenu(
@@ -27,6 +18,13 @@ class HeaderMenu extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: [
+          Image.asset(
+            'assets/background_menu.png',
+            fit: BoxFit.cover,
+            height: double.infinity,
+            width: double.infinity,
+            alignment: Alignment.center,
+          ),
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -96,8 +94,6 @@ class HeaderMenu extends ConsumerWidget {
           ),
           onPressed: () {
             var currentScreen = ref.watch(currentScreenProvider);
-            print(currentScreen.toString());
-            print(screenToRoute.toString());
             if (currentScreen != screenToRoute) {
               ref
                   .read(currentScreenProvider.notifier)
