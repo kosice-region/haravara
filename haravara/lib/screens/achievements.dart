@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/widgets/achievement.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
 
-class AchievementsScreen extends StatefulWidget {
+class AchievementsScreen extends ConsumerStatefulWidget {
   const AchievementsScreen({super.key});
 
   @override
-  State<AchievementsScreen> createState() => _AchievementsScreenState();
+  ConsumerState<AchievementsScreen> createState() => _AchievementsScreenState();
 }
 
-class _AchievementsScreenState extends State<AchievementsScreen> {
+class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
   @override
   Widget build(BuildContext context) {
+    final places = ref.watch(placesProvider);
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return Scaffold(
-      endDrawer: HeaderMenu(),
+      endDrawer: const HeaderMenu(),
       body: Column(
         children: [
           Padding(
@@ -40,11 +43,9 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
             child: GridView.count(
               crossAxisCount: 2,
               childAspectRatio: (5 / 4.h),
-              children: const [
-                Achievement(title: 'Dom sv.Alzbety'),
-                Achievement(title: 'Obisovsky hrad', isClosed: false),
-                Achievement(title: 'Kosicky hrad', isClosed: false),
-                Achievement(title: 'Vcely raja', isClosed: true),
+              children: [
+                for (final place in places)
+                  Achievement(isClosed: false, place: place)
               ],
             ),
           ),

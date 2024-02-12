@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/repositories/location_repository.dart';
 import 'package:path_provider/path_provider.dart' as syspaths;
@@ -34,8 +35,10 @@ class PlacesService {
   Future<void> savePlacesLocally() async {
     final List<Place> places = await locationRepository.getAllPlaces();
     Directory appDocDir = await _getDirectory();
+
     await _downloadLocationDataFromStorage(places);
     final db = await _getDatabase();
+
     for (final place in places) {
       await db.insert('places', {
         'id': place.id!,
@@ -55,24 +58,28 @@ class PlacesService {
 
   Future<void> _downloadLocationDataFromStorage(List<Place> places) async {
     Directory appDocDir = await _getDirectory();
+
     List<PlaceImageFromDB> images = places
         .where((place) => place.placeImages != null)
         .map((place) => place.placeImages!)
         .toList();
+
     for (final image in images) {
       String fileToDownloadLocationImage = image.location;
       String fileToDownloadStampImage = image.stamp;
-      File downloadToFileLocationImage =
-          File('${appDocDir.path}/${image.location}');
-      File downloadToFileStampImage = File('${appDocDir.path}/${image.stamp}');
       print('${appDocDir.path}/${image.location}');
+      print('${appDocDir.path}/${image.stamp}');
+
       try {
-        await firebase_storage.FirebaseStorage.instance
+        final locationUrl = await firebase_storage.FirebaseStorage.instance
             .ref(fileToDownloadLocationImage)
-            .writeToFile(downloadToFileLocationImage);
-        await firebase_storage.FirebaseStorage.instance
+            .getDownloadURL();
+        final stampUrl = await firebase_storage.FirebaseStorage.instance
             .ref(fileToDownloadStampImage)
-            .writeToFile(downloadToFileStampImage);
+            .getDownloadURL();
+        await Dio()
+            .download(locationUrl, '${appDocDir.path}/${image.location}');
+        await Dio().download(stampUrl, '${appDocDir.path}/${image.stamp}');
       } catch (e) {
         print('Download error: $e');
       }
@@ -83,17 +90,20 @@ class PlacesService {
   Future<List<Place>> loadPlaces() async {
     final db = await _getDatabase();
     final data = await db.query('places');
+
     final List<Place> places = data.map<Place>((row) {
       GeoData geoData = GeoData(
           primary: Primary(coordinates: [
         row['lat_primary'] as double,
         row['lng_primary'] as double
       ], fence: Fence(radius: row['radius'] as int)));
+
       Detail detail = Detail(description: row['description'] as String);
       PlaceImageFromDB images = PlaceImageFromDB(
           location: row['location_path'] as String,
           stamp: row['stamp_path'] as String,
           placeId: row['id'] as String);
+
       return Place(
         id: row['id'] as String,
         active: row['active'] == 1,
@@ -115,11 +125,6 @@ class PlacesService {
     for (var ref in results.items) {
       print('file  $ref');
     }
-    String url = await storage
-        .ref('images/locations/Banicke muzeum v Roznave.jpg')
-        .getDownloadURL();
-
-    print(url);
     return results;
   }
 

@@ -1,15 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/models/place.dart';
 
 class Achievement extends StatelessWidget {
-  const Achievement(
-      {this.isClosed = true, required this.title, this.asset = '', Key? key});
+  const Achievement({
+    super.key,
+    required this.isClosed,
+    required this.place,
+  });
 
+  final Place place;
   final bool isClosed;
-  final String title;
-  final String asset;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -20,7 +24,7 @@ class Achievement extends StatelessWidget {
             height: 100.h,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(26)).r,
-              color: Color.fromARGB(255, 91, 187, 75),
+              color: const Color.fromARGB(255, 91, 187, 75),
               boxShadow: const [
                 BoxShadow(
                   color: Colors.black,
@@ -40,8 +44,8 @@ class Achievement extends StatelessWidget {
           SizedBox(
             width: 140.w,
             height: 100.h,
-            child: Image.asset(
-              'assets/16.png',
+            child: Image.file(
+              File(place.placeImages!.stamp),
               fit: BoxFit.contain,
             ),
           ),
@@ -54,9 +58,10 @@ class Achievement extends StatelessWidget {
               color: const Color.fromARGB(255, 155, 221, 153)),
           child: Center(
             child: Text(
-              'Dom sv.Alzbety',
+              place.name,
               style: GoogleFonts.titanOne(color: Colors.black, fontSize: 11.sp),
               maxLines: 2,
+              textAlign: TextAlign.center,
             ),
           ),
         ),

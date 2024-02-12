@@ -24,12 +24,13 @@ void main() async {
       null,
       [
         NotificationChannel(
-            channelGroupKey: 'basic_channel_group',
-            channelKey: 'basic_channel',
-            channelName: 'Basic notifications',
-            channelDescription: 'Notification channel for basic tests',
-            defaultColor: const Color(0xFF9D50DD),
-            ledColor: Colors.white)
+          channelGroupKey: 'basic_channel_group',
+          channelKey: 'basic_channel',
+          channelName: 'Basic notifications',
+          channelDescription: 'Notification channel for basic tests',
+          defaultColor: const Color(0xFF9D50DD),
+          ledColor: Colors.white,
+        )
       ],
       channelGroups: [
         NotificationChannelGroup(
@@ -39,7 +40,7 @@ void main() async {
       ],
       debug: true);
   if (!await AwesomeNotifications().isNotificationAllowed()) {
-    AwesomeNotifications().requestPermissionToSendNotifications();
+    await AwesomeNotifications().requestPermissionToSendNotifications();
   }
   final prefs = await SharedPreferences.getInstance();
   SystemChrome.setPreferredOrientations(

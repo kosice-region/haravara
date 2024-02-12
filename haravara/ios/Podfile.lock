@@ -1,7 +1,7 @@
 PODS:
-  - awesome_notifications (0.8.1):
+  - awesome_notifications (0.9.0):
     - Flutter
-    - IosAwnCore (~> 0.8.0)
+    - IosAwnCore (~> 0.9.1)
   - device_imei (0.0.3):
     - Flutter
   - device_info_plus (0.0.1):
@@ -17,7 +17,7 @@ PODS:
   - firebase_core (2.25.4):
     - Firebase/CoreOnly (= 10.20.0)
     - Flutter
-  - firebase_database (10.3.8):
+  - firebase_database (10.4.5):
     - Firebase/Database (= 10.20.0)
     - firebase_core
     - Flutter
@@ -74,7 +74,7 @@ PODS:
     - GoogleUtilities/Environment
   - "GoogleUtilities/NSData+zlib (7.12.0)"
   - GTMSessionFetcher/Core (3.3.1)
-  - IosAwnCore (0.8.0)
+  - IosAwnCore (0.9.1)
   - leveldb-library (1.22.3)
   - map_launcher (0.0.1):
     - Flutter
@@ -167,12 +167,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/darwin"
 
 SPEC CHECKSUMS:
-  awesome_notifications: db394d2e061e4583ba0f738ddea611e3986cc3fb
+  awesome_notifications: 399076ea2bdf119beef9126f1ca6914215390997
   device_imei: 06bea5160991fbb7aba7f2e7267a37f6b616c514
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Firebase: 10c8cb12fb7ad2ae0c09ffc86cd9c1ab392a0031
   firebase_core: a46c312d8bae4defa3d009b2aa7b5b413aeb394e
-  firebase_database: 062e333d5c563daa53affdabf053ba60caf6f400
+  firebase_database: e6b72eeda8dadd6e3965d86b86c997d35e43d4e2
   firebase_storage: 5007be227e54a46f260b6040a23b4fdc8ca1c5c5
   FirebaseAppCheckInterop: 69fc7d8f6a1cbfa973efb8d1723651de30d12525
   FirebaseAuthInterop: b4161d3e99b05d2d528d6ee2759bc55a01976eba
@@ -188,17 +188,17 @@ SPEC CHECKSUMS:
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   flutter_foreground_task: 21ef182ab0a29a3005cc72cd70e5f45cb7f7f817
   geofence_service: e007ddec3cf8b85531e8f7b202c1ceabca669d64
-  geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
-  google_maps_flutter_ios: 590249c67f34f422122c232f2a626192adbc78ee
+  geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
+  google_maps_flutter_ios: f135b968a67c05679e0a53538e900b5c174b0d99
   GoogleMaps: b47b67bd63d708477d6ff457da2d695c0d8ceb5f
   GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   GTMSessionFetcher: 8a1b34ad97ebe6f909fb8b9b77fba99943007556
-  IosAwnCore: ed1b2b6d84962a758354dbacd9ce525c72ce28a9
+  IosAwnCore: 4691f457bd8dc9a3a0a941cee6439a894a0b81aa
   leveldb-library: e74c27d8fbd22854db7cb467968a0b8aa1db7126
   map_launcher: e325db1261d029ff33e08e03baccffe09593ffea
-  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
-  shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
+  shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
 
 PODFILE CHECKSUM: 45ac330c124b61ab7336968f765dae77ff27ec2a

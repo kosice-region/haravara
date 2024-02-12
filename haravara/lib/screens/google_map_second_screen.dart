@@ -17,8 +17,8 @@ class GoogleMapSecondScreen extends ConsumerStatefulWidget {
   const GoogleMapSecondScreen({
     required this.cameraTargetBounds,
     required this.cameraPosition,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   final LatLngBounds cameraTargetBounds;
   final CameraPosition cameraPosition;
 
@@ -50,99 +50,98 @@ class _GoogleMapSecondScreenState extends ConsumerState<GoogleMapSecondScreen> {
               .first;
           isMarkerPicked = true;
           print(pickedLocation.placeImages!.location);
-          showModalBottomSheet(
-            context: context,
-            builder: (context) {
-              return Container(
-                height: 232.4.h,
-                width: 255.w,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15.r),
-                    topRight: Radius.circular(15.r),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        5.verticalSpace,
-                        Container(
-                          width: 35.w,
-                          height: 3.h,
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(15),
-                            ),
-                          ),
-                        ),
-                        15.verticalSpace,
-                        Text(
-                          pickedLocation.name,
-                          style: GoogleFonts.titanOne(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w400,
-                              color: const Color.fromARGB(255, 51, 206, 242)),
-                          textAlign: TextAlign.center,
-                        ),
-                        8.verticalSpace,
-                        Text(
-                          pickedLocation.detail.description,
-                          style: GoogleFonts.titanOne(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w400,
-                              color: const Color.fromARGB(255, 33, 173, 4)),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                    10.verticalSpace,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: SizedBox(
-                            width: 100.w,
-                            height: 100.h,
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15.r)),
-                              child: Image.file(
-                                File(pickedLocation.placeImages!.location),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        10.horizontalSpace,
-                        Column(
-                          children: [
-                            _LocalButton(
-                                name: 'Navigovat\'',
-                                onPressed: () {
-                                  MapService()
-                                      .lauchMap(context, pickedLocation);
-                                }),
-                            14.verticalSpace,
-                            _LocalButton(
-                                name: 'Pouzit\'',
-                                onPressed: () {
-                                  routeToCompassScreen();
-                                }),
-                          ],
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
         });
+        showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return Container(
+              height: 232.4.h,
+              width: 255.w,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15.r),
+                  topRight: Radius.circular(15.r),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      5.verticalSpace,
+                      Container(
+                        width: 35.w,
+                        height: 3.h,
+                        decoration: const BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15),
+                          ),
+                        ),
+                      ),
+                      15.verticalSpace,
+                      Text(
+                        pickedLocation.name,
+                        style: GoogleFonts.titanOne(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w400,
+                            color: const Color.fromARGB(255, 51, 206, 242)),
+                        textAlign: TextAlign.center,
+                      ),
+                      8.verticalSpace,
+                      Text(
+                        pickedLocation.detail.description,
+                        style: GoogleFonts.titanOne(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w400,
+                            color: const Color.fromARGB(255, 33, 173, 4)),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  10.verticalSpace,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.w),
+                        child: SizedBox(
+                          width: 100.w,
+                          height: 100.h,
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15.r)),
+                            child: Image.file(
+                              File(pickedLocation.placeImages!.location),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                      10.horizontalSpace,
+                      Column(
+                        children: [
+                          _LocalButton(
+                              name: 'Navigovat\'',
+                              onPressed: () {
+                                MapService().lauchMap(context, pickedLocation);
+                              }),
+                          14.verticalSpace,
+                          _LocalButton(
+                              name: 'Pouzit\'',
+                              onPressed: () {
+                                routeToCompassScreen();
+                              }),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
       }
     });
   }
@@ -215,11 +214,11 @@ class _LocalButton extends StatelessWidget {
   final bool isCompass;
 
   const _LocalButton({
-    Key? key,
+    super.key,
     required this.name,
     required this.onPressed,
     this.isCompass = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

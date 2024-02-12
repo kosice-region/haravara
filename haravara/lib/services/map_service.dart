@@ -71,7 +71,7 @@ class MapService {
             c(point2.latitude * p) *
             (1 - c((point2.longitude - point1.longitude) * p)) /
             2;
-    return 12742 * asin(sqrt(a)); // 2 * радиус Земли (6371 km)
+    return 12742 * asin(sqrt(a));
   }
 
   LatLngBounds findBounds(List<LatLng> points) {

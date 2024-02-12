@@ -38,7 +38,7 @@ class _ApiState extends ConsumerState<Api> {
         Center(
           child: ElevatedButton(
             onPressed: () {
-              placesService.deleteDB();
+              placesService.listFiles();
             },
             child: const Text('press'),
           ),
