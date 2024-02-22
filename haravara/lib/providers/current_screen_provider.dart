@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/screens/achievements.dart';
+import 'package:haravara/screens/auth.dart';
 import 'package:haravara/screens/compass.dart';
 import 'package:haravara/screens/map_screen.dart';
 import 'package:haravara/screens/news_screen.dart';
@@ -22,7 +23,7 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.summary: const SummaryScreen(),
   ScreenType.compass: const Compass(),
   ScreenType.achievements: const AchievementsScreen(),
-  // ScreenType.auth: const Aut,
+  ScreenType.auth: const AuthScreen(),
 };
 
 class CurrentScreenNotifier extends StateNotifier<ScreenType> {

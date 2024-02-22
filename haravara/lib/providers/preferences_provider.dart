@@ -7,19 +7,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LoginNotifier extends StateNotifier<UserModel> {
   LoginNotifier(this.pref) : super(_initialUser(pref));
 
-  static final provider =
-      StateNotifierProvider<LoginNotifier, UserModel>((ref) {
-    final pref = ref.read(sharedPreferencesProvider);
-    return LoginNotifier(pref);
-  });
-
   final SharedPreferences pref;
 
-  static UserModel _initialUser(SharedPreferences? pref) {
-    bool isLoggedIn = pref?.getBool("isLoggedIn") ?? false;
-    String username = pref?.getString("username") ?? '';
-    String email = pref?.getString("email") ?? '';
-    String id = pref?.getString("id") ?? '';
+  static UserModel _initialUser(SharedPreferences pref) {
+    bool isLoggedIn = pref.getBool("isLoggedIn") ?? false;
+    String username = pref.getString("username") ?? '';
+    String email = pref.getString("email") ?? '';
+    String id = pref.getString("id") ?? '';
     return UserModel(
         isLoggedIn: isLoggedIn, username: username, email: email, id: id);
   }
@@ -35,9 +29,18 @@ class LoginNotifier extends StateNotifier<UserModel> {
 
   void logout() {
     state = UserModel(isLoggedIn: false, username: '', email: '', id: '');
-    pref.clear();
+    pref.setBool("isLoggedIn", false);
+    pref.remove("username");
+    pref.remove("email");
+    pref.remove("id");
   }
 }
+
+final loginNotifierProvider =
+    StateNotifierProvider<LoginNotifier, UserModel>((ref) {
+  final pref = ref.read(sharedPreferencesProvider);
+  return LoginNotifier(pref);
+});
 
 class SetupNotifier extends StateNotifier<SetupModel> {
   SetupNotifier(this.pref) : super(_initialSetup(pref));

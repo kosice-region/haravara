@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:haravara/models/place.dart';
 import 'package:uuid/parsing.dart';
+import 'package:uuid/rng.dart';
 
 FirebaseDatabase database = FirebaseDatabase.instance;
 DatabaseReference placesRef = FirebaseDatabase.instance.ref('locations');
@@ -24,10 +26,8 @@ class LocationRepository {
         Map<String, dynamic> placeMap = value as Map<String, dynamic>;
         Map<String, dynamic>? imageMap =
             imagesJson[key] as Map<String, dynamic>?;
-
         PlaceImageFromDB imageFromDB =
             PlaceImageFromDB.fromJson(imageMap!).copyWith(placeId: key);
-
         Place place = Place.fromJson(placeMap)
             .copyWith(id: key, placeImages: imageFromDB);
         places.add(place);
@@ -36,6 +36,23 @@ class LocationRepository {
       }
     });
     return places;
+  }
+
+  Future<List<String>> getCollectedPlacesByUser(String userId) async {
+    DatabaseReference userRef =
+        FirebaseDatabase.instance.ref('collectedLocationsByUsers/$userId');
+    print('User ID: $userId');
+    DataSnapshot snapshot = await userRef.get();
+
+    List<dynamic>? placesDynamic = snapshot.value as List<dynamic>?;
+
+    if (placesDynamic != null) {
+      List<String> collectedPlaces = placesDynamic.cast<String>();
+      print(collectedPlaces);
+      return collectedPlaces;
+    } else {
+      return [];
+    }
   }
 
   static Map<String, dynamic> decodeJsonFromSnapshot(DataSnapshot snapshot) {

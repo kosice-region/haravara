@@ -1,8 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:ui' as ui;
 
@@ -21,7 +17,7 @@ class PlaceMarker extends Marker {
     required this.position,
     required this.infoWindow,
     required this.onTapAction,
-    required BitmapDescriptor icon,
+    required super.icon,
   }) : super(
           markerId: MarkerId(markerID),
           position: position,
@@ -31,7 +27,6 @@ class PlaceMarker extends Marker {
             position: position,
             infoWindow: infoWindow,
           )),
-          icon: icon,
         );
 
   static Future<PlaceMarker> createWithDefaultIcon({

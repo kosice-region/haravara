@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/providers/current_screen_provider.dart';
+import 'package:haravara/providers/map_providers.dart';
+import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/services/screen_router.dart';
 
 class HeaderMenu extends ConsumerWidget {
@@ -94,6 +96,10 @@ class HeaderMenu extends ConsumerWidget {
           ),
           onPressed: () {
             var currentScreen = ref.watch(currentScreenProvider);
+            if (screenToRoute == ScreenType.auth) {
+              handleLogout(ref, context);
+              return;
+            }
             if (currentScreen != screenToRoute) {
               ref
                   .read(currentScreenProvider.notifier)
@@ -142,5 +148,12 @@ class HeaderMenu extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  handleLogout(WidgetRef ref, context) async {
+    ref.read(loginNotifierProvider.notifier).logout();
+    ref.read(richedPlacesProvider.notifier).deleteAllPlaces();
+    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+        context, ScreenRouter().getScreenWidget(ScreenType.auth));
   }
 }

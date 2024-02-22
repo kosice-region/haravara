@@ -171,7 +171,6 @@ class _GoogleMapSecondScreenState extends ConsumerState<GoogleMapSecondScreen> {
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
             mapToolbarEnabled: true,
-            padding: EdgeInsets.only(bottom: 170.h, right: 1.w, left: 10.w),
           ),
         ),
         Positioned(

@@ -1,20 +1,20 @@
-class User {
-  String? userId;
-  String name;
-  String? email;
-  String? phoneNumber;
-  List<String> phoneIds;
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  User.regEmail(
-      {required this.email, required this.phoneIds, required this.name});
-  User.regPhoneNumber(
-      {required this.phoneNumber, required this.phoneIds, required this.name});
-  User(
-      {required this.userId,
-      required this.email,
-      required this.phoneNumber,
-      required this.phoneIds,
-      required this.name});
+part 'user.freezed.dart';
+part 'user.g.dart';
+
+@freezed
+class User with _$User {
+  const factory User({
+    String? id,
+    required String username,
+    String? email,
+    @JsonKey(name: 'phone_number') String? phoneNumber,
+    @JsonKey(name: 'phone_ids') required List<String> phones,
+  }) = _User;
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }
 
 class UserModel {
@@ -28,4 +28,9 @@ class UserModel {
       this.username = '',
       this.email = '',
       this.id = ''});
+
+  @override
+  String toString() {
+    return 'UserModel(isLoggedIn: $isLoggedIn, username: $username, email: $email, id: $id)';
+  }
 }

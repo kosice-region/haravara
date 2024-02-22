@@ -8,7 +8,7 @@ import 'package:haravara/models/place.dart';
 class Achievement extends StatelessWidget {
   const Achievement({
     super.key,
-    required this.isClosed,
+    this.isClosed = true,
     required this.place,
   });
 

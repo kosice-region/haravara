@@ -16,11 +16,14 @@ class Init {
     print("starting registering services");
     SetupModel model = ref.watch(setupNotifierProvider);
     print(model);
+    // await _firstSetup(ref, model);
     if (model.isFirstSetup) {
       await _firstSetup(ref, model);
     } else if (!model.isFirstSetup) {
       await _defaultSetup(ref);
     }
+    final test = ref.watch(loginNotifierProvider);
+    print(test);
     print("finished registering services");
   }
 
@@ -30,6 +33,7 @@ class Init {
     model.isFirstSetup = false;
     ref.read(setupNotifierProvider.notifier).updateSetup(
         model.isFirstSetup, model.isLoggedIn, model.versionOfDatabase);
+
     _defaultSetup(ref);
   }
 

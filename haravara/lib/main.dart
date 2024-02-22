@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:haravara/firebase_options.dart';
+import 'package:haravara/providers/preferences_provider.dart';
+import 'package:haravara/screens/auth.dart';
 import 'package:haravara/screens/news_screen.dart';
 import 'package:haravara/screens/splash_screen.dart';
 import 'package:haravara/services/init_service.dart';
@@ -103,7 +105,9 @@ class _ConsumerAppState extends ConsumerState<ConsumerApp> {
             future: _initFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                return const NewsScreen();
+                return ref.watch(loginNotifierProvider).isLoggedIn
+                    ? const NewsScreen()
+                    : const AuthScreen();
               } else {
                 return const SplashScreen();
               }

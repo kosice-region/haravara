@@ -18,6 +18,9 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
   @override
   Widget build(BuildContext context) {
     final places = ref.watch(placesProvider);
+    print(places.length);
+    final richedPlaces = ref.watch(richedPlacesProvider);
+    print(richedPlaces);
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return Scaffold(
       endDrawer: const HeaderMenu(),
@@ -45,7 +48,12 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
               childAspectRatio: (5 / 4.h),
               children: [
                 for (final place in places)
-                  Achievement(isClosed: false, place: place)
+                  Achievement(
+                    isClosed: richedPlaces.isNotEmpty
+                        ? !richedPlaces.contains(place.id)
+                        : true,
+                    place: place,
+                  ),
               ],
             ),
           ),

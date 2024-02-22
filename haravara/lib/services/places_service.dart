@@ -1,11 +1,15 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/models/place.dart';
+import 'package:haravara/providers/map_providers.dart';
+import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/repositories/location_repository.dart';
 import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:path/path.dart' as path;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:sqflite/sqlite_api.dart';
 
@@ -22,9 +26,19 @@ Future<Database> _getDatabase() async {
   final dbPath = await sql.getDatabasesPath();
   final db = await sql.openDatabase(
     path.join(dbPath, 'places.db'),
-    onCreate: (db, version) {
-      return db.execute(
-          'CREATE TABLE places(id TEXT PRIMARY KEY, name TEXT, created INTEGER, updated INTEGER, active INTEGER, description TEXT, radius INTEGER, lat_primary REAL, lng_primary REAL, location_path TEXT, stamp_path TEXT)');
+    onCreate: (db, version) async {
+      await db.execute('''CREATE TABLE if not exists places(
+           id TEXT PRIMARY KEY,
+           name TEXT,
+           created INTEGER,
+           updated INTEGER,
+           active INTEGER,
+           description TEXT,
+           radius INTEGER,
+           lat_primary REAL,
+           lng_primary REAL,
+           location_path TEXT,
+           stamp_path TEXT)''');
     },
     version: 1,
   );
@@ -40,25 +54,27 @@ class PlacesService {
     final db = await _getDatabase();
 
     for (final place in places) {
-      await db.insert('places', {
-        'id': place.id!,
-        'name': place.name,
-        'created': place.created,
-        'updated': place.updated,
-        'active': place.active ? 1 : 0,
-        'description': place.detail.description,
-        'radius': place.geoData.primary.fence.radius,
-        'lat_primary': place.geoData.primary.coordinates[0],
-        'lng_primary': place.geoData.primary.coordinates[1],
-        'location_path': '${appDocDir.path}/${place.placeImages!.location}',
-        'stamp_path': '${appDocDir.path}/${place.placeImages!.stamp}',
-      });
+      await db.insert(
+        'places',
+        {
+          'id': place.id!,
+          'name': place.name,
+          'created': place.created,
+          'updated': place.updated,
+          'active': place.active ? 1 : 0,
+          'description': place.detail.description,
+          'radius': place.geoData.primary.fence.radius,
+          'lat_primary': place.geoData.primary.coordinates[0],
+          'lng_primary': place.geoData.primary.coordinates[1],
+          'location_path': '${appDocDir.path}/${place.placeImages!.location}',
+          'stamp_path': '${appDocDir.path}/${place.placeImages!.stamp}',
+        },
+      );
     }
   }
 
   Future<void> _downloadLocationDataFromStorage(List<Place> places) async {
     Directory appDocDir = await _getDirectory();
-
     List<PlaceImageFromDB> images = places
         .where((place) => place.placeImages != null)
         .map((place) => place.placeImages!)
@@ -67,9 +83,6 @@ class PlacesService {
     for (final image in images) {
       String fileToDownloadLocationImage = image.location;
       String fileToDownloadStampImage = image.stamp;
-      print('${appDocDir.path}/${image.location}');
-      print('${appDocDir.path}/${image.stamp}');
-
       try {
         final locationUrl = await firebase_storage.FirebaseStorage.instance
             .ref(fileToDownloadLocationImage)
@@ -84,7 +97,14 @@ class PlacesService {
         print('Download error: $e');
       }
     }
-    print('ok');
+  }
+
+  Future<void> getCollectedPlacesByUser(String id) async {
+    final collectedPlaces =
+        await locationRepository.getCollectedPlacesByUser(id);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('collectedPlaces', collectedPlaces);
+    prefs.reload();
   }
 
   Future<List<Place>> loadPlaces() async {
@@ -122,7 +142,13 @@ class PlacesService {
     firebase_storage.ListResult results =
         await storage.ref('images/locations/').listAll();
 
+    firebase_storage.ListResult results2 =
+        await storage.ref('images/stamps/').listAll();
+
     for (var ref in results.items) {
+      print('file  $ref');
+    }
+    for (var ref in results2.items) {
       print('file  $ref');
     }
     return results;
