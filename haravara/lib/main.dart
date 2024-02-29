@@ -85,11 +85,12 @@ class _ConsumerAppState extends ConsumerState<ConsumerApp> {
 
   @override
   void didChangeDependencies() {
-    super.didChangeDependencies();
     if (!_isInitCalled) {
       _initFuture = Init.initialize(ref);
       _isInitCalled = true;
     }
+    precacheImage(const AssetImage('assets/places-map.jpg'), context);
+    super.didChangeDependencies();
   }
 
   @override

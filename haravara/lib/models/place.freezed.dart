@@ -648,6 +648,7 @@ Primary _$PrimaryFromJson(Map<String, dynamic> json) {
 mixin _$Primary {
   List<double> get coordinates => throw _privateConstructorUsedError;
   Fence get fence => throw _privateConstructorUsedError;
+  List<double> get pixelCoordinates => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -659,7 +660,8 @@ abstract class $PrimaryCopyWith<$Res> {
   factory $PrimaryCopyWith(Primary value, $Res Function(Primary) then) =
       _$PrimaryCopyWithImpl<$Res, Primary>;
   @useResult
-  $Res call({List<double> coordinates, Fence fence});
+  $Res call(
+      {List<double> coordinates, Fence fence, List<double> pixelCoordinates});
 
   $FenceCopyWith<$Res> get fence;
 }
@@ -679,6 +681,7 @@ class _$PrimaryCopyWithImpl<$Res, $Val extends Primary>
   $Res call({
     Object? coordinates = null,
     Object? fence = null,
+    Object? pixelCoordinates = null,
   }) {
     return _then(_value.copyWith(
       coordinates: null == coordinates
@@ -689,6 +692,10 @@ class _$PrimaryCopyWithImpl<$Res, $Val extends Primary>
           ? _value.fence
           : fence // ignore: cast_nullable_to_non_nullable
               as Fence,
+      pixelCoordinates: null == pixelCoordinates
+          ? _value.pixelCoordinates
+          : pixelCoordinates // ignore: cast_nullable_to_non_nullable
+              as List<double>,
     ) as $Val);
   }
 
@@ -708,7 +715,8 @@ abstract class _$$PrimaryImplCopyWith<$Res> implements $PrimaryCopyWith<$Res> {
       __$$PrimaryImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<double> coordinates, Fence fence});
+  $Res call(
+      {List<double> coordinates, Fence fence, List<double> pixelCoordinates});
 
   @override
   $FenceCopyWith<$Res> get fence;
@@ -727,6 +735,7 @@ class __$$PrimaryImplCopyWithImpl<$Res>
   $Res call({
     Object? coordinates = null,
     Object? fence = null,
+    Object? pixelCoordinates = null,
   }) {
     return _then(_$PrimaryImpl(
       coordinates: null == coordinates
@@ -737,6 +746,10 @@ class __$$PrimaryImplCopyWithImpl<$Res>
           ? _value.fence
           : fence // ignore: cast_nullable_to_non_nullable
               as Fence,
+      pixelCoordinates: null == pixelCoordinates
+          ? _value._pixelCoordinates
+          : pixelCoordinates // ignore: cast_nullable_to_non_nullable
+              as List<double>,
     ));
   }
 }
@@ -745,8 +758,11 @@ class __$$PrimaryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PrimaryImpl with DiagnosticableTreeMixin implements _Primary {
   const _$PrimaryImpl(
-      {required final List<double> coordinates, required this.fence})
-      : _coordinates = coordinates;
+      {required final List<double> coordinates,
+      required this.fence,
+      required final List<double> pixelCoordinates})
+      : _coordinates = coordinates,
+        _pixelCoordinates = pixelCoordinates;
 
   factory _$PrimaryImpl.fromJson(Map<String, dynamic> json) =>
       _$$PrimaryImplFromJson(json);
@@ -761,10 +777,18 @@ class _$PrimaryImpl with DiagnosticableTreeMixin implements _Primary {
 
   @override
   final Fence fence;
+  final List<double> _pixelCoordinates;
+  @override
+  List<double> get pixelCoordinates {
+    if (_pixelCoordinates is EqualUnmodifiableListView)
+      return _pixelCoordinates;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_pixelCoordinates);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Primary(coordinates: $coordinates, fence: $fence)';
+    return 'Primary(coordinates: $coordinates, fence: $fence, pixelCoordinates: $pixelCoordinates)';
   }
 
   @override
@@ -773,7 +797,8 @@ class _$PrimaryImpl with DiagnosticableTreeMixin implements _Primary {
     properties
       ..add(DiagnosticsProperty('type', 'Primary'))
       ..add(DiagnosticsProperty('coordinates', coordinates))
-      ..add(DiagnosticsProperty('fence', fence));
+      ..add(DiagnosticsProperty('fence', fence))
+      ..add(DiagnosticsProperty('pixelCoordinates', pixelCoordinates));
   }
 
   @override
@@ -783,13 +808,18 @@ class _$PrimaryImpl with DiagnosticableTreeMixin implements _Primary {
             other is _$PrimaryImpl &&
             const DeepCollectionEquality()
                 .equals(other._coordinates, _coordinates) &&
-            (identical(other.fence, fence) || other.fence == fence));
+            (identical(other.fence, fence) || other.fence == fence) &&
+            const DeepCollectionEquality()
+                .equals(other._pixelCoordinates, _pixelCoordinates));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_coordinates), fence);
+      runtimeType,
+      const DeepCollectionEquality().hash(_coordinates),
+      fence,
+      const DeepCollectionEquality().hash(_pixelCoordinates));
 
   @JsonKey(ignore: true)
   @override
@@ -808,7 +838,8 @@ class _$PrimaryImpl with DiagnosticableTreeMixin implements _Primary {
 abstract class _Primary implements Primary {
   const factory _Primary(
       {required final List<double> coordinates,
-      required final Fence fence}) = _$PrimaryImpl;
+      required final Fence fence,
+      required final List<double> pixelCoordinates}) = _$PrimaryImpl;
 
   factory _Primary.fromJson(Map<String, dynamic> json) = _$PrimaryImpl.fromJson;
 
@@ -816,6 +847,8 @@ abstract class _Primary implements Primary {
   List<double> get coordinates;
   @override
   Fence get fence;
+  @override
+  List<double> get pixelCoordinates;
   @override
   @JsonKey(ignore: true)
   _$$PrimaryImplCopyWith<_$PrimaryImpl> get copyWith =>
