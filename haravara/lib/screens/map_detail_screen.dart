@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -175,15 +176,40 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
             panEnabled: true,
             transformationController: _controller,
             child: GestureDetector(
+              onTapUp: (details) {
+                setState(() {
+                  print(
+                      '${details.globalPosition.dx}, ${details.globalPosition.dy}');
+                  tapPositions.add(Offset(
+                      details.globalPosition.dx, details.globalPosition.dy));
+                });
+              },
               child: Stack(children: [
                 Image.asset(
                   'assets/places-map.jpg',
                   fit: BoxFit.cover,
                 ),
+                // ...tapPositions.map((entry) {
+                //   return Positioned(
+                //     left: entry.dx.w,
+                //     top: entry.dy.h,
+                //     child: Container(
+                //       width: 85.w,
+                //       height: 85.h,
+                //       decoration: const BoxDecoration(
+                //         shape: BoxShape.circle,
+                //         color: Colors.red,
+                //       ),
+                //     ),
+                //   );
+                // }),
                 ...places.asMap().entries.map((entry) {
                   int index = entry.key;
                   Place place = entry.value;
-
+                  if (entry.value.id! ==
+                      '12e3fc06-078a-2412-a6f4-2b648c1afb40') {
+                    print('index $index');
+                  }
                   return Positioned(
                     left: place.geoData.primary.pixelCoordinates[0],
                     top: place.geoData.primary.pixelCoordinates[1],

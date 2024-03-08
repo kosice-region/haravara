@@ -20,19 +20,21 @@ class MapMarker extends ConsumerWidget {
         eventBus.sendEvent(placeId);
       },
       child: Container(
-        width: 70.w,
-        height: 70.h,
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 229, 13, 0),
-          borderRadius: BorderRadius.all(Radius.circular(38.r)),
+        width: 95.w,
+        height: 95.h,
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 229, 13, 0),
+          shape: BoxShape.circle,
         ),
-        child: Text(
-          (index + 1).toString(),
-          textAlign: TextAlign.center,
-          style: GoogleFonts.lato(
-              color: Colors.white,
-              fontSize: 25.dg,
-              fontWeight: FontWeight.w900),
+        child: Center(
+          child: Text(
+            (index + 1).toString(),
+            textAlign: TextAlign.center,
+            style: GoogleFonts.oswald(
+                color: Colors.white,
+                fontSize: 32.dg,
+                fontWeight: FontWeight.w500),
+          ),
         ),
       ),
     );

@@ -105,8 +105,8 @@ flutter:
     - assets/logo-haravara.png
     - assets/background.png
     - assets/peopleMapScreen.png
-    - assets/compass.png
-    - assets/cadrant.png
+    - assets/compass.jpg
+    - assets/cadrant.jpg
     - assets/menu-icons/steps.png
     - assets/menu-icons/map.png
     - assets/menu-icons/calendar.png
@@ -124,6 +124,7 @@ flutter:
     - assets/background-summary.png
     - assets/compass_mini.png
     - assets/places-map.jpg
+    - assets/compass-fixed.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

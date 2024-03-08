@@ -1,7 +1,9 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:math' as math;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -61,7 +63,7 @@ class _CompassState extends ConsumerState<Compass> {
     positionStream = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.high,
-      distanceFilter: 5,
+      distanceFilter: 0,
     )).listen(
       (position) {
         _updateDistanceAndBearing(position);
@@ -114,31 +116,24 @@ class _CompassState extends ConsumerState<Compass> {
                   width: 230.w,
                   height: 230.h,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 144, 198, 238),
                     borderRadius:
                         BorderRadius.all(const Radius.circular(120).r),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 5.0.w,
-                    ),
                   ),
                   child: Stack(children: [
+                    Positioned(child: _buildCompass()),
                     Positioned(
-                      bottom: 1.h,
-                      top: 1.h,
-                      right: 1.w,
-                      left: 1.w,
-                      child: Image.asset("assets/cadrant.png"),
-                    ),
-                    Center(
-                      child: Transform.rotate(
-                        angle: (direction * (pi / 180)),
-                        child: Image.asset(
-                          "assets/compass.png",
-                          scale: 1.1,
+                      child: Center(
+                        child: Transform.rotate(
+                          angle: (direction * (math.pi / 180)),
+                          child: Image.asset(
+                            "assets/compass-fixed.png",
+                            scale: 1.1,
+                            width: 200.w,
+                            height: 300.h,
+                          ),
                         ),
                       ),
-                    ),
+                    )
                   ]),
                 ),
               ],
@@ -188,11 +183,11 @@ class _CompassState extends ConsumerState<Compass> {
 
     var dLng = endLngRad - startLngRad;
 
-    var x = sin(dLng) * cos(endLatRad);
-    var y = cos(startLatRad) * sin(endLatRad) -
-        sin(startLatRad) * cos(endLatRad) * cos(dLng);
+    var x = math.sin(dLng) * math.cos(endLatRad);
+    var y = math.cos(startLatRad) * math.sin(endLatRad) -
+        math.sin(startLatRad) * math.cos(endLatRad) * math.cos(dLng);
 
-    var bearing = atan2(x, y);
+    var bearing = math.atan2(x, y);
     bearing = _toDegrees(bearing);
     bearing = (bearing + 360) % 360;
 
@@ -200,23 +195,18 @@ class _CompassState extends ConsumerState<Compass> {
   }
 
   double _toRadians(double degree) {
-    return degree * pi / 180;
+    return degree * math.pi / 180;
   }
 
   double _toDegrees(double radians) {
-    return radians * 180 / pi;
-  }
-
-  Future<Position> _getCurrentLocation() async {
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    return radians * 180 / math.pi;
   }
 
   double calculateCompassDirection(double heading, double bearingToTarget) {
     double direction = bearingToTarget - heading;
 
     direction = (direction + 360) % 360;
-
+    // print('pos direction ${(direction * (math.pi / 180))}');
     return direction;
   }
 
@@ -231,6 +221,38 @@ class _CompassState extends ConsumerState<Compass> {
     return distanceInMeters;
   }
 
+  Widget _buildCompass() {
+    return StreamBuilder<CompassEvent>(
+      stream: FlutterCompass.events,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error reading heading: ${snapshot.error}');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        double? currentDirection = snapshot.data!.heading;
+
+        if (currentDirection == null) {
+          return const Center(
+            child: Text("Device does not have sensors !"),
+          );
+        }
+        // print('current direction ${(currentDirection * (math.pi / 180) * -1)}');
+        return Transform.rotate(
+          angle: (currentDirection * (math.pi / 180) * -1),
+          child: Image.asset(
+            'assets/cadrant.jpg',
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     compassSubscription.cancel();
@@ -238,3 +260,13 @@ class _CompassState extends ConsumerState<Compass> {
     super.dispose();
   }
 }
+
+//  Center(
+//                       child: Transform.rotate(
+//                         angle: (direction * (math.pi / 180)),
+//                         child: Image.asset(
+//                           "assets/compass-fixed.png",
+//                           scale: 1.1,
+//                         ),
+//                       ),
+//                     ),
