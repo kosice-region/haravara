@@ -37,6 +37,8 @@ Future<Database> _getDatabase() async {
            radius INTEGER,
            lat_primary REAL,
            lng_primary REAL,
+           xCoordinate REAL,
+           yCoordinate REAL,
            location_path TEXT,
            stamp_path TEXT)''');
     },
@@ -49,10 +51,9 @@ class PlacesService {
   Future<void> savePlacesLocally() async {
     final List<Place> places = await locationRepository.getAllPlaces();
     Directory appDocDir = await _getDirectory();
-
     await _downloadLocationDataFromStorage(places);
     final db = await _getDatabase();
-
+    print(places);
     for (final place in places) {
       await db.insert(
         'places',
@@ -66,6 +67,8 @@ class PlacesService {
           'radius': place.geoData.primary.fence.radius,
           'lat_primary': place.geoData.primary.coordinates[0],
           'lng_primary': place.geoData.primary.coordinates[1],
+          'xCoordinate': place.geoData.primary.pixelCoordinates[0],
+          'yCoordinate': place.geoData.primary.pixelCoordinates[1],
           'location_path': '${appDocDir.path}/${place.placeImages!.location}',
           'stamp_path': '${appDocDir.path}/${place.placeImages!.stamp}',
         },
@@ -84,6 +87,7 @@ class PlacesService {
       String fileToDownloadLocationImage = image.location;
       String fileToDownloadStampImage = image.stamp;
       try {
+        print('downloading');
         final locationUrl = await firebase_storage.FirebaseStorage.instance
             .ref(fileToDownloadLocationImage)
             .getDownloadURL();
@@ -113,10 +117,18 @@ class PlacesService {
 
     final List<Place> places = data.map<Place>((row) {
       GeoData geoData = GeoData(
-          primary: Primary(coordinates: [
-        row['lat_primary'] as double,
-        row['lng_primary'] as double
-      ], fence: Fence(radius: row['radius'] as int)));
+        primary: Primary(
+          coordinates: [
+            row['lat_primary'] as double,
+            row['lng_primary'] as double
+          ],
+          fence: Fence(radius: row['radius'] as int),
+          pixelCoordinates: [
+            row['xCoordinate'] as double,
+            row['yCoordinate'] as double
+          ],
+        ),
+      );
 
       Detail detail = Detail(description: row['description'] as String);
       PlaceImageFromDB images = PlaceImageFromDB(

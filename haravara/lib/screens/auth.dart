@@ -24,42 +24,36 @@ class AuthScreen extends ConsumerStatefulWidget {
 class _AuthScreenState extends ConsumerState<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   var _isLogin = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   var _enteredEmail = '';
-  final _enteredPhone = '';
   var _enteredUsername = '';
-  var _enteredCode = '';
   bool isCodeSent = false;
   bool isInputByPhoneNumber = false;
   late String code;
+  late AuthNotifier authNotifier;
 
   @override
   void initState() {
+    authNotifier = ref.read(authNotifierProvider.notifier);
     super.initState();
   }
 
-  void _submitCode() async {
-    _formKey.currentState!.save();
-    if (_enteredCode.compareTo(code) == 1) {
-      _showSnackBar('Not valid');
+  void _submitAndValidate() async {
+    if (_emailController.text.isEmpty ||
+        !_emailController.text.contains('@') ||
+        _emailController.text == 'const User Exist') {
+      _showSnackBar('Please enter a valid email address or user exists');
       return;
     }
-
-    if (_isLogin) {
-      await authService.loginUserByEmail(_enteredEmail);
-    } else {
-      await authService.registerUserByEmail(
-          _enteredEmail, _enteredUsername, ref);
+    if (!_isLogin) {
+      if (_usernameController.text.isEmpty) {
+        _showSnackBar('username must not be empty');
+        return;
+      }
+      _enteredUsername = _usernameController.text;
     }
-    routeToNewsScreen();
-    _showSnackBar('Success');
-  }
-
-  void _submit() async {
-    final isValid = _formKey.currentState!.validate();
-    if (!isValid) {
-      return;
-    }
-    _formKey.currentState!.save();
+    _enteredEmail = _emailController.text;
     if (_isLogin) {
       _handleLogin();
     } else {
@@ -70,315 +64,217 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
-    Widget codeContent = Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(top: 20.h),
-          child: SizedBox(
-            child: TextFormField(
-              autocorrect: false,
-              keyboardType: TextInputType.number,
-              textCapitalization: TextCapitalization.none,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Write code';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                _enteredCode = value!;
-              },
-              style: const TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0),
-                  fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
-                label: Center(
-                  child: Text(
-                    'KOD',
-                    style: GoogleFonts.titanOne(
-                      color: const Color.fromARGB(255, 86, 162, 73),
-                      fontWeight: FontWeight.w300,
-                      fontSize: 11.sp,
-                    ),
-                  ),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: const Color.fromARGB(255, 155, 221, 153),
-                    width: 4.w,
-                  ),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: const Color.fromARGB(255, 155, 221, 153),
-                    width: 4.w,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        15.verticalSpace,
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            textStyle: GoogleFonts.titanOne(fontSize: 11.sp),
-            foregroundColor: const Color.fromARGB(255, 86, 162, 73),
-            backgroundColor: const Color.fromARGB(255, 155, 221, 153),
-            shape: RoundedRectangleBorder(
-              borderRadius: const BorderRadius.all(Radius.circular(34)).w,
-              side: BorderSide(
-                  color: const Color.fromARGB(255, 91, 187, 75), width: 4.0.w),
-            ),
-          ),
-          onPressed: isCodeSent ? _submitCode : _submit,
-          child: SizedBox(
-            width: 100.w,
-            height: 20.h,
-            child: Center(child: Text(_isLogin ? 'PRIHLÁS SA' : 'REGISTRÁCIA')),
-          ),
-        ),
-      ],
-    );
-
+    var deviceHeight = MediaQuery.of(context).size.height;
+    var registrationHeight = 140;
+    var loginHeight = 110;
+    if (deviceHeight < 850) {
+      registrationHeight = 160;
+      loginHeight = 120;
+    }
+    if (deviceHeight < 700) {
+      registrationHeight = 180;
+      loginHeight = 140;
+    }
+    print(deviceHeight);
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Padding(
-          padding: const EdgeInsets.only(top: 8).h,
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Column(
-                  children: [
-                    const Header(showMenu: false),
-                    15.verticalSpace,
-                    Text(
-                      'PRIHLÁSENIE',
-                      style: GoogleFonts.titanOne(
-                          fontSize: 18.sp,
-                          color: const Color.fromARGB(255, 86, 162, 73),
-                          fontWeight: FontWeight.w500),
+      resizeToAvoidBottomInset: false,
+      body: Padding(
+        padding: const EdgeInsets.only(top: 8).h,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Column(
+                children: [
+                  const Header(showMenu: false),
+                  15.verticalSpace,
+                  Text(
+                    'PRIHLÁSENIE',
+                    style: GoogleFonts.titanOne(
+                        fontSize: 18.sp,
+                        color: const Color.fromARGB(255, 86, 162, 73),
+                        fontWeight: FontWeight.w500),
+                  ),
+                  5.verticalSpace,
+                  Container(
+                    key: ValueKey<bool>(_isLogin),
+                    width: 220.w,
+                    height: _isLogin ? loginHeight.h : registrationHeight.h,
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(15)).r,
+                      color: const Color.fromARGB(255, 177, 235, 183),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(255, 91, 187, 75)
+                              .withOpacity(1),
+                          spreadRadius: 8,
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    5.verticalSpace,
-                    Container(
-                      width: 220.w,
-                      height: _isLogin ? 100.h : 161.h,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(15)).r,
-                        color: const Color.fromARGB(255, 177, 235, 183),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color.fromARGB(255, 91, 187, 75)
-                                .withOpacity(1),
-                            spreadRadius: 8,
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: isCodeSent
-                          ? codeContent
-                          : Column(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        3.verticalSpace,
-                                        SizedBox(
-                                          width: 166.w,
-                                          child: TextFormField(
-                                            validator: (value) {
-                                              if (value != null &&
-                                                  value == 'const User Exist') {
-                                                return 'User with this email Exists';
-                                              }
-                                              if (value == null ||
-                                                  value.trim().isEmpty ||
-                                                  !value.contains('@')) {
-                                                return 'Please enter a valid email address';
-                                              }
-                                              return null;
-                                            },
-                                            onSaved: (value) {
-                                              _enteredEmail = value!;
-                                            },
-                                            autocorrect: false,
-                                            keyboardType:
-                                                TextInputType.emailAddress,
-                                            textCapitalization:
-                                                TextCapitalization.none,
-                                            style: const TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 0, 0, 0),
-                                                fontWeight: FontWeight.bold),
-                                            decoration: InputDecoration(
-                                              label: Padding(
-                                                padding: const EdgeInsets.only(
-                                                        top: 15)
-                                                    .r,
-                                                child: Center(
-                                                  child: Text(
-                                                    'E-MAIL PÁTRAČA',
-                                                    style: GoogleFonts.titanOne(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255, 86, 162, 73),
-                                                      fontWeight:
-                                                          FontWeight.w300,
-                                                      fontSize: 11.sp,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              enabledBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: const Color.fromARGB(
-                                                      255, 155, 221, 153),
-                                                  width: 4.w,
-                                                ),
-                                              ),
-                                              focusedBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: const Color.fromARGB(
-                                                      255, 155, 221, 153),
-                                                  width: 4.w,
-                                                ),
-                                              ),
+                                19.verticalSpace,
+                                SizedBox(
+                                  width: 166.w,
+                                  child: TextFormField(
+                                    controller: _emailController,
+                                    autocorrect: false,
+                                    keyboardType: TextInputType.emailAddress,
+                                    textCapitalization: TextCapitalization.none,
+                                    style: const TextStyle(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        fontWeight: FontWeight.bold),
+                                    decoration: InputDecoration(
+                                      label: Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 15).r,
+                                        child: Center(
+                                          child: Text(
+                                            'E-MAIL PÁTRAČA',
+                                            style: GoogleFonts.titanOne(
+                                              color: const Color.fromARGB(
+                                                  255, 86, 162, 73),
+                                              fontWeight: FontWeight.w300,
+                                              fontSize: 11.sp,
                                             ),
                                           ),
                                         ),
-                                        if (!_isLogin) 10.verticalSpace,
-                                        if (!_isLogin && !isCodeSent)
-                                          SizedBox(
-                                            width: 166.w,
-                                            child: TextFormField(
-                                              obscureText: true,
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.trim().isEmpty) {
-                                                  return 'username is empty';
-                                                }
-                                                return null;
-                                              },
-                                              onSaved: (value) {
-                                                _enteredUsername = value!;
-                                              },
-                                              autocorrect: true,
-                                              keyboardType: TextInputType.name,
-                                              textCapitalization:
-                                                  TextCapitalization.characters,
-                                              style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0),
-                                                  fontWeight: FontWeight.bold),
-                                              decoration: InputDecoration(
-                                                label: Center(
-                                                  child: Text(
-                                                    'POUŽÍVATEĽSKÉ MENO',
-                                                    style: GoogleFonts.titanOne(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255, 86, 162, 73),
-                                                      fontWeight:
-                                                          FontWeight.w300,
-                                                      fontSize: 11.sp,
-                                                    ),
-                                                  ),
-                                                ),
-                                                enabledBorder:
-                                                    UnderlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                    color: const Color.fromARGB(
-                                                        255, 155, 221, 153),
-                                                    width: 4.w,
-                                                  ),
-                                                ),
-                                                focusedBorder:
-                                                    UnderlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                    color: const Color.fromARGB(
-                                                        255, 155, 221, 153),
-                                                    width: 4.w,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        10.verticalSpace,
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            textStyle: GoogleFonts.titanOne(
-                                                fontSize: 11.sp),
-                                            foregroundColor:
-                                                const Color.fromARGB(
-                                                    255, 86, 162, 73),
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 155, 221, 153),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                          Radius.circular(34))
-                                                      .w,
-                                              side: BorderSide(
-                                                  color: const Color.fromARGB(
-                                                      255, 91, 187, 75),
-                                                  width: 4.0.w),
-                                            ),
-                                          ),
-                                          onPressed: isCodeSent
-                                              ? _submitCode
-                                              : _submit,
-                                          child: SizedBox(
-                                            width: 100.w,
-                                            height: 20.h,
-                                            child: Center(
-                                                child: Text(_isLogin
-                                                    ? 'PRIHLÁS SA'
-                                                    : 'REGISTRÁCIA')),
-                                          ),
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: const Color.fromARGB(
+                                              255, 155, 221, 153),
+                                          width: 3.w,
                                         ),
-                                      ],
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: const Color.fromARGB(
+                                              255, 155, 221, 153),
+                                          width: 3.w,
+                                        ),
+                                      ),
                                     ),
-                                  ],
+                                  ),
+                                ),
+                                if (!_isLogin && !isCodeSent)
+                                  SizedBox(
+                                    width: 166.w,
+                                    child: TextFormField(
+                                      controller: _usernameController,
+                                      autocorrect: true,
+                                      keyboardType: TextInputType.name,
+                                      textCapitalization:
+                                          TextCapitalization.characters,
+                                      style: const TextStyle(
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                          fontWeight: FontWeight.bold),
+                                      decoration: InputDecoration(
+                                        label: Padding(
+                                          padding: EdgeInsets.only(top: 15.w),
+                                          child: Center(
+                                            child: Text(
+                                              'POUŽÍVATEĽSKÉ MENO',
+                                              style: GoogleFonts.titanOne(
+                                                color: const Color.fromARGB(
+                                                    255, 86, 162, 73),
+                                                fontWeight: FontWeight.w300,
+                                                fontSize: 11.sp,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: const Color.fromARGB(
+                                                255, 155, 221, 153),
+                                            width: 3.w,
+                                          ),
+                                        ),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: const Color.fromARGB(
+                                                255, 155, 221, 153),
+                                            width: 3.w,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                15.verticalSpace,
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    textStyle:
+                                        GoogleFonts.titanOne(fontSize: 11.sp),
+                                    foregroundColor:
+                                        const Color.fromARGB(255, 86, 162, 73),
+                                    backgroundColor: const Color.fromARGB(
+                                        255, 155, 221, 153),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: const BorderRadius.all(
+                                              Radius.circular(34))
+                                          .w,
+                                      side: BorderSide(
+                                          color: const Color.fromARGB(
+                                              255, 91, 187, 75),
+                                          width: 2.0.w),
+                                    ),
+                                  ),
+                                  onPressed: _submitAndValidate,
+                                  child: SizedBox(
+                                    width: 100.w,
+                                    height: 20.h,
+                                    child: Center(
+                                        child: Text(_isLogin
+                                            ? 'PRIHLÁS SA'
+                                            : 'REGISTRÁCIA')),
+                                  ),
                                 ),
                               ],
                             ),
-                    ),
-                    10.verticalSpace,
-                    TextButton(
-                      child: Text(
-                          !_isLogin
-                              ? "Máte už konto? Prihlás sa."
-                              : 'Nie si ešte prihlásený? ZAREGISTRUJ SA!',
-                          style: GoogleFonts.titanOne(
-                              fontSize: 10.sp,
-                              color: const Color.fromARGB(255, 86, 162, 73),
-                              fontWeight: FontWeight.w500)),
-                      onPressed: () {
-                        setState(() {
-                          _isLogin = !_isLogin;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        bottom: 0.h,
-                        child: const Footer(
-                          height: 160,
-                          boxFit: BoxFit.fill,
+                          ],
                         ),
+                      ],
+                    ),
+                  ),
+                  10.verticalSpace,
+                  TextButton(
+                    child: Text(
+                        !_isLogin
+                            ? "Máte už konto? Prihlás sa."
+                            : 'Nie si ešte prihlásený? ZAREGISTRUJ SA!',
+                        style: GoogleFonts.titanOne(
+                            fontSize: 10.sp,
+                            color: const Color.fromARGB(255, 86, 162, 73),
+                            fontWeight: FontWeight.w500)),
+                    onPressed: () {
+                      setState(() {
+                        _isLogin = !_isLogin;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              Expanded(
+                child: Stack(
+                  children: [
+                    Positioned(
+                      bottom: 0.h,
+                      child: const Footer(
+                        height: 160,
+                        boxFit: BoxFit.fill,
                       ),
+                    ),
+                    if (deviceHeight > 700)
                       Positioned(
                         bottom: 0.h,
                         left: 105.w,
@@ -389,22 +285,23 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           fit: BoxFit.fill,
                         ),
                       ),
-                    ],
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Future<void> _handleLogin() async {
-    List<String> deviceInfo = await authService.getDeviceDetails();
     final userId = await authService.findUserByEmail(_enteredEmail);
     if (userId.isEmpty || userId.compareTo('null') == 0) {
       _showSnackBar('We cant find your email, register instead');
       return;
     }
+    List<String> deviceInfo = await authService.getDeviceDetails();
     User user = await authService.getUserById(userId);
     if (user.phones.contains(deviceInfo[0])) {
       ref
@@ -413,6 +310,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       await authService.getCollectedPlacesByUser(userId);
       routeToNewsScreen();
     } else {
+      authNotifier.setEnteredUsername(user.username);
+      authNotifier.setEnteredEmail(user.email);
+      authNotifier.setUserId(user.id);
+      authNotifier.toggleLoginState(true);
       onSendCode();
     }
   }
@@ -423,15 +324,16 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       _showSnackBar('This email already exists');
       return;
     }
+    authNotifier.setEnteredUsername(_enteredUsername);
+    authNotifier.setEnteredEmail(_enteredEmail);
+    authNotifier.toggleLoginState(false);
     onSendCode();
   }
 
   onSendCode() async {
-    final sentCode = await authService.sendEmail(context);
-    setState(() {
-      code = sentCode;
-      isCodeSent = true;
-    });
+    final sentCode = await authService.sendEmail(context, _enteredEmail);
+    authNotifier.updateCode(sentCode);
+    routeToCodeScreen();
   }
 
   void _showSnackBar(String message) {
@@ -443,5 +345,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   void routeToNewsScreen() {
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
         context, ScreenRouter().getScreenWidget(ScreenType.news));
+  }
+
+  void routeToCodeScreen() {
+    ScreenRouter().routeToNextScreen(
+        context, ScreenRouter().getScreenWidget(ScreenType.code));
   }
 }

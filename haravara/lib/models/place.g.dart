@@ -57,12 +57,16 @@ _$PrimaryImpl _$$PrimaryImplFromJson(Map<String, dynamic> json) =>
           .map((e) => (e as num).toDouble())
           .toList(),
       fence: Fence.fromJson(json['fence'] as Map<String, dynamic>),
+      pixelCoordinates: (json['pixelCoordinates'] as List<dynamic>)
+          .map((e) => (e as num).toDouble())
+          .toList(),
     );
 
 Map<String, dynamic> _$$PrimaryImplToJson(_$PrimaryImpl instance) =>
     <String, dynamic>{
       'coordinates': instance.coordinates,
       'fence': instance.fence,
+      'pixelCoordinates': instance.pixelCoordinates,
     };
 
 _$FenceImpl _$$FenceImplFromJson(Map<String, dynamic> json) => _$FenceImpl(

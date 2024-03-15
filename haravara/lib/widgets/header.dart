@@ -6,10 +6,11 @@ import 'package:haravara/widgets/header_menu.dart';
 class Header extends StatefulWidget {
   final bool showMenu;
   final Color backGroundColor;
-
+  final bool isCenter;
   const Header({
     super.key,
     this.showMenu = true,
+    this.isCenter = false,
     this.backGroundColor = const Color.fromARGB(255, 91, 187, 75),
   });
   @override
@@ -22,69 +23,78 @@ class _HeaderState extends State<Header> {
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return Padding(
         padding: const EdgeInsets.only(top: 27).r,
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                25.horizontalSpace,
-                Image(
+        child: widget.isCenter
+            ? Center(
+                child: Image(
                   image: const AssetImage('assets/logo-haravara.png'),
                   fit: BoxFit.cover,
-                  width: 91.94.w,
-                  height: 64.h,
+                  width: 139.w,
+                  height: 96.h,
                 ),
-                60.horizontalSpace,
-                if (widget.showMenu)
-                  GestureDetector(
-                    onTap: () {
-                      ScreenRouter().routeToNextScreen(
-                          context,
-                          HeaderMenu(
-                            backGroundColor: widget.backGroundColor,
-                          ));
-                    },
-                    child: Container(
-                      height: 43.h,
-                      width: 58.w,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(14)).r,
-                        color: widget.backGroundColor,
+              )
+            : Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      25.horizontalSpace,
+                      Image(
+                        image: const AssetImage('assets/logo-haravara.png'),
+                        fit: BoxFit.cover,
+                        width: 91.94.w,
+                        height: 64.h,
                       ),
-                      child: Column(
-                        children: [
-                          8.70.verticalSpace,
-                          SizedBox(
-                            height: 3.5.h,
-                            width: 35.48.w,
-                            child: const ColoredBox(
-                              color: Colors.black,
+                      60.horizontalSpace,
+                      if (widget.showMenu)
+                        GestureDetector(
+                          onTap: () {
+                            ScreenRouter().routeToNextScreen(
+                                context,
+                                HeaderMenu(
+                                  backGroundColor: widget.backGroundColor,
+                                ));
+                          },
+                          child: Container(
+                            height: 43.h,
+                            width: 58.w,
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(14)).r,
+                              color: widget.backGroundColor,
+                            ),
+                            child: Column(
+                              children: [
+                                8.70.verticalSpace,
+                                SizedBox(
+                                  height: 3.5.h,
+                                  width: 35.48.w,
+                                  child: const ColoredBox(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                8.33.verticalSpace,
+                                SizedBox(
+                                  height: 3.5.h,
+                                  width: 35.48.w,
+                                  child: const ColoredBox(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                8.33.verticalSpace,
+                                SizedBox(
+                                  height: 3.5.h,
+                                  width: 35.48.w,
+                                  child: const ColoredBox(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          8.33.verticalSpace,
-                          SizedBox(
-                            height: 3.5.h,
-                            width: 35.48.w,
-                            child: const ColoredBox(
-                              color: Colors.black,
-                            ),
-                          ),
-                          8.33.verticalSpace,
-                          SizedBox(
-                            height: 3.5.h,
-                            width: 35.48.w,
-                            child: const ColoredBox(
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                        )
+                    ],
                   )
-              ],
-            )
-          ],
-        ));
+                ],
+              ));
   }
 }

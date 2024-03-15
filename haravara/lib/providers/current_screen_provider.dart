@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/screens/achievements.dart';
 import 'package:haravara/screens/auth.dart';
+import 'package:haravara/screens/auth_verification.dart';
 import 'package:haravara/screens/compass.dart';
 import 'package:haravara/screens/map_screen.dart';
 import 'package:haravara/screens/news_screen.dart';
@@ -15,6 +15,7 @@ enum ScreenType {
   auth,
   compass,
   achievements,
+  code,
 }
 
 Map screenTypeToWidget = <ScreenType, Widget>{
@@ -24,6 +25,7 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.compass: const Compass(),
   ScreenType.achievements: const AchievementsScreen(),
   ScreenType.auth: const AuthScreen(),
+  ScreenType.code: const AuthVerificationScreen(),
 };
 
 class CurrentScreenNotifier extends StateNotifier<ScreenType> {

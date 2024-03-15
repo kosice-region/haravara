@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/main.dart';
@@ -94,4 +96,13 @@ final pickedPlaceProvider =
     StateNotifierProvider<PickedPlaceNotifier, String>((ref) {
   final SharedPreferences pref = ref.read(sharedPreferencesProvider);
   return PickedPlaceNotifier(pref);
+});
+
+class AssetImageNotifier extends StateNotifier<File> {
+  AssetImageNotifier() : super(File('assets/places-map.jpg'));
+}
+
+final assetImageProvider =
+    StateNotifierProvider<AssetImageNotifier, File>((ref) {
+  return AssetImageNotifier();
 });

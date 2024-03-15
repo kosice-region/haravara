@@ -44,6 +44,7 @@ class Primary with _$Primary {
   const factory Primary({
     required List<double> coordinates,
     required Fence fence,
+    required List<double> pixelCoordinates,
   }) = _Primary;
 
   factory Primary.fromJson(Map<String, dynamic> json) =>

@@ -6,7 +6,7 @@ import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
 
 class NewsScreen extends ConsumerStatefulWidget {
-  const NewsScreen({Key? key}) : super(key: key);
+  const NewsScreen({super.key});
 
   @override
   ConsumerState<NewsScreen> createState() => _NewsScreenState();
@@ -18,7 +18,6 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
-    double screenHeight = MediaQuery.of(context).size.height;
 
     TextStyle textStyle = TextStyle(fontSize: 12.sp);
     double padding = 20;

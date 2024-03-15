@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/screens/google_map_second_screen.dart';
 import 'package:haravara/repositories/location_repository.dart';
+import 'package:haravara/screens/map_detail_screen.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/widgets/footer.dart';
 import 'package:haravara/widgets/header.dart';
@@ -89,7 +90,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 children: [
                   CupertinoButton(
                       onPressed: () {
-                        places.isNotEmpty ? navigateToMap() : null;
+                        // places.isNotEmpty ? navigateToMap() : null;
+                        navigateToMap();
                       },
                       color: places.isNotEmpty
                           ? const Color.fromARGB(255, 7, 179, 25)
@@ -169,30 +171,36 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   navigateToMap() {
-    calculateBoundsAndInitialCameraPosition();
-    if (Platform.isAndroid) {
-      Navigator.push(
+    //   calculateBoundsAndInitialCameraPosition();
+    //   if (Platform.isAndroid) {
+    //     Navigator.push(
+    //       context,
+    //       PageTransition(
+    //         type: PageTransitionType.scale,
+    //         alignment: Alignment.bottomCenter,
+    //         duration: const Duration(seconds: 1),
+    //         child: GoogleMapSecondScreen(
+    //           cameraPosition: cameraPosition,
+    //           cameraTargetBounds: bounds,
+    //         ),
+    //       ),
+    //     );
+    //   } else {
+    //     Navigator.push(
+    //       context,
+    //       CupertinoPageRoute(
+    //         builder: (context) => GoogleMapSecondScreen(
+    //           cameraPosition: cameraPosition,
+    //           cameraTargetBounds: bounds,
+    //         ),
+    //       ),
+    //     );
+    //   }
+    print('123');
+    Navigator.push(
         context,
-        PageTransition(
-          type: PageTransitionType.scale,
-          alignment: Alignment.bottomCenter,
-          duration: const Duration(seconds: 1),
-          child: GoogleMapSecondScreen(
-            cameraPosition: cameraPosition,
-            cameraTargetBounds: bounds,
-          ),
-        ),
-      );
-    } else {
-      Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => GoogleMapSecondScreen(
-            cameraPosition: cameraPosition,
-            cameraTargetBounds: bounds,
-          ),
-        ),
-      );
-    }
+        MaterialPageRoute(
+          builder: (context) => const MapDetailScreen(),
+        ));
   }
 }
