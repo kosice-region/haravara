@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:haravara/models/auth_state.dart';
 import 'package:haravara/main.dart';
 import 'package:haravara/models/setup_model.dart';
 import 'package:haravara/models/user.dart';
@@ -75,4 +76,33 @@ final setupNotifierProvider =
     StateNotifierProvider<SetupNotifier, SetupModel>((ref) {
   final SharedPreferences pref = ref.read(sharedPreferencesProvider);
   return SetupNotifier(pref);
+});
+
+class AuthNotifier extends StateNotifier<AuthState> {
+  AuthNotifier() : super(AuthState());
+
+  void updateCode(String code) {
+    state = state.copyWith(code: code);
+  }
+
+  void setEnteredUsername(String? username) {
+    state = state.copyWith(enteredUsername: username);
+  }
+
+  void setEnteredEmail(String? email) {
+    state = state.copyWith(enteredEmail: email);
+  }
+
+  void setUserId(String? id) {
+    state = state.copyWith();
+  }
+
+  void toggleLoginState(bool newState) {
+    state = state.copyWith(isLogin: newState);
+  }
+}
+
+final authNotifierProvider =
+    StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+  return AuthNotifier();
 });

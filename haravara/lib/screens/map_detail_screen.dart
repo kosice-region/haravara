@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,7 +11,6 @@ import 'package:haravara/services/event_bus.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/services/screen_router.dart';
 import 'package:haravara/widgets/map_marker.dart';
-import 'package:vector_math/vector_math_64.dart' as vector;
 
 class MapDetailScreen extends ConsumerStatefulWidget {
   const MapDetailScreen({super.key});
@@ -55,9 +53,10 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
             TextStyle textStyle = TextStyle(fontSize: 15.sp);
             double padding = 20;
             double maxWidth = 224.w - padding * 1.4;
-
+            String lengthOfDescription = pickedLocation.detail.description;
+            String lengthOfTitle = pickedLocation.name;
             Size textSize = calculateTextSize(
-                pickedLocation.detail.description, textStyle, maxWidth);
+                lengthOfTitle + lengthOfDescription, textStyle, maxWidth);
 
             double containerHeight = textSize.height + padding * 7;
             return Container(

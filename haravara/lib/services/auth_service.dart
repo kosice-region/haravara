@@ -90,7 +90,7 @@ class AuthService {
     return code;
   }
 
-  Future<String> sendEmail(BuildContext context) async {
+  Future<String> sendEmail(BuildContext context, String email) async {
     String code = await generateRandomNumbers();
     String username = 'asusnik241201@gmail.com';
     String password = 'vaqr tmcn ecgy rksf';
@@ -99,7 +99,7 @@ class AuthService {
 
     final message = Message()
           ..from = Address(username, 'Danil Zdoryk')
-          ..recipients.add('danilzdoryk@gmail.com')
+          ..recipients.add(email)
           // ..ccRecipients.addAll(['abc@gmail.com', 'xyz@gmail.com']) // For Adding Multiple Recipients
           // ..bccRecipients.add(Address('a@gmail.com')) For Binding Carbon Copy of Sent Email
           ..subject = 'Mail from Mailer'

@@ -50,25 +50,17 @@ class HeaderMenu extends ConsumerWidget {
               top: 60.h,
               right: 30.w,
               child: Container(
-                width: 39.w,
-                height: 39.h,
+                width: 36.w,
+                height: 36.h,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(50)).r,
-                  color: backGroundColor,
-                  boxShadow: [
-                    BoxShadow(
-                      color: backGroundColor.withOpacity(1),
-                      spreadRadius: 8,
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+                  color: Colors.red,
                 ),
                 child: IconButton(
-                  icon: const Icon(
-                    Icons.close,
-                    color: Colors.black,
-                    size: 24,
+                  icon: Icon(
+                    Icons.clear_outlined,
+                    color: Colors.white,
+                    size: 13.dg,
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
