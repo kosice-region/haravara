@@ -31,7 +31,7 @@ class Init {
 
   static _firstSetup(WidgetRef ref, SetupModel model) async {
     print('1');
-    // await _requestLocationPermission();
+    await _requestLocationPermission();
     print('2');
     await placesService.savePlacesLocally();
     model.isFirstSetup = false;
@@ -42,7 +42,7 @@ class Init {
   }
 
   static _defaultSetup(WidgetRef ref) async {
-    // await _requestLocationPermission();
+    await _requestLocationPermission();
     final List<Place> places = await placesService.loadPlaces();
     final Set<Marker> markers = await mapService.getMarkers(places);
     ref.read(placesProvider.notifier).addPlaces(places);
