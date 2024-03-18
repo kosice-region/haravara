@@ -31,7 +31,7 @@ class Init {
 
   static _firstSetup(WidgetRef ref, SetupModel model) async {
     print('1');
-    await _requestLocationPermission();
+    // await _requestLocationPermission();
     print('2');
     await placesService.savePlacesLocally();
     model.isFirstSetup = false;

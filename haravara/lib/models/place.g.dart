@@ -14,6 +14,7 @@ _$PlaceImpl _$$PlaceImplFromJson(Map<String, dynamic> json) => _$PlaceImpl(
       geoData: GeoData.fromJson(json['geoData'] as Map<String, dynamic>),
       name: json['name'] as String,
       updated: json['updated'] as int,
+      isReached: json['isReached'] ?? false,
       placeImages: json['placeImages'] == null
           ? null
           : PlaceImageFromDB.fromJson(
@@ -29,6 +30,7 @@ Map<String, dynamic> _$$PlaceImplToJson(_$PlaceImpl instance) =>
       'geoData': instance.geoData,
       'name': instance.name,
       'updated': instance.updated,
+      'isReached': instance.isReached,
       'placeImages': instance.placeImages,
     };
 

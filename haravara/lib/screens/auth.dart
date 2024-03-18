@@ -304,6 +304,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     List<String> deviceInfo = await authService.getDeviceDetails();
     User user = await authService.getUserById(userId);
     if (user.phones.contains(deviceInfo[0])) {
+      ref.read(currentScreenProvider.notifier).changeScreen(ScreenType.news);
       ref
           .read(loginNotifierProvider.notifier)
           .login(user.username, user.email!, user.id!);
@@ -332,6 +333,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   onSendCode() async {
     final sentCode = await authService.sendEmail(context, _enteredEmail);
+    ref.read(currentScreenProvider.notifier).changeScreen(ScreenType.code);
     authNotifier.updateCode(sentCode);
     routeToCodeScreen();
   }
@@ -342,7 +344,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void routeToNewsScreen() {
+  void routeToNewsScreen() async {
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
         context, ScreenRouter().getScreenWidget(ScreenType.news));
   }

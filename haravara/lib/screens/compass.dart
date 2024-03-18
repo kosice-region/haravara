@@ -94,9 +94,7 @@ class _CompassState extends ConsumerState<Compass> {
         calculateCompassDirection(heading ?? 0, bearingToTarget ?? 0);
 
     return Scaffold(
-      endDrawer: const HeaderMenu(
-        backGroundColor: Color.fromARGB(255, 70, 68, 205),
-      ),
+      endDrawer: const HeaderMenu(),
       body: Stack(
         children: [
           Image.asset(
@@ -110,7 +108,9 @@ class _CompassState extends ConsumerState<Compass> {
             padding: const EdgeInsets.only(top: 8).h,
             child: Column(
               children: [
-                const Header(backGroundColor: Color.fromARGB(255, 70, 68, 205)),
+                const Header(
+                    backButton: true,
+                    backGroundColor: Color.fromARGB(255, 22, 102, 177)),
                 40.verticalSpace,
                 Container(
                   width: 230.w,

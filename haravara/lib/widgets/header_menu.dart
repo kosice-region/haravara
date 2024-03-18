@@ -5,14 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/providers/current_screen_provider.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
+import 'package:haravara/services/places_service.dart';
 import 'package:haravara/services/screen_router.dart';
+import 'package:provider/provider.dart';
 
 class HeaderMenu extends ConsumerWidget {
-  const HeaderMenu(
-      {super.key,
-      this.backGroundColor = const Color.fromARGB(255, 91, 187, 75)});
-
-  final Color backGroundColor;
+  const HeaderMenu({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,15 +37,13 @@ class HeaderMenu extends ConsumerWidget {
                     ScreenType.achievements, ref),
                 menuItem(context, 'SUTAZE', 'assets/menu-icons/calendar.png',
                     ScreenType.summary, ref),
-                menuItem(context, 'COMPASS', 'assets/menu-icons/steps.png',
-                    ScreenType.compass, ref),
                 menuItem(context, 'ODHLASIT SA', 'assets/menu-icons/steps.png',
                     ScreenType.auth, ref),
               ],
             ),
           ),
           Positioned(
-              top: 60.h,
+              top: 80.h,
               right: 30.w,
               child: Container(
                 width: 36.w,
@@ -81,7 +77,7 @@ class HeaderMenu extends ConsumerWidget {
         height: 38.h,
         child: TextButton(
           style: TextButton.styleFrom(
-            backgroundColor: backGroundColor,
+            backgroundColor: const Color.fromARGB(255, 91, 187, 75),
             shape: RoundedRectangleBorder(
               borderRadius: const BorderRadius.all(Radius.circular(10)).w,
             ),
@@ -145,6 +141,7 @@ class HeaderMenu extends ConsumerWidget {
   handleLogout(WidgetRef ref, context) async {
     ref.read(loginNotifierProvider.notifier).logout();
     ref.read(richedPlacesProvider.notifier).deleteAllPlaces();
+    await PlacesService().clearRichedPlaces();
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
         context, ScreenRouter().getScreenWidget(ScreenType.auth));
   }

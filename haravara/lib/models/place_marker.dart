@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:ui' as ui;
 
@@ -34,8 +36,9 @@ class PlaceMarker extends Marker {
     required LatLng position,
     required InfoWindow infoWindow,
     required void Function(Marker) onTapAction,
+    required int width,
   }) async {
-    Future getBytesFromAsset(int width) async {
+    Future getBytesFromAsset() async {
       ByteData data = await rootBundle.load(_defaultIconPath);
       ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
           targetWidth: width);
@@ -45,7 +48,7 @@ class PlaceMarker extends Marker {
           .asUint8List();
     }
 
-    final Uint8List markerIcon = await getBytesFromAsset(120);
+    final Uint8List markerIcon = await getBytesFromAsset();
 
     return PlaceMarker._(
         markerID: markerID,

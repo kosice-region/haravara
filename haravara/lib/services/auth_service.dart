@@ -44,7 +44,6 @@ class AuthService {
     List<String> phoneDetail = await getDeviceDetails();
     final userId = await findUserByEmail(enteredEmail);
     User? user = await getUserById(userId);
-
     if (user != null) {
       User updatedUser =
           user.copyWith(phones: [...user.phones, phoneDetail[0]]);
@@ -98,28 +97,19 @@ class AuthService {
     final smtpServer = gmail(username, password);
 
     final message = Message()
-          ..from = Address(username, 'Danil Zdoryk')
-          ..recipients.add(email)
-          // ..ccRecipients.addAll(['abc@gmail.com', 'xyz@gmail.com']) // For Adding Multiple Recipients
-          // ..bccRecipients.add(Address('a@gmail.com')) For Binding Carbon Copy of Sent Email
-          ..subject = 'Mail from Mailer'
-          ..text =
-              'Hello, thanks for register in our application.\n Your code is $code'
-        // ..html = "<h1>Test</h1>\n<p>Hey! Here's some HTML content</p>"; // For Adding Html in email
-        // ..attachments = [
-        //   FileAttachment(File('image.png'))  //For Adding Attachments
-        //     ..location = Location.inline
-        //     ..cid = '<myimg@3.141>'
-        // ]
-        ;
+      ..from = Address(username, 'Danil Zdoryk')
+      ..recipients.add(email)
+      ..subject = 'Mail from Mailer'
+      ..text =
+          'Hello, thanks for register in our application.\n Your code is $code';
 
     try {
       final sendReport = await send(message, smtpServer);
-      print('Message sent: $sendReport');
+      print('$code Message sent: $sendReport');
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Mail Send Successfully")));
     } on MailerException catch (e) {
-      print('Message not sent.');
+      print('Message not sent. $code');
       print(e.message);
       for (var p in e.problems) {
         print('Problem: ${p.code}: ${p.msg}');

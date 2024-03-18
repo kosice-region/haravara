@@ -48,6 +48,7 @@ class MapService {
         PlaceMarker.createWithDefaultIcon(
           markerID: place.id.toString(),
           position: primaryPos,
+          width: 80,
           infoWindow: InfoWindow(
             title: place.name,
             snippet: place.detail.description,
@@ -162,7 +163,7 @@ class MapService {
     return results;
   }
 
-  lauchMap(context, Place place) async {
+  launchMap(BuildContext context, Place place) async {
     mapLauncher.MapType map = mapLauncher.MapType.apple;
     bool isMapSelected = true;
 
@@ -197,9 +198,11 @@ class MapService {
           ),
         ),
       );
+    } else if (Platform.isAndroid) {
+      map = mapLauncher.MapType.google;
     }
     if (isMapSelected) {
-      await mapLauncher.MapLauncher.showMarker(
+      await MapLauncher.showMarker(
         mapType: map,
         coords: Coords(place.geoData.primary.coordinates[0],
             place.geoData.primary.coordinates[1]),

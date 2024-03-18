@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cupertino_modal_sheet/cupertino_modal_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,10 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/providers/map_providers.dart';
-import 'package:haravara/screens/google_map_second_screen.dart';
-import 'package:haravara/repositories/location_repository.dart';
 import 'package:haravara/screens/map_detail_screen.dart';
-import 'package:haravara/services/map_service.dart';
 import 'package:haravara/widgets/footer.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:flutter/cupertino.dart';
@@ -148,59 +144,24 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 
-  calculateBoundsAndInitialCameraPosition() async {
-    var places = ref.watch(placesProvider);
-    List<LatLng> latlng = [];
-    for (var place in places) {
-      latlng.add(LatLng(place.geoData.primary.coordinates[0],
-          place.geoData.primary.coordinates[1]));
-    }
-    final latLngBounds = MapService().findBounds(latlng);
-    final cameraPosition = MapService().calculateInitialCameraPosition(latlng);
-    this.cameraPosition = cameraPosition;
-    bounds = latLngBounds;
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        cameraPosition,
-      ),
-    );
-    controller.animateCamera(
-      CameraUpdate.newLatLngBounds(latLngBounds, 2),
-    );
-  }
-
   navigateToMap() {
-    //   calculateBoundsAndInitialCameraPosition();
-    //   if (Platform.isAndroid) {
-    //     Navigator.push(
-    //       context,
-    //       PageTransition(
-    //         type: PageTransitionType.scale,
-    //         alignment: Alignment.bottomCenter,
-    //         duration: const Duration(seconds: 1),
-    //         child: GoogleMapSecondScreen(
-    //           cameraPosition: cameraPosition,
-    //           cameraTargetBounds: bounds,
-    //         ),
-    //       ),
-    //     );
-    //   } else {
-    //     Navigator.push(
-    //       context,
-    //       CupertinoPageRoute(
-    //         builder: (context) => GoogleMapSecondScreen(
-    //           cameraPosition: cameraPosition,
-    //           cameraTargetBounds: bounds,
-    //         ),
-    //       ),
-    //     );
-    //   }
-    print('123');
-    Navigator.push(
+    if (Platform.isAndroid) {
+      Navigator.push(
         context,
-        MaterialPageRoute(
+        PageTransition(
+          type: PageTransitionType.scale,
+          alignment: Alignment.bottomCenter,
+          duration: const Duration(seconds: 1),
+          child: const MapDetailScreen(),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        CupertinoPageRoute(
           builder: (context) => const MapDetailScreen(),
-        ));
+        ),
+      );
+    }
   }
 }

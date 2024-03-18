@@ -21,19 +21,18 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2), // Duration of the animation
+      duration: const Duration(seconds: 2),
     );
 
     _fadeAnimation =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
 
-    _animationController.forward(); // Start the animation
+    _animationController.forward();
   }
 
   @override
   void dispose() {
-    _animationController
-        .dispose(); // Dispose the controller when the widget is removed
+    _animationController.dispose();
     super.dispose();
   }
 

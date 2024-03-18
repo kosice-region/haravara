@@ -33,6 +33,7 @@ Future<Database> _getDatabase() async {
            created INTEGER,
            updated INTEGER,
            active INTEGER,
+           isReached INTEGER,
            description TEXT,
            radius INTEGER,
            lat_primary REAL,
@@ -53,7 +54,6 @@ class PlacesService {
     Directory appDocDir = await _getDirectory();
     await _downloadLocationDataFromStorage(places);
     final db = await _getDatabase();
-    print(places);
     for (final place in places) {
       await db.insert(
         'places',
@@ -63,6 +63,7 @@ class PlacesService {
           'created': place.created,
           'updated': place.updated,
           'active': place.active ? 1 : 0,
+          'isReached': 0,
           'description': place.detail.description,
           'radius': place.geoData.primary.fence.radius,
           'lat_primary': place.geoData.primary.coordinates[0],
@@ -106,9 +107,36 @@ class PlacesService {
   Future<void> getCollectedPlacesByUser(String id) async {
     final collectedPlaces =
         await locationRepository.getCollectedPlacesByUser(id);
+    await setRichedPlaces(collectedPlaces);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList('collectedPlaces', collectedPlaces);
     prefs.reload();
+  }
+
+  Future<void> setRichedPlaces(List<String> placeIds) async {
+    final db = await _getDatabase();
+    for (String placeId in placeIds) {
+      await db.update(
+        'places',
+        {'isReached': 1},
+        where: 'id = ?',
+        whereArgs: [placeId],
+      );
+    }
+    final places = await loadPlaces();
+    for (var place in places) {
+      if (place.isReached) {
+        print('1 place ${place.name} isReached = ${place.isReached}');
+      }
+    }
+  }
+
+  Future<void> clearRichedPlaces() async {
+    final db = await _getDatabase();
+    await db.update(
+      'places',
+      {'isReached': 0},
+    );
   }
 
   Future<List<Place>> loadPlaces() async {
@@ -129,7 +157,6 @@ class PlacesService {
           ],
         ),
       );
-
       Detail detail = Detail(description: row['description'] as String);
       PlaceImageFromDB images = PlaceImageFromDB(
           location: row['location_path'] as String,
@@ -139,6 +166,7 @@ class PlacesService {
       return Place(
         id: row['id'] as String,
         active: row['active'] == 1,
+        isReached: row['isReached'] == 1,
         created: row['created'] as int,
         detail: detail,
         geoData: geoData,

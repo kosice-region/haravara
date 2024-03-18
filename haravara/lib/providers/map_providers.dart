@@ -4,13 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/main.dart';
 import 'package:haravara/models/place.dart';
+import 'package:haravara/services/places_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PlacesNotifier extends StateNotifier<List<Place>> {
   PlacesNotifier() : super([]);
 
   void addPlaces(List<Place> places) {
-    state = [...state, ...places];
+    state = [...places];
   }
 
   Place getPlaceById(String id) {
@@ -18,11 +19,33 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
       (place) => place.id == id,
     );
   }
+
+  List<Place> getSortedPlaces(bool sortForward) {
+    List<Place> reachedPlaces = [];
+    List<Place> unreachedPlaces = [];
+    for (var place in state) {
+      print('place ${place.name} is Reached ${place.isReached}');
+      if (place.isReached) {
+        reachedPlaces.add(place);
+      } else {
+        unreachedPlaces.add(place);
+      }
+    }
+    if (sortForward) {
+      return [...reachedPlaces, ...unreachedPlaces];
+    } else {
+      return [...unreachedPlaces, ...reachedPlaces];
+    }
+  }
 }
 
 final placesProvider =
     StateNotifierProvider<PlacesNotifier, List<Place>>((ref) {
   return PlacesNotifier();
+});
+
+final placesFutureProvider = FutureProvider<List<Place>>((ref) async {
+  return await PlacesService().loadPlaces();
 });
 
 class MarkersNotifier extends StateNotifier<Set<Marker>> {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/providers/map_providers.dart';
+import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
 
@@ -15,6 +17,23 @@ class NewsScreen extends ConsumerStatefulWidget {
 class _NewsScreenState extends ConsumerState<NewsScreen> {
   String text =
       'Vedeli ste, že tam sa skrýva to a tam je postavené zase tamto? Predstavíme vám tie najkrajšie miesta a atrakcie v Košickom kraji, kde sa zabavia malí aj veľkí.';
+
+  @override
+  void initState() {
+    super.initState();
+    initPlaces();
+  }
+
+  initPlaces() async {
+    final places = await PlacesService().loadPlaces();
+    ref.read(placesProvider.notifier).addPlaces(places);
+    for (var place in places) {
+      if (place.isReached) {
+        print('2 place ${place.name} isReached = ${place.isReached}');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));

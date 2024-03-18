@@ -56,7 +56,10 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
             String lengthOfDescription = pickedLocation.detail.description;
             String lengthOfTitle = pickedLocation.name;
             Size textSize = calculateTextSize(
-                lengthOfTitle + lengthOfDescription, textStyle, maxWidth);
+                chooseBetterStringToCalculate(
+                    lengthOfTitle, lengthOfDescription),
+                textStyle,
+                maxWidth);
 
             double containerHeight = textSize.height + padding * 7;
             return Container(
@@ -69,80 +72,83 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                   topRight: Radius.circular(15.r),
                 ),
               ),
-              child: Column(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      5.verticalSpace,
-                      Container(
-                        width: 35.w,
-                        height: 3.h,
-                        decoration: const BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15),
-                          ),
-                        ),
-                      ),
-                      15.verticalSpace,
-                      Text(
-                        pickedLocation.name,
-                        style: GoogleFonts.titanOne(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w400,
-                            color: const Color.fromARGB(255, 51, 206, 242)),
-                        textAlign: TextAlign.center,
-                      ),
-                      8.verticalSpace,
-                      Text(
-                        pickedLocation.detail.description,
-                        style: GoogleFonts.titanOne(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w400,
-                            color: const Color.fromARGB(255, 33, 173, 4)),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                  10.verticalSpace,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15.w),
-                        child: SizedBox(
-                          width: 100.w,
-                          height: 100.h,
-                          child: ClipRRect(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15.r)),
-                            child: Image.file(
-                              File(pickedLocation.placeImages!.location),
-                              fit: BoxFit.cover,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        5.verticalSpace,
+                        Container(
+                          width: 35.w,
+                          height: 3.h,
+                          decoration: const BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15),
                             ),
                           ),
                         ),
-                      ),
-                      10.horizontalSpace,
-                      Column(
-                        children: [
-                          _LocalButton(
-                              name: 'Navigovat\'',
-                              onPressed: () {
-                                MapService().lauchMap(context, pickedLocation);
-                              }),
-                          14.verticalSpace,
-                          _LocalButton(
-                              name: 'Pouzit\'',
-                              onPressed: () {
-                                routeToCompassScreen();
-                              }),
-                        ],
-                      )
-                    ],
-                  ),
-                ],
+                        15.verticalSpace,
+                        Text(
+                          pickedLocation.name,
+                          style: GoogleFonts.titanOne(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w400,
+                              color: const Color.fromARGB(255, 51, 206, 242)),
+                          textAlign: TextAlign.center,
+                        ),
+                        8.verticalSpace,
+                        Text(
+                          pickedLocation.detail.description,
+                          style: GoogleFonts.titanOne(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                              color: const Color.fromARGB(255, 33, 173, 4)),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                    10.verticalSpace,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15.w),
+                          child: SizedBox(
+                            width: 100.w,
+                            height: 100.h,
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15.r)),
+                              child: Image.file(
+                                File(pickedLocation.placeImages!.location),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                        10.horizontalSpace,
+                        Column(
+                          children: [
+                            _LocalButton(
+                                name: 'Navigovat\'',
+                                onPressed: () {
+                                  MapService()
+                                      .launchMap(context, pickedLocation);
+                                }),
+                            14.verticalSpace,
+                            _LocalButton(
+                                name: 'Pouzit\'',
+                                onPressed: () {
+                                  routeToCompassScreen();
+                                }),
+                          ],
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -235,7 +241,8 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                   color: Colors.black,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+                      context, ScreenRouter().getScreenWidget(ScreenType.map));
                 },
               ),
             ),
@@ -261,6 +268,13 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     )..layout(minWidth: 0, maxWidth: maxWidth);
 
     return textPainter.size;
+  }
+
+  String chooseBetterStringToCalculate(String firstText, String secondText) {
+    if (firstText.length > secondText.length) {
+      return firstText;
+    }
+    return secondText;
   }
 }
 

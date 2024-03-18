@@ -125,7 +125,7 @@ class _GoogleMapSecondScreenState extends ConsumerState<GoogleMapSecondScreen> {
                           _LocalButton(
                               name: 'Navigovat\'',
                               onPressed: () {
-                                MapService().lauchMap(context, pickedLocation);
+                                MapService().launchMap(context, pickedLocation);
                               }),
                           14.verticalSpace,
                           _LocalButton(

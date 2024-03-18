@@ -14,6 +14,7 @@ class Place with _$Place {
     required GeoData geoData,
     required String name,
     required int updated,
+    @Default(false) isReached,
     PlaceImageFromDB? placeImages,
   }) = _Place;
 
