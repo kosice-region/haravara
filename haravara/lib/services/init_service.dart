@@ -42,7 +42,7 @@ class Init {
   }
 
   static _defaultSetup(WidgetRef ref) async {
-    await _requestLocationPermission();
+    // await _requestLocationPermission();
     final List<Place> places = await placesService.loadPlaces();
     final Set<Marker> markers = await mapService.getMarkers(places);
     ref.read(placesProvider.notifier).addPlaces(places);

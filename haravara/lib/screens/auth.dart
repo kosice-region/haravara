@@ -32,11 +32,19 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   bool isInputByPhoneNumber = false;
   late String code;
   late AuthNotifier authNotifier;
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _usernameFocusNode = FocusNode();
 
   @override
   void initState() {
     authNotifier = ref.read(authNotifierProvider.notifier);
+    _emailFocusNode.addListener(_onFocusChange);
+    _usernameFocusNode.addListener(_onFocusChange);
     super.initState();
+  }
+
+  void _onFocusChange() {
+    setState(() {});
   }
 
   void _submitAndValidate() async {
@@ -127,6 +135,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                   width: 166.w,
                                   child: TextFormField(
                                     controller: _emailController,
+                                    focusNode: _emailFocusNode,
                                     autocorrect: false,
                                     keyboardType: TextInputType.emailAddress,
                                     textCapitalization: TextCapitalization.none,
@@ -134,21 +143,25 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                         color: Color.fromARGB(255, 0, 0, 0),
                                         fontWeight: FontWeight.bold),
                                     decoration: InputDecoration(
-                                      label: Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 15).r,
-                                        child: Center(
-                                          child: Text(
-                                            'E-MAIL PÁTRAČA',
-                                            style: GoogleFonts.titanOne(
-                                              color: const Color.fromARGB(
-                                                  255, 86, 162, 73),
-                                              fontWeight: FontWeight.w300,
-                                              fontSize: 11.sp,
+                                      label: _emailFocusNode.hasFocus ||
+                                              _emailController.text.isNotEmpty
+                                          ? null
+                                          : Padding(
+                                              padding:
+                                                  const EdgeInsets.only(top: 15)
+                                                      .r,
+                                              child: Center(
+                                                child: Text(
+                                                  'E-MAIL PÁTRAČA',
+                                                  style: GoogleFonts.titanOne(
+                                                    color: const Color.fromARGB(
+                                                        255, 86, 162, 73),
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 11.sp,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      ),
                                       enabledBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
                                           color: const Color.fromARGB(
@@ -171,6 +184,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                     width: 166.w,
                                     child: TextFormField(
                                       controller: _usernameController,
+                                      focusNode: _usernameFocusNode,
                                       autocorrect: true,
                                       keyboardType: TextInputType.name,
                                       textCapitalization:
@@ -179,20 +193,27 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                           color: Color.fromARGB(255, 0, 0, 0),
                                           fontWeight: FontWeight.bold),
                                       decoration: InputDecoration(
-                                        label: Padding(
-                                          padding: EdgeInsets.only(top: 15.w),
-                                          child: Center(
-                                            child: Text(
-                                              'POUŽÍVATEĽSKÉ MENO',
-                                              style: GoogleFonts.titanOne(
-                                                color: const Color.fromARGB(
-                                                    255, 86, 162, 73),
-                                                fontWeight: FontWeight.w300,
-                                                fontSize: 11.sp,
+                                        label: _usernameFocusNode.hasFocus ||
+                                                _usernameController
+                                                    .text.isNotEmpty
+                                            ? null
+                                            : Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 15.w),
+                                                child: Center(
+                                                  child: Text(
+                                                    'POUŽÍVATEĽSKÉ MENO',
+                                                    style: GoogleFonts.titanOne(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255, 86, 162, 73),
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      fontSize: 11.sp,
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        ),
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
                                             color: const Color.fromARGB(
@@ -352,5 +373,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   void routeToCodeScreen() {
     ScreenRouter().routeToNextScreen(
         context, ScreenRouter().getScreenWidget(ScreenType.code));
+  }
+
+  @override
+  void dispose() {
+    // Очищаем FocusNode при уничтожении виджета
+    _emailFocusNode.dispose();
+    _usernameFocusNode.dispose();
+    super.dispose();
   }
 }
