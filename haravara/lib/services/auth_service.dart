@@ -71,11 +71,11 @@ class AuthService {
     final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       var build = await deviceInfoPlugin.androidInfo;
-      return [build.id, 'Android']; //UUID for Android
+      return [build.id, 'Android'];
     } else if (Platform.isIOS) {
       var data = await deviceInfoPlugin.iosInfo;
 
-      return [data.identifierForVendor!, 'IOS']; // UUID for IOS
+      return [data.identifierForVendor!, 'IOS'];
     }
     return ['empty'];
   }
