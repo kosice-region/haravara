@@ -10,6 +10,7 @@ import 'package:haravara/repositories/location_repository.dart';
 import 'package:haravara/screens/auth.dart';
 import 'package:haravara/services/init_service.dart';
 import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 import 'dart:math';
 
@@ -91,17 +92,14 @@ class AuthService {
 
   Future<String> sendEmail(BuildContext context, String email) async {
     String code = await generateRandomNumbers();
-    String username = 'asusnik241201@gmail.com';
-    String password = 'vaqr tmcn ecgy rksf';
-
-    final smtpServer = gmail(username, password);
-
+    //asusnik241204@gmail.com
+    final smtpServer = SmtpServer('smtp.m1.websupport.sk',
+        username: 'users@haravara.sk', password: 'H4r4v4r4!808');
     final message = Message()
-      ..from = Address(username, 'Danil Zdoryk')
+      ..from = const Address('users@haravara.sk', 'Haravara')
       ..recipients.add(email)
-      ..subject = 'Mail from Mailer'
-      ..text =
-          'Hello, thanks for register in our application.\n Your code is $code';
+      ..subject = 'Haravara Code'
+      ..text = 'Hello thanks for using Haravara,\n Your code is $code';
 
     try {
       final sendReport = await send(message, smtpServer);

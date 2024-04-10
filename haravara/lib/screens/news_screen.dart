@@ -29,7 +29,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     ref.read(placesProvider.notifier).addPlaces(places);
     for (var place in places) {
       if (place.isReached) {
-        print('2 place ${place.name} isReached = ${place.isReached}');
+        print('2 place ${place.name} is Collected = ${place.isReached}');
       }
     }
   }

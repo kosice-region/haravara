@@ -24,7 +24,6 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
     List<Place> reachedPlaces = [];
     List<Place> unreachedPlaces = [];
     for (var place in state) {
-      print('place ${place.name} is Reached ${place.isReached}');
       if (place.isReached) {
         reachedPlaces.add(place);
       } else {

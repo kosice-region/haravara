@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/models/place.dart';
 import 'package:haravara/providers/map_providers.dart';
+import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/achievement.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
@@ -20,7 +22,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
   final List<String> viewItems = ['2x2', '3x3'];
   String? selectedValueSort = 'Opened first';
   String? selectedValueView = '2x2';
-
+  late List<Place> places;
   @override
   void initState() {
     // TODO: implement initState

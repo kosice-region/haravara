@@ -6,6 +6,7 @@ import 'package:haravara/models/place.dart';
 import 'package:haravara/models/setup_model.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
+import 'package:haravara/repositories/location_repository.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/services/places_service.dart';
 
@@ -16,7 +17,6 @@ class Init {
   static initialize(WidgetRef ref) async {
     print("starting registering services");
     SetupModel model = ref.watch(setupNotifierProvider);
-    print(model);
     if (model.isFirstSetup) {
       print('first setup');
       await _firstSetup(ref, model);
@@ -24,8 +24,6 @@ class Init {
       print('isnt first');
       await _defaultSetup(ref);
     }
-    final test = ref.watch(loginNotifierProvider);
-    print(test);
     print("finished registering services");
   }
 
@@ -51,7 +49,6 @@ class Init {
 
   static _requestLocationPermission() async {
     LocationPermission permission;
-
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -59,12 +56,10 @@ class Init {
         return Future.error('Location permissions are denied');
       }
     }
-
     if (permission == LocationPermission.deniedForever) {
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
     }
-    return Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    return Geolocator.getCurrentPosition();
   }
 }

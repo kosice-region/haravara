@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -73,7 +75,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
     var deviceHeight = MediaQuery.of(context).size.height;
-    var registrationHeight = 140;
+    var registrationHeight = 145;
     var loginHeight = 110;
     if (deviceHeight < 850) {
       registrationHeight = 160;
@@ -83,7 +85,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       registrationHeight = 180;
       loginHeight = 140;
     }
-    print(deviceHeight);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Padding(

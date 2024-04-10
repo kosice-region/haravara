@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -104,6 +105,21 @@ class PlacesService {
     }
   }
 
+  Future<void> addPlaceToCollectedByUser(String id) async {
+    await locationRepository.addCollectedPlaceForUser(id);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var collectedPlaces = prefs.getStringList('collectedPlaces');
+    await clearRichedPlaces();
+    if (collectedPlaces == null) {
+      setRichedPlaces([id]);
+      return;
+    }
+    collectedPlaces = [...collectedPlaces, id];
+    setRichedPlaces(collectedPlaces);
+    prefs.setStringList('collectedPlaces', collectedPlaces);
+    await prefs.reload();
+  }
+
   Future<void> getCollectedPlacesByUser(String id) async {
     final collectedPlaces =
         await locationRepository.getCollectedPlacesByUser(id);
@@ -124,11 +140,6 @@ class PlacesService {
       );
     }
     final places = await loadPlaces();
-    for (var place in places) {
-      if (place.isReached) {
-        print('1 place ${place.name} isReached = ${place.isReached}');
-      }
-    }
   }
 
   Future<void> clearRichedPlaces() async {
