@@ -92,7 +92,6 @@ class AuthService {
 
   Future<String> sendEmail(BuildContext context, String email) async {
     String code = await generateRandomNumbers();
-    //asusnik241204@gmail.com
     final smtpServer = SmtpServer('smtp.m1.websupport.sk',
         username: 'users@haravara.sk', password: 'H4r4v4r4!808');
     final message = Message()

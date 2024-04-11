@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,7 +35,7 @@ class Compass extends ConsumerStatefulWidget {
   ConsumerState<Compass> createState() => _CompassState();
 }
 
-class _CompassState extends ConsumerState<Compass> {
+class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
   bool isPlaceReached = false;
   double? heading;
   double? bearingToTarget;
@@ -65,6 +66,7 @@ class _CompassState extends ConsumerState<Compass> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initializeCompass();
     _initializeLocationStream();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -77,6 +79,30 @@ class _CompassState extends ConsumerState<Compass> {
       _geofenceService.addStreamErrorListener(_onError);
       _geofenceService.start(_geofenceList).catchError(_onError);
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        log("app in resumed");
+        FlutterBackgroundService().invoke('stopSerice');
+        FlutterBackgroundService().invoke('setAsForeground');
+        break;
+      case AppLifecycleState.inactive:
+        log("app in inactive");
+        break;
+      case AppLifecycleState.paused:
+        log("app in paused");
+        FlutterBackgroundService().invoke('setAsBackground');
+        break;
+      case AppLifecycleState.detached:
+        log("app in detached");
+        break;
+      case AppLifecycleState.hidden:
+        log('app is hidden');
+        break;
+    }
   }
 
   Future<void> _onGeofenceStatusChanged(
@@ -135,8 +161,7 @@ class _CompassState extends ConsumerState<Compass> {
       NotificationService().sendNotification('Gratulujeme',
           'Dosiahli ste miesto, prejdite do aplikácie a získajte odmenu');
       _geofenceService.pause();
-      log(pickedPlace.id!);
-      await placesService.addPlaceToCollectedByUser(pickedPlace.id!);
+      // await placesService.addPlaceToCollectedByUser(pickedPlace.id!);
     } else {
       NotificationService().sendNotification('Pozor',
           'Zostáva už len trochu, choď ${distance.toStringAsFixed(0)} metrov a získaj odmenu.');
@@ -164,20 +189,7 @@ class _CompassState extends ConsumerState<Compass> {
     print('ErrorCode: $errorCode');
   }
 
-  final _geofenceList = <Geofence>[
-    Geofence(
-      id: 'place_1',
-      latitude: 48.697555117540226,
-      longitude: 21.23349319583468,
-      radius: [
-        GeofenceRadius(id: 'radius_5m', length: 5),
-        GeofenceRadius(id: 'radius_25m', length: 25),
-        GeofenceRadius(id: 'radius_100m', length: 100),
-        GeofenceRadius(id: 'radius_250m', length: 250),
-        GeofenceRadius(id: 'radius_200m', length: 200),
-      ],
-    ),
-  ];
+  final _geofenceList = <Geofence>[];
 
   @override
   void didChangeDependencies() {
@@ -190,8 +202,20 @@ class _CompassState extends ConsumerState<Compass> {
     pickedPlace = ref.watch(placesProvider.notifier).getPlaceById(id);
     targetLat = pickedPlace.geoData.primary.coordinates[0];
     targetLng = pickedPlace.geoData.primary.coordinates[1];
-    targetLat = 48.697555117540226;
-    targetLng = 21.23349319583468;
+    _geofenceList.add(Geofence(
+      id: id,
+      latitude: targetLat,
+      longitude: targetLng,
+      radius: [
+        GeofenceRadius(id: 'radius_5m', length: 5),
+        GeofenceRadius(id: 'radius_25m', length: 25),
+        GeofenceRadius(id: 'radius_100m', length: 100),
+        GeofenceRadius(id: 'radius_250m', length: 250),
+        GeofenceRadius(id: 'radius_200m', length: 200),
+      ],
+    ));
+    // targetLat = 48.697555117540226;
+    // targetLng = 21.23349319583468;
   }
 
   void _initializeCompass() {
