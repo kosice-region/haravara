@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/models/setup_model.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/repositories/location_repository.dart';
+import 'package:haravara/services/location_client.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/services/places_service.dart';
 
 final PlacesService placesService = PlacesService();
 final MapService mapService = MapService();
 
+final _locationClient = LocationClient();
+
 class Init {
   static initialize(WidgetRef ref) async {
     print("starting registering services");
+    _locationClient.init();
     SetupModel model = ref.watch(setupNotifierProvider);
     if (model.isFirstSetup) {
       print('first setup');
@@ -42,24 +44,8 @@ class Init {
   static _defaultSetup(WidgetRef ref) async {
     await _requestLocationPermission();
     final List<Place> places = await placesService.loadPlaces();
-    final Set<Marker> markers = await mapService.getMarkers(places);
     ref.read(placesProvider.notifier).addPlaces(places);
-    ref.read(markersProvider.notifier).setMarkers(markers);
   }
 
-  static _requestLocationPermission() async {
-    LocationPermission permission;
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-    return Geolocator.getCurrentPosition();
-  }
+  static _requestLocationPermission() async {}
 }

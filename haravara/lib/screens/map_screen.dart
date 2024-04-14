@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/screens/map_detail_screen.dart';
 import 'package:haravara/widgets/footer.dart';
@@ -23,13 +22,6 @@ class MapScreen extends ConsumerStatefulWidget {
 }
 
 class _MapScreenState extends ConsumerState<MapScreen> {
-  final Completer<GoogleMapController> _controller = Completer();
-  LatLngBounds bounds = LatLngBounds(
-    southwest: const LatLng(48.0722569, 19.8085628),
-    northeast: const LatLng(49.3252921, 23.3745267),
-  );
-  late CameraPosition cameraPosition;
-
   @override
   void initState() {
     super.initState();
@@ -65,19 +57,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(4.r)),
-                child: GoogleMap(
-                  mapType: MapType.normal,
-                  initialCameraPosition: const CameraPosition(
-                    target: LatLng(48.859101948221365, 21.244443170637833),
-                    zoom: 8,
-                  ),
-                  markers: ref.watch(markersProvider),
-                  cameraTargetBounds: CameraTargetBounds(bounds),
-                  myLocationEnabled: false,
-                  myLocationButtonEnabled: false,
-                  mapToolbarEnabled: false,
-                  zoomControlsEnabled: false,
-                ),
+                child: Container(),
               ),
             ),
             14.verticalSpace,

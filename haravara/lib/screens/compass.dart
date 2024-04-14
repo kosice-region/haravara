@@ -1,32 +1,24 @@
 import 'dart:async';
-import 'dart:developer';
+import 'dart:developer' as dev;
 import 'dart:math' as math;
+import 'dart:math';
 
+import 'package:haravara/services/location_client.dart';
+import 'package:location/location.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geofence_service/geofence_service.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:haravara/data/geofence_list.dart';
-import 'package:haravara/models/geofence_message.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/notification_service.dart';
 import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
-import 'package:fl_location_platform_interface/src/models/location_accuracy.dart'
-    // ignore: library_prefixes
-    as flLocation;
-import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
-    // ignore: library_prefixes
-    as geoLocation;
 
 class Compass extends ConsumerStatefulWidget {
   const Compass({super.key});
@@ -42,117 +34,34 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
   double distanceToTarget = 0;
   late Place pickedPlace;
   late StreamSubscription<CompassEvent> compassSubscription;
-  late StreamSubscription<Position> positionStream;
-  GeofenceMessage? geofenceMessage;
-  double? smallestDistanceLength;
-  PlacesService placesService = PlacesService();
+  late StreamSubscription<LocationData> locationSubscription;
+  Location location = Location();
+  final _locationClient = LocationClient();
 
   late double targetLat;
   late double targetLng;
 
-  final _geofenceStreamController = StreamController<Geofence>();
-  final _activityStreamController = StreamController<Activity>();
-
-  final _geofenceService = GeofenceService.instance.setup(
-      interval: 5000,
-      accuracy: 100,
-      loiteringDelayMs: 60000,
-      statusChangeDelayMs: 10000,
-      useActivityRecognition: true,
-      allowMockLocations: false,
-      printDevLog: false,
-      geofenceRadiusSortType: GeofenceRadiusSortType.DESC);
+  bool _isServiceRunning = false;
 
   @override
   void initState() {
     super.initState();
+    _locationClient.init();
+    _listenLocation();
+    Timer.periodic(const Duration(seconds: 2), (_) => _listenLocation());
     WidgetsBinding.instance.addObserver(this);
     _initializeCompass();
     _initializeLocationStream();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _geofenceService
-          .addGeofenceStatusChangeListener(_onGeofenceStatusChanged);
-      _geofenceService.addLocationChangeListener(_onLocationChanged);
-      _geofenceService.addLocationServicesStatusChangeListener(
-          _onLocationServicesStatusChanged);
-      _geofenceService.addActivityChangeListener(_onActivityChanged);
-      _geofenceService.addStreamErrorListener(_onError);
-      _geofenceService.start(_geofenceList).catchError(_onError);
-    });
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        log("app in resumed");
-        FlutterBackgroundService().invoke('stopSerice');
-        FlutterBackgroundService().invoke('setAsForeground');
-        break;
-      case AppLifecycleState.inactive:
-        log("app in inactive");
-        break;
-      case AppLifecycleState.paused:
-        log("app in paused");
-        FlutterBackgroundService().invoke('setAsBackground');
-        break;
-      case AppLifecycleState.detached:
-        log("app in detached");
-        break;
-      case AppLifecycleState.hidden:
-        log('app is hidden');
-        break;
-    }
-  }
-
-  Future<void> _onGeofenceStatusChanged(
-      Geofence geofence,
-      GeofenceRadius geofenceRadius,
-      GeofenceStatus geofenceStatus,
-      Location location) async {
-    // print('geofence: ${geofence.toJson()}');
-    // print('geofenceRadius: ${geofenceRadius.toJson()}');
-    // print('geofenceStatus: ${geofenceStatus.toString()}');
-    _geofenceStreamController.sink.add(geofence);
-    double? smallestLength;
-    GeofenceStatus? radiusStatus;
-    for (var radius in geofence.radius) {
-      print('Radius: ${radius.length} meters, Status: ${radius.status}');
-      if (radius.status == GeofenceStatus.ENTER) {
-        if (smallestLength == null || radius.length < smallestLength) {
-          smallestLength = radius.length;
-          radiusStatus = radius.toJson()['status'];
-        }
-      }
-    }
-    if (smallestLength == null) {
-      for (var radius in geofence.radius) {
-        print('Radius: ${radius.length} meters, Status: ${radius.status}');
-        if (radius.status == GeofenceStatus.DWELL) {
-          if (smallestLength == null || radius.length < smallestLength) {
-            smallestLength = radius.length;
-            radiusStatus = radius.toJson()['status'];
-          }
-        }
-      }
-    }
-    setState(() {
-      if (smallestLength != null) {
-        geofenceMessage = GeofenceMessage(
-            geofenceLength: smallestLength,
-            geofenceRadius: geofenceRadius,
-            geofenceStatus: radiusStatus!);
-        smallestDistanceLength = smallestLength;
-      } else {
-        geofenceMessage = GeofenceMessage(
-            geofenceLength: -1.0,
-            geofenceRadius: geofenceRadius,
-            geofenceStatus: radiusStatus!);
-        smallestDistanceLength = -1.0;
-      }
-    });
-    if (smallestLength != null) {
-      await notificateAboutDistance(smallestLength);
+  void _listenLocation() async {
+    if (!_isServiceRunning && await _locationClient.isServiceEnabled()) {
+      _isServiceRunning = true;
+      _locationClient.locationStream.listen((event) {
+        dev.log(event.toString());
+      });
+    } else {
+      _isServiceRunning = false;
     }
   }
 
@@ -160,36 +69,12 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
     if (distance <= 25) {
       NotificationService().sendNotification('Gratulujeme',
           'Dosiahli ste miesto, prejdite do aplikácie a získajte odmenu');
-      _geofenceService.pause();
       // await placesService.addPlaceToCollectedByUser(pickedPlace.id!);
     } else {
       NotificationService().sendNotification('Pozor',
           'Zostáva už len trochu, choď ${distance.toStringAsFixed(0)} metrov a získaj odmenu.');
     }
   }
-
-  void _onActivityChanged(Activity prevActivity, Activity currActivity) {
-    // print('prevActivity: ${prevActivity.toJson()}');
-    // print('currActivity: ${currActivity.toJson()}');
-    _activityStreamController.sink.add(currActivity);
-  }
-
-  void _onLocationChanged(Location location) {}
-
-  void _onLocationServicesStatusChanged(bool status) {
-    // print('isLocationServicesEnabled: $status');
-  }
-
-  void _onError(error) {
-    final errorCode = getErrorCodesFromError(error);
-    if (errorCode == null) {
-      print('Undefined error: $error');
-      return;
-    }
-    print('ErrorCode: $errorCode');
-  }
-
-  final _geofenceList = <Geofence>[];
 
   @override
   void didChangeDependencies() {
@@ -202,18 +87,6 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
     pickedPlace = ref.watch(placesProvider.notifier).getPlaceById(id);
     targetLat = pickedPlace.geoData.primary.coordinates[0];
     targetLng = pickedPlace.geoData.primary.coordinates[1];
-    _geofenceList.add(Geofence(
-      id: id,
-      latitude: targetLat,
-      longitude: targetLng,
-      radius: [
-        GeofenceRadius(id: 'radius_5m', length: 5),
-        GeofenceRadius(id: 'radius_25m', length: 25),
-        GeofenceRadius(id: 'radius_100m', length: 100),
-        GeofenceRadius(id: 'radius_250m', length: 250),
-        GeofenceRadius(id: 'radius_200m', length: 200),
-      ],
-    ));
     // targetLat = 48.697555117540226;
     // targetLng = 21.23349319583468;
   }
@@ -224,31 +97,48 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
     });
   }
 
-  void _initializeLocationStream() {
-    positionStream = Geolocator.getPositionStream(
-        locationSettings: const LocationSettings(
-      accuracy: geoLocation.LocationAccuracy.high,
-      distanceFilter: 0,
-    )).listen(
-      (position) {
-        _updateDistanceAndBearing(position);
-      },
-      onError: (e) {},
-    );
+  void _initializeLocationStream() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    locationSubscription =
+        location.onLocationChanged.listen((LocationData currentLocation) {
+      _updateDistanceAndBearing(currentLocation);
+    });
   }
 
-  Future<void> _updateDistanceAndBearing(Position position) async {
-    bearingToTarget = _calculateBearing(
-        position.latitude, position.longitude, targetLat, targetLng);
-    double distance = await calculateDistance(
-      position.latitude,
-      position.longitude,
-      targetLat,
-      targetLng,
-    );
-    setState(() {
-      distanceToTarget = distance;
-    });
+  Future<void> _updateDistanceAndBearing(LocationData currentLocation) async {
+    if (currentLocation.latitude != null && currentLocation.longitude != null) {
+      bearingToTarget = _calculateBearing(currentLocation.latitude!,
+          currentLocation.longitude!, targetLat, targetLng);
+
+      double distance = await calculateDistance(
+        currentLocation.latitude!,
+        currentLocation.longitude!,
+        targetLat,
+        targetLng,
+      );
+
+      setState(() {
+        distanceToTarget = distance;
+      });
+    }
   }
 
   @override
@@ -376,13 +266,20 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
 
   Future<double> calculateDistance(double startLatitude, double startLongitude,
       double endLatitude, double endLongitude) async {
-    double distanceInMeters = Geolocator.distanceBetween(
-      startLatitude,
-      startLongitude,
-      endLatitude,
-      endLongitude,
-    );
-    return distanceInMeters;
+    var earthRadiusKm = 6371.0;
+
+    var dLat = _toRadians(endLatitude - startLatitude);
+    var dLon = _toRadians(endLongitude - startLongitude);
+
+    var a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_toRadians(startLatitude)) *
+            cos(_toRadians(endLatitude)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+    var c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    var distance = earthRadiusKm * c;
+    return distance * 1000; // Convert to meters
   }
 
   Widget _buildCompass() {
@@ -413,23 +310,10 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
     );
   }
 
-  _disposeGeofenceSerive() async {
-    _geofenceService
-        .removeGeofenceStatusChangeListener(_onGeofenceStatusChanged);
-    _geofenceService.removeLocationChangeListener(_onLocationChanged);
-    _geofenceService.removeLocationServicesStatusChangeListener(
-        _onLocationServicesStatusChanged);
-    _geofenceService.removeActivityChangeListener(_onActivityChanged);
-    _geofenceService.removeStreamErrorListener(_onError);
-    _geofenceService.clearAllListeners();
-    _geofenceService.stop();
-  }
-
   @override
   void dispose() {
     compassSubscription.cancel();
-    positionStream.cancel();
-    _disposeGeofenceSerive();
+    locationSubscription.cancel();
     super.dispose();
   }
 }

@@ -11,7 +11,6 @@ import 'package:haravara/screens/auth.dart';
 import 'package:haravara/services/init_service.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
-import 'package:mailer/smtp_server/gmail.dart';
 import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -75,7 +74,6 @@ class AuthService {
       return [build.id, 'Android'];
     } else if (Platform.isIOS) {
       var data = await deviceInfoPlugin.iosInfo;
-
       return [data.identifierForVendor!, 'IOS'];
     }
     return ['empty'];
