@@ -1,18 +1,38 @@
-import 'package:location/location.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'dart:developer';
 
-class LocationClient {
-  final Location _location = Location();
+// import 'package:location/location.dart';
+// import 'package:latlong2/latlong.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
-  Stream<LatLng> get locationStream => _location.onLocationChanged
-      .map((event) => LatLng(event.latitude!, event.longitude!));
+// class LocationClient {
+//   final Location _location = Location();
 
-  void init() async {
-    Permission.locationAlways.request();
-  }
+//   // Stream that emits LatLng values as the location updates.
+//   Stream<LatLng> get locationStream => _location.onLocationChanged
+//       .map((event) => LatLng(event.latitude!, event.longitude!));
 
-  Future<bool> isServiceEnabled() async {
-    return _location.serviceEnabled();
-  }
-}
+//   void init() async {
+//     await requestPermission();
+//   }
+
+//   Future<bool> isServiceEnabled() async {
+//     return _location.serviceEnabled();
+//   }
+
+//   Future<void> requestPermission() async {
+//     await Permission.location.request();
+//     var status = await Permission.locationAlways.status;
+//     if (status.isDenied || status.isPermanentlyDenied) {
+//       await Permission.locationAlways.request();
+//     }
+//     status = await Permission.locationAlways.status;
+//     if (status.isGranted) {
+//       print("Location Always permission granted.");
+//     } else if (status.isPermanentlyDenied) {
+//       // Opens the app settings if permissions are permanently denied.
+//       openAppSettings();
+//     } else {
+//       print("Location Always permission denied.");
+//     }
+//   }
+// }

@@ -23,9 +23,9 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
   String? selectedValueSort = 'Opened first';
   String? selectedValueView = '2x2';
   late List<Place> places;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

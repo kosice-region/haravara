@@ -108,38 +108,44 @@ class PlacesService {
   Future<void> addPlaceToCollectedByUser(String id) async {
     await locationRepository.addCollectedPlaceForUser(id);
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var collectedPlaces = prefs.getStringList('collectedPlaces');
-    await clearRichedPlaces();
+    List<String>? collectedPlaces = prefs.getStringList('collectedPlaces');
+    log('Collected Places from service ${collectedPlaces}');
+
     if (collectedPlaces == null) {
-      setRichedPlaces([id]);
-      return;
+      collectedPlaces = [id];
+    } else {
+      collectedPlaces.add(id);
     }
-    collectedPlaces = [...collectedPlaces, id];
-    setRichedPlaces(collectedPlaces);
+
+    log('Collected Places from service 2 ${collectedPlaces}');
+    await setReachedPlace(id);
     prefs.setStringList('collectedPlaces', collectedPlaces);
-    await prefs.reload();
+    log('Collected Places from service 3 ${await prefs.getStringList('collectedPlaces')}');
   }
 
   Future<void> getCollectedPlacesByUser(String id) async {
     final collectedPlaces =
         await locationRepository.getCollectedPlacesByUser(id);
-    await setRichedPlaces(collectedPlaces);
+    log('collected places ${collectedPlaces}');
+
+    for (String placeId in collectedPlaces) {
+      await setReachedPlace(placeId);
+    }
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList('collectedPlaces', collectedPlaces);
-    prefs.reload();
+    log('places from prefs ${prefs.getStringList('collectedPlaces')}');
+    await prefs.reload();
   }
 
-  Future<void> setRichedPlaces(List<String> placeIds) async {
+  Future<void> setReachedPlace(String placeId) async {
     final db = await _getDatabase();
-    for (String placeId in placeIds) {
-      await db.update(
-        'places',
-        {'isReached': 1},
-        where: 'id = ?',
-        whereArgs: [placeId],
-      );
-    }
-    final places = await loadPlaces();
+    await db.update(
+      'places',
+      {'isReached': 1},
+      where: 'id = ?',
+      whereArgs: [placeId],
+    );
   }
 
   Future<void> clearRichedPlaces() async {

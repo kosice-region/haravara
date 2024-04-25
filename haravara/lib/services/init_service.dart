@@ -5,19 +5,16 @@ import 'package:haravara/models/setup_model.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/repositories/location_repository.dart';
-import 'package:haravara/services/location_client.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/services/places_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final PlacesService placesService = PlacesService();
 final MapService mapService = MapService();
 
-final _locationClient = LocationClient();
-
 class Init {
   static initialize(WidgetRef ref) async {
     print("starting registering services");
-    _locationClient.init();
     SetupModel model = ref.watch(setupNotifierProvider);
     if (model.isFirstSetup) {
       print('first setup');
@@ -47,5 +44,19 @@ class Init {
     ref.read(placesProvider.notifier).addPlaces(places);
   }
 
-  static _requestLocationPermission() async {}
+  static _requestLocationPermission() async {
+    await Permission.location.request();
+    var status = await Permission.locationAlways.status;
+    if (status.isDenied || status.isPermanentlyDenied) {
+      await Permission.locationAlways.request();
+    }
+    status = await Permission.locationAlways.status;
+    if (status.isGranted) {
+      print("Location Always permission granted.");
+    } else if (status.isPermanentlyDenied) {
+      openAppSettings();
+    } else {
+      print("Location Always permission denied.");
+    }
+  }
 }

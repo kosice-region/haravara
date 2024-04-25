@@ -3,8 +3,7 @@ import 'dart:developer' as dev;
 import 'dart:math' as math;
 import 'dart:math';
 
-import 'package:haravara/services/location_client.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +18,11 @@ import 'package:haravara/services/notification_service.dart';
 import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
+    // ignore: library_prefixes
+    as geoLocation;
 
 class Compass extends ConsumerStatefulWidget {
   const Compass({super.key});
@@ -27,16 +31,31 @@ class Compass extends ConsumerStatefulWidget {
   ConsumerState<Compass> createState() => _CompassState();
 }
 
+class DistanceModel {
+  late double distance;
+  late bool isActive;
+
+  DistanceModel(double distance, bool isActive) {
+    this.distance = distance;
+    this.isActive = isActive;
+  }
+}
+
 class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
+  List<DistanceModel> distances = [
+    DistanceModel(30.0, false),
+    DistanceModel(100.0, false),
+    DistanceModel(250.0, false),
+  ];
   bool isPlaceReached = false;
+  bool isAppInBackgroundMode = false;
   double? heading;
   double? bearingToTarget;
   double distanceToTarget = 0;
   late Place pickedPlace;
   late StreamSubscription<CompassEvent> compassSubscription;
-  late StreamSubscription<LocationData> locationSubscription;
-  Location location = Location();
-  final _locationClient = LocationClient();
+  late StreamSubscription<Position> positionStream;
+  PlacesService placesService = PlacesService();
 
   late double targetLat;
   late double targetLng;
@@ -46,34 +65,9 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    _locationClient.init();
-    _listenLocation();
-    Timer.periodic(const Duration(seconds: 2), (_) => _listenLocation());
     WidgetsBinding.instance.addObserver(this);
     _initializeCompass();
     _initializeLocationStream();
-  }
-
-  void _listenLocation() async {
-    if (!_isServiceRunning && await _locationClient.isServiceEnabled()) {
-      _isServiceRunning = true;
-      _locationClient.locationStream.listen((event) {
-        dev.log(event.toString());
-      });
-    } else {
-      _isServiceRunning = false;
-    }
-  }
-
-  notificateAboutDistance(double distance) async {
-    if (distance <= 25) {
-      NotificationService().sendNotification('Gratulujeme',
-          'Dosiahli ste miesto, prejdite do aplikácie a získajte odmenu');
-      // await placesService.addPlaceToCollectedByUser(pickedPlace.id!);
-    } else {
-      NotificationService().sendNotification('Pozor',
-          'Zostáva už len trochu, choď ${distance.toStringAsFixed(0)} metrov a získaj odmenu.');
-    }
   }
 
   @override
@@ -97,48 +91,31 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
     });
   }
 
-  void _initializeLocationStream() async {
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
-    }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    locationSubscription =
-        location.onLocationChanged.listen((LocationData currentLocation) {
-      _updateDistanceAndBearing(currentLocation);
-    });
+  void _initializeLocationStream() {
+    positionStream = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+      accuracy: geoLocation.LocationAccuracy.high,
+      distanceFilter: 1,
+    )).listen(
+      (position) {
+        _updateDistanceAndBearing(position);
+      },
+      onError: (e) {},
+    );
   }
 
-  Future<void> _updateDistanceAndBearing(LocationData currentLocation) async {
-    if (currentLocation.latitude != null && currentLocation.longitude != null) {
-      bearingToTarget = _calculateBearing(currentLocation.latitude!,
-          currentLocation.longitude!, targetLat, targetLng);
+  Future<void> _updateDistanceAndBearing(Position position) async {
+    double distance = Geolocator.distanceBetween(
+        position.latitude, position.longitude, targetLat, targetLng);
 
-      double distance = await calculateDistance(
-        currentLocation.latitude!,
-        currentLocation.longitude!,
-        targetLat,
-        targetLng,
-      );
+    setState(() {
+      distanceToTarget = distance;
+    });
 
-      setState(() {
-        distanceToTarget = distance;
-      });
-    }
+    bearingToTarget = _calculateBearing(
+        position.latitude, position.longitude, targetLat, targetLng);
+
+    await checkDistance(distance);
   }
 
   @override
@@ -208,7 +185,7 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
                   width: 117.w,
                   height: 43.h,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 70, 68, 205),
+                    color: getColorForDistance(this.distanceToTarget),
                     borderRadius: BorderRadius.all(Radius.circular(15.r)),
                   ),
                   child: Center(
@@ -264,24 +241,6 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
     return direction;
   }
 
-  Future<double> calculateDistance(double startLatitude, double startLongitude,
-      double endLatitude, double endLongitude) async {
-    var earthRadiusKm = 6371.0;
-
-    var dLat = _toRadians(endLatitude - startLatitude);
-    var dLon = _toRadians(endLongitude - startLongitude);
-
-    var a = sin(dLat / 2) * sin(dLat / 2) +
-        cos(_toRadians(startLatitude)) *
-            cos(_toRadians(endLatitude)) *
-            sin(dLon / 2) *
-            sin(dLon / 2);
-    var c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-    var distance = earthRadiusKm * c;
-    return distance * 1000; // Convert to meters
-  }
-
   Widget _buildCompass() {
     return StreamBuilder<CompassEvent>(
       stream: FlutterCompass.events,
@@ -310,10 +269,190 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
     );
   }
 
+  checkDistance(double distance) async {
+    if (distance > 250 || isPlaceReached) {
+      distances.forEach((element) => element.isActive = false);
+      return;
+    }
+    if (distance <= 30)
+      distances[0].isActive = true;
+    else if ((distance <= 100 && distance > 25))
+      distances[1].isActive = true;
+    else if ((distance <= 250 && distance > 100)) distances[2].isActive = true;
+    if (isAppInBackgroundMode) {
+      await notificateAboutDistance();
+    } else {
+      await handleDistanceOnForeground();
+    }
+  }
+
+  notificateAboutDistance() async {
+    var distance = distances.firstWhere((model) => model.isActive).distance;
+    if (distance <= 30) {
+      NotificationService().sendNotification('Gratulujeme',
+          'Dosiahli ste miesto, prejdite do aplikácie a získajte odmenu');
+      // await placesService.addPlaceToCollectedByUser(pickedPlace.id!);
+    } else {
+      NotificationService().sendNotification('Pozor',
+          'Zostáva už len trochu, choď ${distance.toStringAsFixed(0)} metrov a získaj odmenu.');
+    }
+  }
+
+  handleDistanceOnForeground() async {
+    var distance = distances.firstWhere((model) => model.isActive).distance;
+    if (distance <= 30) {
+      showCustomDialog();
+      if (pickedPlace.isReached) {
+        return;
+      }
+      this.isPlaceReached = true;
+      await placesService.addPlaceToCollectedByUser(pickedPlace.id!);
+      await initPlaces();
+    }
+  }
+
+  initPlaces() async {
+    final places = await PlacesService().loadPlaces();
+    ref.read(placesProvider.notifier).addPlaces(places);
+    for (var place in places) {
+      if (place.isReached) {
+        dev.log(
+            'initFunc place ${place.name} is Collected = ${place.isReached}');
+      }
+    }
+  }
+
+  showCustomDialog() {
+    showCongratulationsDialog(context);
+  }
+
+  void showCongratulationsDialog(BuildContext context) => showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          double screenHeight = MediaQuery.of(context).size.height;
+          double containerHeight = screenHeight / 2.3;
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15.r)),
+            ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  height: containerHeight,
+                  width: 224.w,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 140, 192, 225),
+                    borderRadius: BorderRadius.all(Radius.circular(15.r)),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      12.verticalSpace,
+                      Text(
+                        'GRATULUJEME!',
+                        style: GoogleFonts.titanOne(
+                            color: Colors.black, fontSize: 20.sp),
+                      ),
+                      12.verticalSpace,
+                      Text(
+                        'Dosiahli ste',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.titanOne(
+                          color: Colors.black,
+                          fontSize: 15.sp,
+                        ),
+                      ),
+                      5.verticalSpace,
+                      Text(
+                        '${pickedPlace.name}',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.titanOne(
+                            color: Colors.black, fontSize: 15.sp),
+                      ),
+                      30.verticalSpace,
+                      Container(
+                        width: 100.w,
+                        height: 50.h,
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 22, 102, 177),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15.r))),
+                        child: TextButton(
+                          child: Text(
+                            'Získať pečiatku',
+                            style: GoogleFonts.titanOne(
+                              color: Colors.white,
+                              fontSize: 15.sp,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Positioned(
+                //   bottom: -100,
+                //   left: 0,
+                //   right: 0,
+                //   child: Center(
+                //     child: Image.asset(
+                //       "assets/MaxAndMayka.jpg",
+                //       scale: 1.1,
+                //       width: 255.w,
+                //       height: 255.h,
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          );
+        },
+      );
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        isAppInBackgroundMode = false;
+        dev.log("app in resumed");
+        break;
+      case AppLifecycleState.inactive:
+        isAppInBackgroundMode = true;
+        dev.log("app in inactive");
+        break;
+      case AppLifecycleState.paused:
+        isAppInBackgroundMode = true;
+        dev.log("app in paused");
+        break;
+      case AppLifecycleState.detached:
+        isAppInBackgroundMode = true;
+        dev.log("app in detached");
+        break;
+      case AppLifecycleState.hidden:
+        isAppInBackgroundMode = true;
+        dev.log('app is hidden');
+        break;
+    }
+  }
+
+  getColorForDistance(double distance) {
+    if (distance > 250) {
+      return const Color.fromARGB(255, 70, 68, 205);
+    }
+    if (distance < 25) return Color.fromARGB(255, 233, 18, 18);
+    if (distance < 100) return Color.fromARGB(255, 225, 222, 16);
+    return Color.fromARGB(255, 215, 16, 246);
+  }
+
   @override
   void dispose() {
     compassSubscription.cancel();
-    locationSubscription.cancel();
+    positionStream.cancel();
     super.dispose();
   }
 }

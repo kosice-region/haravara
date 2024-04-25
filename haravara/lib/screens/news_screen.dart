@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +8,7 @@ import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NewsScreen extends ConsumerStatefulWidget {
   const NewsScreen({super.key});
@@ -25,11 +28,13 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
   }
 
   initPlaces() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    log('${prefs.getStringList('collectedPlaces')}');
     final places = await PlacesService().loadPlaces();
     ref.read(placesProvider.notifier).addPlaces(places);
     for (var place in places) {
       if (place.isReached) {
-        print('2 place ${place.name} is Collected = ${place.isReached}');
+        log('2 place ${place.name} is Collected = ${place.isReached}');
       }
     }
   }

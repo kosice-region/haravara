@@ -61,14 +61,18 @@ class LocationRepository {
         FirebaseDatabase.instance.ref('collectedLocationsByUsers/$userId');
 
     DataSnapshot snapshot = await userRef.get();
+    if (snapshot.value == null) {
+      log('No data available for user $userId');
+      return [];
+    }
 
-    List<dynamic>? placesDynamic = snapshot.value as List<dynamic>?;
-
-    if (placesDynamic != null) {
-      List<String> collectedPlaces = placesDynamic.cast<String>();
-      print(collectedPlaces);
+    if (snapshot.value is List) {
+      List<dynamic> placesDynamic = snapshot.value as List;
+      List<String> collectedPlaces = placesDynamic.whereType<String>().toList();
+      log('$collectedPlaces');
       return collectedPlaces;
     } else {
+      log('Unexpected data format for user $userId: ${snapshot.value}');
       return [];
     }
   }
