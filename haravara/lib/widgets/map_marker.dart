@@ -9,12 +9,7 @@ import 'package:haravara/services/event_bus.dart';
 final eventBus = EventBus();
 
 class MapMarker extends ConsumerWidget {
-  const MapMarker(
-      {required this.placeId,
-      required this.index,
-      required this.isCollected,
-      super.key});
-  final bool isCollected;
+  const MapMarker({required this.placeId, required this.index, super.key});
   final String placeId;
   final int index;
 
@@ -27,10 +22,8 @@ class MapMarker extends ConsumerWidget {
       child: Container(
         width: 95.w,
         height: 95.h,
-        decoration: BoxDecoration(
-          color: isCollected
-              ? Color.fromARGB(255, 143, 190, 72)
-              : Color.fromARGB(255, 229, 13, 0),
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 229, 13, 0),
           shape: BoxShape.circle,
         ),
         child: Center(

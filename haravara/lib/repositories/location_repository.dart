@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:dio/dio.dart';
 import 'package:haravara/models/place.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 FirebaseDatabase database = FirebaseDatabase.instance;
 DatabaseReference placesRef = FirebaseDatabase.instance.ref('locations');
@@ -25,6 +23,7 @@ class LocationRepository {
         Map<String, dynamic> placeMap = value as Map<String, dynamic>;
         Map<String, dynamic>? imageMap =
             imagesJson[key] as Map<String, dynamic>?;
+        print(placeMap);
         PlaceImageFromDB imageFromDB =
             PlaceImageFromDB.fromJson(imageMap!).copyWith(placeId: key);
         Place place = Place.fromJson(placeMap)
@@ -37,42 +36,19 @@ class LocationRepository {
     return places;
   }
 
-  Future<void> addCollectedPlaceForUser(String placeId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userId = prefs.getString('id');
-    if (userId != null && placeId.isNotEmpty) {
-      DatabaseReference placesRef =
-          FirebaseDatabase.instance.ref('collectedLocationsByUsers');
-
-      var places = prefs.getStringList('collectedPlaces');
-      log('places before $places');
-      if (places == null) {
-        places = [placeId];
-      } else {
-        places = [...places, placeId];
-      }
-      log('places after $places');
-      await placesRef.update({userId: places});
-    }
-  }
-
   Future<List<String>> getCollectedPlacesByUser(String userId) async {
     DatabaseReference userRef =
         FirebaseDatabase.instance.ref('collectedLocationsByUsers/$userId');
-
+    print('User ID: $userId');
     DataSnapshot snapshot = await userRef.get();
-    if (snapshot.value == null) {
-      log('No data available for user $userId');
-      return [];
-    }
 
-    if (snapshot.value is List) {
-      List<dynamic> placesDynamic = snapshot.value as List;
-      List<String> collectedPlaces = placesDynamic.whereType<String>().toList();
-      log('$collectedPlaces');
+    List<dynamic>? placesDynamic = snapshot.value as List<dynamic>?;
+
+    if (placesDynamic != null) {
+      List<String> collectedPlaces = placesDynamic.cast<String>();
+      print(collectedPlaces);
       return collectedPlaces;
     } else {
-      log('Unexpected data format for user $userId: ${snapshot.value}');
       return [];
     }
   }

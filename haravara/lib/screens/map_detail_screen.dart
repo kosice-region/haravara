@@ -139,7 +139,7 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                                 }),
                             14.verticalSpace,
                             _LocalButton(
-                                name: 'Pouzit\'',
+                                name: 'Už som tu!',
                                 onPressed: () {
                                   routeToCompassScreen();
                                 }),
@@ -219,7 +219,6 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                     left: place.geoData.primary.pixelCoordinates[0],
                     top: place.geoData.primary.pixelCoordinates[1],
                     child: MapMarker(
-                      isCollected: place.isReached,
                       index: index,
                       placeId: place.id!,
                     ),
