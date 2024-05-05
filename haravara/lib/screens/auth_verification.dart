@@ -130,6 +130,7 @@ class _AuthVerificationScreenState
   }
 
   void routeToNewsScreen() {
+    if (!mounted) return;
     ref.read(currentScreenProvider.notifier).changeScreen(ScreenType.news);
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
         context, ScreenRouter().getScreenWidget(ScreenType.news));

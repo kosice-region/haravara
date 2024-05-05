@@ -367,11 +367,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   void routeToNewsScreen() async {
+    if (!mounted) return;
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
         context, ScreenRouter().getScreenWidget(ScreenType.news));
   }
 
   void routeToCodeScreen() {
+    if (!mounted) return;
     ScreenRouter().routeToNextScreen(
         context, ScreenRouter().getScreenWidget(ScreenType.code));
   }

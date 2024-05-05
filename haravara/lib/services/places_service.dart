@@ -135,7 +135,6 @@ class PlacesService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList('collectedPlaces', collectedPlaces);
     log('places from prefs ${prefs.getStringList('collectedPlaces')}');
-    await prefs.reload();
   }
 
   Future<void> setReachedPlace(String placeId) async {
