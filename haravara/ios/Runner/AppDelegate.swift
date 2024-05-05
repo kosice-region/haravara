@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import GoogleMaps
 import Firebase
 import flutter_background_service_ios
 

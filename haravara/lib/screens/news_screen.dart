@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,18 +6,25 @@ import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:haravara/widgets/footer.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class NewsScreen extends ConsumerStatefulWidget {
-  const NewsScreen({super.key});
+  const NewsScreen({Key? key}) : super(key: key);
 
   @override
   ConsumerState<NewsScreen> createState() => _NewsScreenState();
 }
 
 class _NewsScreenState extends ConsumerState<NewsScreen> {
-  String text =
-      'Vedeli ste, že tam sa skrýva to a tam je postavené zase tamto? Predstavíme vám tie najkrajšie miesta a atrakcie v Košickom kraji, kde sa zabavia malí aj veľkí.';
+  List<String> texts = [
+    'Tipy na výlety: Nechajte sa inšpirovať našimi tipmi na rodinné výlety a pripravte sa na poriadne dobrodružstvo.',
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis ex eu ante tempus molestie eu eget leo.',
+    'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.'
+  ];
+
+  final _pageController = PageController();
+  final _currentPageNotifier = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -28,13 +33,11 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
   }
 
   initPlaces() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    log('${prefs.getStringList('collectedPlaces')}');
     final places = await PlacesService().loadPlaces();
     ref.read(placesProvider.notifier).addPlaces(places);
     for (var place in places) {
       if (place.isReached) {
-        log('2 place ${place.name} is Collected = ${place.isReached}');
+        print('2 place ${place.name} isReached = ${place.isReached}');
       }
     }
   }
@@ -43,58 +46,144 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
 
-    TextStyle textStyle = TextStyle(fontSize: 12.sp);
-    double padding = 20;
-    double maxWidth = 224.w - padding * 2;
-
-    Size textSize = calculateTextSize(text, textStyle, maxWidth);
-
-    double containerHeight = textSize.height + padding * 7;
-
     return Scaffold(
       endDrawer: const HeaderMenu(),
       body: Stack(
         children: [
-          Image.asset(
-            'assets/background_news.png',
-            fit: BoxFit.cover,
-            height: double.infinity,
-            width: double.infinity,
-            alignment: Alignment.center,
+          Opacity(
+            opacity: 0.8,
+            child: Image.asset(
+              'assets/pozadie8.jpg',
+              fit: BoxFit.cover,
+              height: double.infinity,
+              width: double.infinity,
+              alignment: Alignment.center,
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 8).h,
+            padding: const EdgeInsets.only(top: 8),
             child: Column(
               children: [
                 const Header(),
-                39.verticalSpace,
-                Container(
-                  width: 224.w,
-                  height: containerHeight,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(15)).r,
-                    color: const Color.fromARGB(255, 177, 235, 183),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color.fromARGB(255, 91, 187, 75)
-                            .withOpacity(1),
-                        spreadRadius: 8,
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+                const SizedBox(height: 80),
+                SizedBox(
+                  height: 150.h,
+                  width: 215.w,
+                  child: PageView.builder(
+                    controller: _pageController,
+                    scrollDirection: Axis.horizontal, // Zmena na horizontal
+                    itemCount: texts.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 15.0, vertical: 15.0),
+                        child: buildBox(texts[index]),
+                      );
+                    },
                   ),
-                  child: Center(
-                    child: Text(
-                      text,
-                      textAlign: TextAlign.center,
-                      maxLines: 6,
-                      style: GoogleFonts.titanOne(
-                          color: Colors.black, fontSize: 12.sp),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SmoothPageIndicator(
+                    controller: _pageController,
+                    count: texts.length,
+                    effect: SlideEffect(
+                      spacing: 8.0,
+                      radius: 4.0,
+                      dotWidth: 20.0,
+                      dotHeight: 8.0,
+                      paintStyle: PaintingStyle.fill,
+                      strokeWidth: 1.5,
+                      dotColor: Colors.grey,
+                      activeDotColor: const Color.fromRGBO(205, 19, 175, 1),
                     ),
                   ),
                 ),
               ],
+            ),
+          ),
+          Positioned(
+            bottom: 10,
+            left: 3,
+            child: Image.asset(
+              'assets/MAX s horalkou.png',
+              height: 164.h,
+            ),
+          ),
+          Positioned(
+            bottom: 20,
+            right: -12,
+            child: Transform.scale(
+              scale: 1.2,
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.rotationY(3.14),
+                child: Image.asset(
+                  'assets/Majka pri ohni.png',
+                  height: 164.h,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Footer(height: 40),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildBox(String text) {
+    double padding = 20;
+    double maxWidth = 224.w - padding * 2;
+
+    Size textSize =
+        calculateTextSize(text, TextStyle(fontSize: 12.sp), maxWidth);
+
+    double containerHeight = textSize.height + padding * 7;
+
+    return Container(
+      width: 215.w,
+      height: 100.w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+        color: Color.fromARGB(255, 157, 214, 246),
+        boxShadow: [
+          BoxShadow(
+            color: Color.fromARGB(255, 157, 214, 246).withOpacity(1),
+            spreadRadius: 8,
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 0.0),
+            child: Image.asset(
+              'assets/BATOH (1).png',
+              width: 80.w,
+              height: 80.h,
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  text,
+                  textAlign: TextAlign.left,
+                  maxLines: 6,
+                  style: GoogleFonts.titanOne(
+                    color: const Color.fromRGBO(205, 19, 175, 1),
+                    fontSize: 10.sp,
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -112,30 +201,3 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     return textPainter.size;
   }
 }
-
-
-
-
-
-//  Expanded(
-//               child: Stack(
-//                 children: [
-//                   Positioned(
-//                     bottom: 0.h,
-//                     child: const Footer(
-//                       height: 190,
-//                       boxFit: BoxFit.fill,
-//                     ),
-//                   ),
-//                   Positioned(
-//                     bottom: 8.h,
-//                     right: 1.w,
-//                     // left: 10.w,
-//                     child: Image.asset(
-//                       'assets/kaso-detective.png',
-//                       height: 164.h,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/main.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/services/places_service.dart';
@@ -23,6 +24,7 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
     List<Place> reachedPlaces = [];
     List<Place> unreachedPlaces = [];
     for (var place in state) {
+      print('place ${place.name} is Reached ${place.isReached}');
       if (place.isReached) {
         reachedPlaces.add(place);
       } else {
@@ -44,6 +46,19 @@ final placesProvider =
 
 final placesFutureProvider = FutureProvider<List<Place>>((ref) async {
   return await PlacesService().loadPlaces();
+});
+
+class MarkersNotifier extends StateNotifier<Set<Marker>> {
+  MarkersNotifier() : super({});
+
+  void setMarkers(Set<Marker> markers) {
+    state = markers;
+  }
+}
+
+final markersProvider =
+    StateNotifierProvider<MarkersNotifier, Set<Marker>>((ref) {
+  return MarkersNotifier();
 });
 
 class RichedPlacesNotifier extends StateNotifier<List<String>> {

@@ -1,8 +1,3 @@
-import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
-import 'dart:ui';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +13,6 @@ import 'package:haravara/screens/news_screen.dart';
 import 'package:haravara/screens/splash_screen.dart';
 import 'package:haravara/services/init_service.dart';
 import 'package:haravara/services/notification_controller.dart';
-import 'package:haravara/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sharedPreferencesProvider =
@@ -31,7 +25,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   AwesomeNotifications().initialize(
       null,
       [

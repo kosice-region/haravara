@@ -10,7 +10,7 @@ import 'package:haravara/repositories/location_repository.dart';
 import 'package:haravara/screens/auth.dart';
 import 'package:haravara/services/init_service.dart';
 import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
+import 'package:mailer/smtp_server/gmail.dart';
 import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,6 +74,7 @@ class AuthService {
       return [build.id, 'Android'];
     } else if (Platform.isIOS) {
       var data = await deviceInfoPlugin.iosInfo;
+
       return [data.identifierForVendor!, 'IOS'];
     }
     return ['empty'];
@@ -90,13 +91,17 @@ class AuthService {
 
   Future<String> sendEmail(BuildContext context, String email) async {
     String code = await generateRandomNumbers();
-    final smtpServer = SmtpServer('smtp.m1.websupport.sk',
-        username: 'users@haravara.sk', password: 'H4r4v4r4!808');
+    String username = 'asusnik241201@gmail.com';
+    String password = 'vaqr tmcn ecgy rksf';
+
+    final smtpServer = gmail(username, password);
+
     final message = Message()
-      ..from = const Address('users@haravara.sk', 'Haravara')
+      ..from = Address(username, 'Danil Zdoryk')
       ..recipients.add(email)
-      ..subject = 'Haravara Code'
-      ..text = 'Hello thanks for using Haravara,\n Your code is $code';
+      ..subject = 'Mail from Mailer'
+      ..text =
+          'Hello, thanks for register in our application.\n Your code is $code';
 
     try {
       final sendReport = await send(message, smtpServer);

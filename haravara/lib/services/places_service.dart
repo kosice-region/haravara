@@ -105,46 +105,31 @@ class PlacesService {
     }
   }
 
-  Future<void> addPlaceToCollectedByUser(String id) async {
-    await locationRepository.addCollectedPlaceForUser(id);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? collectedPlaces = prefs.getStringList('collectedPlaces');
-    log('Collected Places from service ${collectedPlaces}');
-
-    if (collectedPlaces == null) {
-      collectedPlaces = [id];
-    } else {
-      collectedPlaces.add(id);
-    }
-
-    log('Collected Places from service 2 ${collectedPlaces}');
-    await setReachedPlace(id);
-    prefs.setStringList('collectedPlaces', collectedPlaces);
-    log('Collected Places from service 3 ${await prefs.getStringList('collectedPlaces')}');
-  }
-
   Future<void> getCollectedPlacesByUser(String id) async {
     final collectedPlaces =
         await locationRepository.getCollectedPlacesByUser(id);
-    log('collected places ${collectedPlaces}');
-
-    for (String placeId in collectedPlaces) {
-      await setReachedPlace(placeId);
-    }
-
+    await setRichedPlaces(collectedPlaces);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList('collectedPlaces', collectedPlaces);
     log('places from prefs ${prefs.getStringList('collectedPlaces')}');
   }
 
-  Future<void> setReachedPlace(String placeId) async {
+  Future<void> setRichedPlaces(List<String> placeIds) async {
     final db = await _getDatabase();
-    await db.update(
-      'places',
-      {'isReached': 1},
-      where: 'id = ?',
-      whereArgs: [placeId],
-    );
+    for (String placeId in placeIds) {
+      await db.update(
+        'places',
+        {'isReached': 1},
+        where: 'id = ?',
+        whereArgs: [placeId],
+      );
+    }
+    final places = await loadPlaces();
+    for (var place in places) {
+      if (place.isReached) {
+        print('1 place ${place.name} isReached = ${place.isReached}');
+      }
+    }
   }
 
   Future<void> clearRichedPlaces() async {

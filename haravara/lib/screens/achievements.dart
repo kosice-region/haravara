@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:haravara/models/place.dart';
 import 'package:haravara/providers/map_providers.dart';
-import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/achievement.dart';
+import 'package:haravara/widgets/footer.dart'; // Import Footer widget
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
 
@@ -18,14 +17,14 @@ class AchievementsScreen extends ConsumerStatefulWidget {
 }
 
 class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
-  final List<String> sortItems = ['Opened first', 'Closed first'];
-  final List<String> viewItems = ['2x2', '3x3'];
-  String? selectedValueSort = 'Opened first';
-  String? selectedValueView = '2x2';
-  late List<Place> places;
+  final List<String> sortItems = ['Otvorene', 'Zatvorene'];
+  final List<String> viewItems = ['Menej', 'Viac'];
+  String? selectedValueSort = 'Otvorene';
+  String? selectedValueView = 'Menej';
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
   }
 
@@ -58,17 +57,17 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
             builder: (context, ref, child) {
               final places = ref
                   .watch(placesProvider.notifier)
-                  .getSortedPlaces(selectedValueSort == 'Opened first');
+                  .getSortedPlaces(selectedValueSort == 'Otvorene');
               return Expanded(
                 child: GridView.count(
-                  crossAxisCount: selectedValueView == '2x2' ? 2 : 3,
+                  crossAxisCount: selectedValueView == 'Menej' ? 2 : 3,
                   childAspectRatio:
-                      5 / (selectedValueView == '2x2' ? 4.h : 5.h),
+                      5 / (selectedValueView == 'Menej' ? 4.h : 5.h),
                   children: [
                     for (final place in places)
                       Achievement(
                         place: place,
-                        size: (selectedValueView == '2x2'
+                        size: (selectedValueView == 'Menej'
                             ? ScreenSize.two
                             : ScreenSize.three),
                       ),
@@ -76,7 +75,10 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                 ),
               );
             },
-          )
+          ),
+          Footer(
+            height: 40,
+          ),
         ],
       ),
     );

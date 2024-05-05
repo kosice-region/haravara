@@ -5,6 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/providers/current_screen_provider.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
+import 'package:haravara/screens/news_screen.dart';
+import 'package:haravara/screens/prizes_screen.dart';
+import 'package:haravara/screens/summary_screen.dart'; // Import SummaryScreen
 import 'package:haravara/services/places_service.dart';
 import 'package:haravara/services/screen_router.dart';
 import 'package:provider/provider.dart';
@@ -31,38 +34,41 @@ class HeaderMenu extends ConsumerWidget {
               children: <Widget>[
                 menuItem(context, 'NOVINKY', 'assets/menu-icons/mail.png',
                     ScreenType.news, ref),
-                menuItem(context, 'MAPA', 'assets/menu-icons/map.png',
+                /*menuItem(context, 'MAPA', 'assets/menu-icons/map.png',
                     ScreenType.map, ref),
                 menuItem(context, 'PECIATKY', 'assets/Icon.jpeg',
-                    ScreenType.achievements, ref),
+                    ScreenType.achievements, ref),*/
                 menuItem(context, 'SUTAZE', 'assets/menu-icons/calendar.png',
                     ScreenType.summary, ref),
+                menuItem(context, 'VYHRY', 'assets/MINCE.png',
+                    ScreenType.prizes, ref),
                 menuItem(context, 'ODHLASIT SA', 'assets/menu-icons/steps.png',
                     ScreenType.auth, ref),
               ],
             ),
           ),
           Positioned(
-              top: 80.h,
-              right: 30.w,
-              child: Container(
-                width: 36.w,
-                height: 36.h,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(50)).r,
-                  color: Colors.red,
+            top: 70.h,
+            right: 30.w,
+            child: Container(
+              width: 36.w,
+              height: 36.h,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(50)).r,
+                color: Colors.red,
+              ),
+              child: IconButton(
+                icon: Icon(
+                  Icons.clear_outlined,
+                  color: Colors.white,
+                  size: 13.dg,
                 ),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.clear_outlined,
-                    color: Colors.white,
-                    size: 13.dg,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              )),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -86,6 +92,30 @@ class HeaderMenu extends ConsumerWidget {
             var currentScreen = ref.watch(currentScreenProvider);
             if (screenToRoute == ScreenType.auth) {
               handleLogout(ref, context);
+              return;
+            }
+            if (screenToRoute == ScreenType.news) {
+              // Navigate to the news screen
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    NewsScreen(), // Replace NewsScreen with your actual screen
+              ));
+              return;
+            }
+            if (screenToRoute == ScreenType.prizes) {
+              // Navigate to the prizes screen
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    PrizesScreen(), // Replace PrizesScreen with your actual screen
+              ));
+              return;
+            }
+            if (screenToRoute == ScreenType.summary) {
+              // Navigate to the summary screen
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    SummaryScreen(), // Replace SummaryScreen with your actual screen
+              ));
               return;
             }
             if (currentScreen != screenToRoute) {

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/screens/map_detail_screen.dart';
 import 'package:haravara/widgets/footer.dart';
@@ -15,13 +16,20 @@ import 'package:haravara/widgets/header_menu.dart';
 import 'package:page_transition/page_transition.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
-  const MapScreen({super.key});
+  const MapScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<MapScreen> createState() => _MapScreenState();
+  _MapScreenState createState() => _MapScreenState();
 }
 
 class _MapScreenState extends ConsumerState<MapScreen> {
+  final Completer<GoogleMapController> _controller = Completer();
+  LatLngBounds bounds = LatLngBounds(
+    southwest: const LatLng(48.0722569, 19.8085628),
+    northeast: const LatLng(49.3252921, 23.3745267),
+  );
+  late CameraPosition cameraPosition;
+
   @override
   void initState() {
     super.initState();
@@ -35,17 +43,18 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return Scaffold(
       endDrawer: const HeaderMenu(),
       body: Padding(
-        padding: const EdgeInsets.only(top: 12).h,
+        padding: EdgeInsets.only(top: 12.h),
         child: Column(
           children: [
-            const Header(),
+            Header(),
             30.verticalSpace,
             Center(
               child: Text(
                 'MAPA PEČIATOK',
                 style: GoogleFonts.titanOne(
-                    fontSize: 17.sp,
-                    color: const Color.fromARGB(255, 1, 199, 67)),
+                  fontSize: 17.sp,
+                  color: const Color.fromARGB(255, 1, 199, 67),
+                ),
               ),
             ),
             10.verticalSpace,
@@ -57,7 +66,19 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(4.r)),
-                child: Container(),
+                child: GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: const CameraPosition(
+                    target: LatLng(48.859101948221365, 21.244443170637833),
+                    zoom: 8,
+                  ),
+                  markers: ref.watch(markersProvider),
+                  cameraTargetBounds: CameraTargetBounds(bounds),
+                  myLocationEnabled: false,
+                  myLocationButtonEnabled: false,
+                  mapToolbarEnabled: false,
+                  zoomControlsEnabled: false,
+                ),
               ),
             ),
             14.verticalSpace,
@@ -65,28 +86,30 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               Column(
                 children: [
                   CupertinoButton(
-                      onPressed: () {
-                        // places.isNotEmpty ? navigateToMap() : null;
-                        navigateToMap();
-                      },
-                      color: places.isNotEmpty
-                          ? const Color.fromARGB(255, 7, 179, 25)
-                          : Colors.grey,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Text('Otvoriť mapu',
-                          style: GoogleFonts.titanOne(color: Colors.white))),
+                    onPressed: () {
+                      navigateToMap();
+                    },
+                    color: places.isNotEmpty
+                        ? const Color.fromARGB(255, 7, 179, 25)
+                        : Colors.grey,
+                    borderRadius: BorderRadius.circular(20),
+                    child: Text(
+                      'Otvoriť mapu',
+                      style: GoogleFonts.titanOne(color: Colors.white),
+                    ),
+                  ),
                 ],
               ),
             if (Platform.isAndroid)
               Column(
                 children: [
                   ElevatedButton(
-                    style: const ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll<Color>(
-                          Color.fromARGB(255, 7, 179, 25)),
+                    style: ElevatedButton.styleFrom(
+                      primary: places.isNotEmpty
+                          ? const Color.fromARGB(255, 7, 179, 25)
+                          : Colors.grey,
                     ),
                     onPressed: () {
-                      // places.isNotEmpty ? navigateToMap() : null;
                       navigateToMap();
                     },
                     child: Text(
@@ -94,33 +117,16 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       style: GoogleFonts.titanOne(color: Colors.white),
                     ),
                   ),
-                  10.verticalSpace
+                  10.verticalSpace,
                 ],
               ),
-            Expanded(
-              child: Stack(
-                children: [
-                  Positioned(
-                    bottom: 0.h,
-                    child: const Footer(height: 175, boxFit: BoxFit.fill),
-                  ),
-                  Positioned(
-                    bottom: 0.h,
-                    right: 1.w,
-                    left: 10.w,
-                    child: Image.asset(
-                      'assets/peopleMapScreen.png',
-                      height: 170.h,
-                      width: 258.44.w,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ],
-              ),
+            Image.asset(
+              'assets/peopleMapScreen.png',
             ),
           ],
         ),
       ),
+      bottomSheet: const Footer(height: 175, boxFit: BoxFit.fill),
     );
   }
 
