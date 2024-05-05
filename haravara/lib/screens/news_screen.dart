@@ -7,6 +7,7 @@ import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
 import 'package:haravara/widgets/footer.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class NewsScreen extends ConsumerStatefulWidget {
   const NewsScreen({Key? key}) : super(key: key);
@@ -21,6 +22,9 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis ex eu ante tempus molestie eu eget leo.',
     'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.'
   ];
+
+  final _pageController = PageController();
+  final _currentPageNotifier = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -57,34 +61,49 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 8).h,
+            padding: const EdgeInsets.only(top: 8),
             child: Column(
               children: [
                 const Header(),
-                43.verticalSpace,
+                const SizedBox(height: 80),
                 SizedBox(
-                  height: 130.h,
-                  width: 230.w, // Zmena výšky PageView
+                  height: 150.h,
+                  width: 215.w,
                   child: PageView.builder(
-                    scrollDirection: Axis.vertical,
+                    controller: _pageController,
+                    scrollDirection: Axis.horizontal, // Zmena na horizontal
                     itemCount: texts.length,
                     itemBuilder: (context, index) {
-                      return SizedBox(
-                        height: 100.h,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 15.0, horizontal: 8.0),
-                          child: buildBox(texts[index]),
-                        ),
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 15.0, vertical: 15.0),
+                        child: buildBox(texts[index]),
                       );
                     },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SmoothPageIndicator(
+                    controller: _pageController,
+                    count: texts.length,
+                    effect: SlideEffect(
+                      spacing: 8.0,
+                      radius: 4.0,
+                      dotWidth: 20.0,
+                      dotHeight: 8.0,
+                      paintStyle: PaintingStyle.fill,
+                      strokeWidth: 1.5,
+                      dotColor: Colors.grey,
+                      activeDotColor: const Color.fromRGBO(205, 19, 175, 1),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           Positioned(
-            bottom: 30,
+            bottom: 10,
             left: 3,
             child: Image.asset(
               'assets/MAX s horalkou.png',
@@ -118,7 +137,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
   }
 
   Widget buildBox(String text) {
-    double padding = 20; // Zmena veľkosti paddingu
+    double padding = 20;
     double maxWidth = 224.w - padding * 2;
 
     Size textSize =

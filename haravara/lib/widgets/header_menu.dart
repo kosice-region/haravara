@@ -6,7 +6,8 @@ import 'package:haravara/providers/current_screen_provider.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/screens/news_screen.dart';
-import 'package:haravara/screens/prizes_screen.dart'; // Import PrizesScreen
+import 'package:haravara/screens/prizes_screen.dart';
+import 'package:haravara/screens/summary_screen.dart'; // Import SummaryScreen
 import 'package:haravara/services/places_service.dart';
 import 'package:haravara/services/screen_router.dart';
 import 'package:provider/provider.dart';
@@ -106,6 +107,14 @@ class HeaderMenu extends ConsumerWidget {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
                     PrizesScreen(), // Replace PrizesScreen with your actual screen
+              ));
+              return;
+            }
+            if (screenToRoute == ScreenType.summary) {
+              // Navigate to the summary screen
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    SummaryScreen(), // Replace SummaryScreen with your actual screen
               ));
               return;
             }

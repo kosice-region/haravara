@@ -69,6 +69,8 @@ dependencies:
   vector_math: ^2.1.4
   flutter_verification_code: ^1.1.7
   dropdown_button2: ^2.3.9
+  page_view_indicators: ^2.0.0
+  smooth_page_indicator: ^1.1.0
 
 
 dev_dependencies:
@@ -133,6 +135,7 @@ flutter:
     - assets/BATOH (1).png
     - assets/clovece.jpg
     - assets/MINCE.png
+    - assets/profil.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart' as Flutter;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/screens/achievements.dart';
 import 'package:haravara/screens/map_screen.dart';
+import 'package:haravara/screens/profil.dart';
 import 'package:haravara/screens/summary_screen.dart';
 import 'package:haravara/widgets/header_menu.dart';
 
@@ -21,14 +21,14 @@ class Footer extends StatelessWidget {
         ));
       },
       child: Container(
-        height: 40.h, // 3 cm in logical pixels
+        height: 50.h, // 3 cm in logical pixels
         color: const Color.fromRGBO(41, 141, 116, 1), // Zelená farba banneru
         child: Row(
           children: [
-            const SizedBox(width: 14), // Posun obsahu doprava
+            const SizedBox(width: 16), // Posun obsahu doprava
             Column(
               children: [
-                8.33.verticalSpace,
+                12.verticalSpace,
                 SizedBox(width: 8.w), // Prispôsobte šírku podľa potreby
                 SizedBox(
                   height: 3.5.h,
@@ -57,32 +57,36 @@ class Footer extends StatelessWidget {
             ),
             Expanded(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceAround, // Zmenené na spaceAround
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 50.0,
-                        right: 35.0), // Zmenené na left a pridané right
-                    child: IconButton(
-                      icon: Image.asset(
-                          'assets/Icon.jpeg'), // Replace with your actual image path
-                      onPressed: () {
-                        // Action when the button is pressed
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              AchievementsScreen(), // Placeholder container, replace with your desired screen
-                        ));
-                      },
-                    ),
-                  ),
+                  const SizedBox(width: 2), // Posun prvého obrázka doprava
                   IconButton(
+                    iconSize: 40.0, // Zväčšená veľkosť ikony
                     icon: Image.asset(
-                        'assets/menu-icons/map.png'), // Replace with your actual image path
+                        'assets/Icon.jpeg'), // Replace with your actual image path
                     onPressed: () {
                       // Action when the button is pressed
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
-                            MapScreen(), // Placeholder container, replace with your desired screen
+                            AchievementsScreen(), // Placeholder container, replace with your desired screen
+                      ));
+                    },
+                  ),
+                  IconButton(
+                    icon: Image.asset('assets/menu-icons/map.png'),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => MapScreen(),
+                      ));
+                    },
+                  ),
+                  IconButton(
+                    iconSize: 60.0, // Zväčšená veľkosť ikony
+                    icon: Image.asset('assets/profil.png'),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ProfilScreen(),
                       ));
                     },
                   ),
