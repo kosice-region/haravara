@@ -16,7 +16,7 @@ class Footer extends ConsumerWidget {
       onTap: () {
         // Otvorenie menu
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const HeaderMenu(),
+          builder: (context) => HeaderMenu(),
         ));
       },
       child: Container(

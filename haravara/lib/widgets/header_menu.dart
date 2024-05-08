@@ -13,10 +13,19 @@ import 'package:haravara/services/screen_router.dart';
 import 'package:provider/provider.dart';
 
 class HeaderMenu extends ConsumerWidget {
-  const HeaderMenu({super.key});
+  HeaderMenu({super.key});
+
+  final List<String> imageAssets = [
+    'assets/background_menu.png',
+    'assets/menu-icons/mail.png',
+    'assets/menu-icons/calendar.png',
+    'assets/MINCE.png',
+    'assets/menu-icons/steps.png'
+  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return Scaffold(
       body: Stack(

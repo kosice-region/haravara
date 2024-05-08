@@ -47,7 +47,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return Scaffold(
-      endDrawer: const HeaderMenu(),
+      endDrawer: HeaderMenu(),
       body: Column(
         children: [
           Padding(
@@ -103,7 +103,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
             Consumer(
               builder: (context, ref, child) {
                 final places =
-                    ref.watch(placesProvider.notifier).getSortedPlaces(false);
+                    ref.watch(placesProvider.notifier).getSortedPlaces(true);
                 places.forEach(
                   (element) {
                     if (element.isReached) {

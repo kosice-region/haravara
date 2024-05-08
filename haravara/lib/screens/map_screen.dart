@@ -28,38 +28,55 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     setState(() {});
   }
 
+  final List<String> imageAssets = [
+    'assets/places-map.jpg',
+    'assets/peopleMapScreen.png',
+  ];
+
   @override
   Widget build(BuildContext context) {
+    imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     ScreenUtil.init(context, designSize: const Size(255, 516));
     final places = ref.watch(placesProvider);
     return Scaffold(
-      endDrawer: const HeaderMenu(),
+      backgroundColor: Color.fromARGB(255, 244, 232, 209),
+      endDrawer: HeaderMenu(),
       body: Padding(
         padding: EdgeInsets.only(top: 12.h),
         child: Column(
           children: [
             const Header(),
-            30.verticalSpace,
+            10.verticalSpace,
             Center(
               child: Text(
                 'MAPA PEČIATOK',
                 style: GoogleFonts.titanOne(
                   fontSize: 17.sp,
-                  color: const Color.fromARGB(255, 1, 199, 67),
+                  color: const Color.fromARGB(255, 86, 162, 73),
                 ),
               ),
             ),
-            10.verticalSpace,
-            Container(
-                height: 110.h,
-                width: 225.w,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(4.r)),
+            // 10.verticalSpace,
+            TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                shadowColor: MaterialStateProperty.all(Colors.transparent),
+                elevation: MaterialStateProperty.all(0),
+              ),
+              onPressed: () {
+                navigateToMap();
+              },
+              child: Container(
+                width: 302.w,
+                height: 150.h,
+                child: Image.asset(
+                  'assets/places-map.jpg',
+                  fit: BoxFit.cover,
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(4.r)),
-                  child: Container(),
-                )),
+              ),
+            ),
+
             14.verticalSpace,
             if (Platform.isIOS)
               Column(
@@ -82,20 +99,20 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             if (Platform.isAndroid)
               Column(
                 children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: places.isNotEmpty
-                          ? const Color.fromARGB(255, 7, 179, 25)
-                          : Colors.grey,
-                    ),
-                    onPressed: () {
-                      navigateToMap();
-                    },
-                    child: Text(
-                      'Otvoriť mapu',
-                      style: GoogleFonts.titanOne(color: Colors.white),
-                    ),
-                  ),
+                  // ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: places.isNotEmpty
+                  //         ? const Color.fromARGB(255, 7, 179, 25)
+                  //         : Colors.grey,
+                  //   ),
+                  //   onPressed: () {
+                  //     navigateToMap();
+                  //   },
+                  //   child: Text(
+                  //     'Otvoriť mapu',
+                  //     style: GoogleFonts.titanOne(color: Colors.white),
+                  //   ),
+                  // ),
                   10.verticalSpace,
                 ],
               ),

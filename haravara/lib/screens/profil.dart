@@ -16,7 +16,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: const HeaderMenu(),
+      endDrawer: HeaderMenu(),
       body: Stack(
         children: [
           Image.asset(

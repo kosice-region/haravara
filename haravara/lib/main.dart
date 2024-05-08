@@ -137,6 +137,8 @@ class _ConsumerAppState extends ConsumerState<ConsumerApp> {
       _isInitCalled = true;
     }
     precacheImage(const AssetImage('assets/places-map.jpg'), context);
+    precacheImage(const AssetImage('assets/background_menu.png'), context);
+
     super.didChangeDependencies();
   }
 

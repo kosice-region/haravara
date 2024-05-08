@@ -33,7 +33,7 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.auth: const AuthScreen(),
   ScreenType.code: const AuthVerificationScreen(),
   ScreenType.detailMap: const MapDetailScreen(),
-  ScreenType.prizes: const PrizesScreen(),
+  ScreenType.prizes: PrizesScreen(),
   ScreenType.profile: const ProfilScreen(),
 };
 

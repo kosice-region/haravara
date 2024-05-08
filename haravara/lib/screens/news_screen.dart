@@ -29,6 +29,12 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
 
   final _pageController = PageController();
   final _currentPageNotifier = ValueNotifier<int>(0);
+  final List<String> imageAssets = [
+    'assets/pozadie8.jpg',
+    'assets/MAX s horalkou.png',
+    'assets/Majka pri ohni.png',
+    'assets/BATOH (1).png',
+  ];
 
   @override
   void initState() {
@@ -45,10 +51,11 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     ScreenUtil.init(context, designSize: const Size(255, 516));
 
     return Scaffold(
-      endDrawer: const HeaderMenu(),
+      endDrawer: HeaderMenu(),
       body: Stack(
         children: [
           Opacity(
@@ -72,7 +79,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                   width: 215.w,
                   child: PageView.builder(
                     controller: _pageController,
-                    scrollDirection: Axis.horizontal, // Zmena na horizontal
+                    scrollDirection: Axis.horizontal,
                     itemCount: texts.length,
                     itemBuilder: (context, index) {
                       return Padding(

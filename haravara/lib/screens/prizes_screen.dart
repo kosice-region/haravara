@@ -13,8 +13,14 @@ class PrizesScreen extends StatefulWidget {
 }
 
 class _PrizesScreenState extends State<PrizesScreen> {
+  final List<String> imageAssets = [
+    'assets/clovece.jpg',
+    'assets/MINCE.png',
+  ];
+
   @override
   Widget build(BuildContext context) {
+    imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     return Scaffold(
       endDrawer: HeaderMenu(),
       body: Stack(
