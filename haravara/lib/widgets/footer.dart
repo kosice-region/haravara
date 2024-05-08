@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haravara/screens/achievements.dart';
-import 'package:haravara/screens/map_screen.dart';
-import 'package:haravara/screens/profil.dart';
-import 'package:haravara/screens/summary_screen.dart';
+import 'package:haravara/providers/current_screen_provider.dart';
+import 'package:haravara/services/screen_router.dart';
 import 'package:haravara/widgets/header_menu.dart';
 
-class Footer extends StatelessWidget {
-  const Footer({this.boxFit = BoxFit.cover, Key? key, required this.height});
+class Footer extends ConsumerWidget {
+  const Footer({super.key, this.boxFit = BoxFit.cover, required this.height});
   final int height;
   final BoxFit boxFit;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
         // Otvorenie menu
@@ -57,37 +56,27 @@ class Footer extends StatelessWidget {
             ),
             Expanded(
               child: Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceAround, // Zmenené na spaceAround
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const SizedBox(width: 2), // Posun prvého obrázka doprava
+                  const SizedBox(width: 2),
                   IconButton(
-                    iconSize: 40.0, // Zväčšená veľkosť ikony
-                    icon: Image.asset(
-                        'assets/Icon.jpeg'), // Replace with your actual image path
+                    iconSize: 40.0,
+                    icon: Image.asset('assets/Icon.jpeg'),
                     onPressed: () {
-                      // Action when the button is pressed
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            AchievementsScreen(), // Placeholder container, replace with your desired screen
-                      ));
+                      routeToNextScreen(context, ScreenType.achievements, ref);
                     },
                   ),
                   IconButton(
                     icon: Image.asset('assets/menu-icons/map.png'),
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => MapScreen(),
-                      ));
+                      routeToNextScreen(context, ScreenType.map, ref);
                     },
                   ),
                   IconButton(
-                    iconSize: 60.0, // Zväčšená veľkosť ikony
+                    iconSize: 60.0,
                     icon: Image.asset('assets/profil.png'),
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ProfilScreen(),
-                      ));
+                      routeToNextScreen(context, ScreenType.profile, ref);
                     },
                   ),
                 ],
@@ -97,5 +86,15 @@ class Footer extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void routeToNextScreen(context, ScreenType screenToRoute, WidgetRef ref) {
+    var currentScreen = ref.watch(currentScreenProvider);
+    if (currentScreen == screenToRoute) {
+      return;
+    }
+    ref.read(currentScreenProvider.notifier).changeScreen(screenToRoute);
+    ScreenRouter().routeToNextScreenWithoutAllowingRouteBackWithoutAnimation(
+        context, ScreenRouter().getScreenWidget(screenToRoute));
   }
 }

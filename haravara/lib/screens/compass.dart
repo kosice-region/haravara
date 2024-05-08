@@ -1,24 +1,31 @@
 import 'dart:async';
+import 'dart:developer' as dev;
 import 'dart:math' as math;
+import 'dart:math';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/providers/map_providers.dart';
-import 'package:haravara/screens/achievements.dart';
-import 'package:haravara/screens/map_screen.dart';
+import 'package:haravara/services/notification_service.dart';
+import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
+    // ignore: library_prefixes
+    as geoLocation;
 
 class Compass extends ConsumerStatefulWidget {
-  const Compass({Key? key}) : super(key: key);
+  const Compass({super.key});
 
   @override
   ConsumerState<Compass> createState() => _CompassState();
@@ -54,10 +61,10 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
   bool isPlaceReached = false;
   bool isAppInBackgroundMode = false;
   double? heading;
-  late StreamSubscription<CompassEvent> compassSubscription;
   double? bearingToTarget;
   double distanceToTarget = 0;
   late Place pickedPlace;
+  late StreamSubscription<CompassEvent> compassSubscription;
   late StreamSubscription<Position> positionStream;
   PlacesService placesService = PlacesService();
   Timer? _backgroundTimer;
@@ -65,9 +72,12 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
   late double targetLat;
   late double targetLng;
 
+  bool _isServiceRunning = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initializeCompass();
     _initializeLocationStream();
   }
@@ -83,6 +93,8 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
     pickedPlace = ref.watch(placesProvider.notifier).getPlaceById(id);
     targetLat = pickedPlace.geoData.primary.coordinates[0];
     targetLng = pickedPlace.geoData.primary.coordinates[1];
+    // targetLat = 48.697555117540226;
+    // targetLng = 21.23349319583468;
   }
 
   void _initializeCompass() {
@@ -109,7 +121,7 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
   }
 
   Future<void> _updateDistanceAndBearing(Position position) async {
-    bearingToTarget = _calculateBearing(
+    double distance = Geolocator.distanceBetween(
         position.latitude, position.longitude, targetLat, targetLng);
     if (mounted) {
       setState(() {
@@ -190,7 +202,7 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
                   width: 117.w,
                   height: 43.h,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 22, 102, 177),
+                    color: getColorForDistance(this.distanceToTarget),
                     borderRadius: BorderRadius.all(Radius.circular(15.r)),
                   ),
                   child: Center(
@@ -243,19 +255,7 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
     double direction = bearingToTarget - heading;
 
     direction = (direction + 360) % 360;
-    // print('pos direction ${(direction * (math.pi / 180))}');
     return direction;
-  }
-
-  Future<double> calculateDistance(double startLatitude, double startLongitude,
-      double endLatitude, double endLongitude) async {
-    double distanceInMeters = Geolocator.distanceBetween(
-      startLatitude,
-      startLongitude,
-      endLatitude,
-      endLongitude,
-    );
-    return distanceInMeters;
   }
 
   Widget _buildCompass() {
@@ -265,21 +265,17 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
         if (snapshot.hasError) {
           return Text('Error reading heading: ${snapshot.error}');
         }
-
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
-
         double? currentDirection = snapshot.data!.heading;
-
         if (currentDirection == null) {
           return const Center(
             child: Text("Device does not have sensors !"),
           );
         }
-        // print('current direction ${(currentDirection * (math.pi / 180) * -1)}');
         return Transform.rotate(
           angle: (currentDirection * (math.pi / 180) * -1),
           child: Image.asset(

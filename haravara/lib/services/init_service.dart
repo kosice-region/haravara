@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/models/setup_model.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
+import 'package:haravara/repositories/location_repository.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/services/places_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final PlacesService placesService = PlacesService();
 final MapService mapService = MapService();
@@ -16,7 +16,6 @@ class Init {
   static initialize(WidgetRef ref) async {
     print("starting registering services");
     SetupModel model = ref.watch(setupNotifierProvider);
-    print(model);
     if (model.isFirstSetup) {
       print('first setup');
       await _firstSetup(ref, model);
@@ -24,8 +23,6 @@ class Init {
       print('isnt first');
       await _defaultSetup(ref);
     }
-    final test = ref.watch(loginNotifierProvider);
-    print(test);
     print("finished registering services");
   }
 
@@ -44,27 +41,22 @@ class Init {
   static _defaultSetup(WidgetRef ref) async {
     await _requestLocationPermission();
     final List<Place> places = await placesService.loadPlaces();
-    final Set<Marker> markers = await mapService.getMarkers(places);
     ref.read(placesProvider.notifier).addPlaces(places);
-    ref.read(markersProvider.notifier).setMarkers(markers);
   }
 
   static _requestLocationPermission() async {
-    LocationPermission permission;
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
+    await Permission.location.request();
+    var status = await Permission.locationAlways.status;
+    if (status.isDenied || status.isPermanentlyDenied) {
+      await Permission.locationAlways.request();
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+    status = await Permission.locationAlways.status;
+    if (status.isGranted) {
+      print("Location Always permission granted.");
+    } else if (status.isPermanentlyDenied) {
+      openAppSettings();
+    } else {
+      print("Location Always permission denied.");
     }
-    return Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
   }
 }

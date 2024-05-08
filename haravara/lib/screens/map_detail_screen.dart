@@ -143,7 +143,7 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                                 }),
                             14.verticalSpace,
                             _LocalButton(
-                                name: 'Už som tu!',
+                                name: 'Pouzit\'',
                                 onPressed: () {
                                   routeToCompassScreen();
                                 }),

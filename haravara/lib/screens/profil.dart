@@ -6,7 +6,7 @@ import 'package:haravara/widgets/header_menu.dart';
 import 'package:haravara/widgets/footer.dart';
 
 class ProfilScreen extends StatefulWidget {
-  const ProfilScreen({Key? key}) : super(key: key);
+  const ProfilScreen({super.key});
 
   @override
   _ProfilScreenState createState() => _ProfilScreenState();
@@ -16,7 +16,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: HeaderMenu(),
+      endDrawer: const HeaderMenu(),
       body: Stack(
         children: [
           Image.asset(
@@ -41,7 +41,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
             ],
           ),
           Positioned(
-            top: 140.h, // Posunutie o 4 cm zhora
+            top: 140.h,
             left: 0,
             right: 0,
             child: Image.asset(

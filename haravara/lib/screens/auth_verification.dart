@@ -121,11 +121,12 @@ class _AuthVerificationScreenState
     }
     if (authState.isLogin) {
       await authService.loginUserByEmail(authState.enteredEmail!);
+      routeToNewsScreen();
     } else {
       await authService.registerUserByEmail(
           authState.enteredEmail!, authState.enteredUsername!, ref);
+      routeToNewsScreen();
     }
-    routeToNewsScreen();
     _showSnackBar('Success');
   }
 

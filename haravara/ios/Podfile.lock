@@ -52,6 +52,8 @@ PODS:
   - Flutter (1.0.0)
   - flutter_activity_recognition (0.0.1):
     - Flutter
+  - flutter_background_service_ios (0.0.3):
+    - Flutter
   - flutter_compass (0.0.1):
     - Flutter
   - flutter_foreground_task (0.0.1):
@@ -60,14 +62,6 @@ PODS:
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
-  - google_maps_flutter_ios (0.0.1):
-    - Flutter
-    - GoogleMaps (< 9.0)
-  - GoogleMaps (8.3.1):
-    - GoogleMaps/Maps (= 8.3.1)
-  - GoogleMaps/Base (8.3.1)
-  - GoogleMaps/Maps (8.3.1):
-    - GoogleMaps/Base
   - GoogleUtilities/Environment (7.12.0):
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleUtilities/Logger (7.12.0):
@@ -81,6 +75,8 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - permission_handler_apple (9.3.0):
+    - Flutter
   - PromisesObjC (2.3.1)
   - shared_preferences_foundation (0.0.1):
     - Flutter
@@ -99,14 +95,14 @@ DEPENDENCIES:
   - fl_location (from `.symlinks/plugins/fl_location/ios`)
   - Flutter (from `Flutter`)
   - flutter_activity_recognition (from `.symlinks/plugins/flutter_activity_recognition/ios`)
+  - flutter_background_service_ios (from `.symlinks/plugins/flutter_background_service_ios/ios`)
   - flutter_compass (from `.symlinks/plugins/flutter_compass/ios`)
   - flutter_foreground_task (from `.symlinks/plugins/flutter_foreground_task/ios`)
   - geofence_service (from `.symlinks/plugins/geofence_service/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
-  - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
-  - GoogleMaps (= 8.3.1)
   - map_launcher (from `.symlinks/plugins/map_launcher/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
 
@@ -121,7 +117,6 @@ SPEC REPOS:
     - FirebaseDatabase
     - FirebaseSharedSwift
     - FirebaseStorage
-    - GoogleMaps
     - GoogleUtilities
     - GTMSessionFetcher
     - IosAwnCore
@@ -147,6 +142,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_activity_recognition:
     :path: ".symlinks/plugins/flutter_activity_recognition/ios"
+  flutter_background_service_ios:
+    :path: ".symlinks/plugins/flutter_background_service_ios/ios"
   flutter_compass:
     :path: ".symlinks/plugins/flutter_compass/ios"
   flutter_foreground_task:
@@ -155,12 +152,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geofence_service/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
-  google_maps_flutter_ios:
-    :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
   map_launcher:
     :path: ".symlinks/plugins/map_launcher/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sqflite:
@@ -185,22 +182,22 @@ SPEC CHECKSUMS:
   fl_location: 68b4a6c4aad2a453493ff66f196e0748280cf43e
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_activity_recognition: 5c3b026997742b01e82424ef257db9640822ad77
+  flutter_background_service_ios: e30e0d3ee69e4cee66272d0c78eacd48c2e94aac
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   flutter_foreground_task: 21ef182ab0a29a3005cc72cd70e5f45cb7f7f817
   geofence_service: e007ddec3cf8b85531e8f7b202c1ceabca669d64
   geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
-  google_maps_flutter_ios: f135b968a67c05679e0a53538e900b5c174b0d99
-  GoogleMaps: b47b67bd63d708477d6ff457da2d695c0d8ceb5f
   GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   GTMSessionFetcher: 8a1b34ad97ebe6f909fb8b9b77fba99943007556
   IosAwnCore: 4691f457bd8dc9a3a0a941cee6439a894a0b81aa
   leveldb-library: e74c27d8fbd22854db7cb467968a0b8aa1db7126
   map_launcher: e325db1261d029ff33e08e03baccffe09593ffea
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
+  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
 
-PODFILE CHECKSUM: 45ac330c124b61ab7336968f765dae77ff27ec2a
+PODFILE CHECKSUM: 80a108d599ecc84a1f0eb7dd9be95a26cab9fee7
 
 COCOAPODS: 1.15.2
