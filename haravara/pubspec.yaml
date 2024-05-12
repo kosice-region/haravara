@@ -1,5 +1,5 @@
 name: haravara
-description: "A new Flutter project."
+description: Haravara project"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -35,9 +35,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  google_maps_flutter: ^2.5.0
-  flutter_polyline_points: ^2.0.0
-  geolocator: ^10.1.0
   geofence_service: ^5.0.0
   awesome_notifications: ^0.9.2
   google_fonts: ^6.1.0
@@ -69,14 +66,27 @@ dependencies:
   vector_math: ^2.1.4
   flutter_verification_code: ^1.1.7
   dropdown_button2: ^2.3.9
+  latlong2: ^0.9.1
+  permission_handler: ^11.3.1
+  flutter_background_service: ^5.0.5
+  geolocator: ^11.0.0
+  flutter_background_service_android: ^6.2.2
+  flutter_background_service_ios: ^5.0.0
   page_view_indicators: ^2.0.0
   smooth_page_indicator: ^1.1.0
 
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.13.1"
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/logo-icon/logo-haravara.png"
+  min_sdk_android: 21 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

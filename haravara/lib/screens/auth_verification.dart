@@ -121,15 +121,17 @@ class _AuthVerificationScreenState
     }
     if (authState.isLogin) {
       await authService.loginUserByEmail(authState.enteredEmail!);
+      routeToNewsScreen();
     } else {
       await authService.registerUserByEmail(
           authState.enteredEmail!, authState.enteredUsername!, ref);
+      routeToNewsScreen();
     }
-    routeToNewsScreen();
     _showSnackBar('Success');
   }
 
   void routeToNewsScreen() {
+    if (!mounted) return;
     ref.read(currentScreenProvider.notifier).changeScreen(ScreenType.news);
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
         context, ScreenRouter().getScreenWidget(ScreenType.news));

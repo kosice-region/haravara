@@ -8,6 +8,7 @@ import 'package:haravara/screens/map_detail_screen.dart';
 import 'package:haravara/screens/map_screen.dart';
 import 'package:haravara/screens/news_screen.dart';
 import 'package:haravara/screens/prizes_screen.dart';
+import 'package:haravara/screens/profil.dart';
 import 'package:haravara/screens/summary_screen.dart';
 
 enum ScreenType {
@@ -20,6 +21,7 @@ enum ScreenType {
   code,
   detailMap,
   prizes,
+  profile
 }
 
 Map screenTypeToWidget = <ScreenType, Widget>{
@@ -32,6 +34,7 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.code: const AuthVerificationScreen(),
   ScreenType.detailMap: const MapDetailScreen(),
   ScreenType.prizes: const PrizesScreen(),
+  ScreenType.profile: const ProfilScreen(),
 };
 
 class CurrentScreenNotifier extends StateNotifier<ScreenType> {

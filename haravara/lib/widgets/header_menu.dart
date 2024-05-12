@@ -94,30 +94,7 @@ class HeaderMenu extends ConsumerWidget {
               handleLogout(ref, context);
               return;
             }
-            if (screenToRoute == ScreenType.news) {
-              // Navigate to the news screen
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    NewsScreen(), // Replace NewsScreen with your actual screen
-              ));
-              return;
-            }
-            if (screenToRoute == ScreenType.prizes) {
-              // Navigate to the prizes screen
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    PrizesScreen(), // Replace PrizesScreen with your actual screen
-              ));
-              return;
-            }
-            if (screenToRoute == ScreenType.summary) {
-              // Navigate to the summary screen
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    SummaryScreen(), // Replace SummaryScreen with your actual screen
-              ));
-              return;
-            }
+
             if (currentScreen != screenToRoute) {
               ref
                   .read(currentScreenProvider.notifier)

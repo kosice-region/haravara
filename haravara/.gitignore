@@ -1,5 +1,3 @@
-# Created by https://www.toptal.com/developers/gitignore/api/flutter,macos,windows,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=flutter,macos,windows,visualstudiocode
 
 ### Flutter ###
 # Flutter/Dart/Pub related
@@ -143,4 +141,15 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/flutter,macos,windows,visualstudiocode
+#Additional files to ignore
+*.log
+node_modules
+
+#Flutter generated files
+linux/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugins.cmake
+windows/flutter/generated_plugin_registrant.h
+macos/Flutter/GeneratedPluginRegistrant.swift
+haravara/linux/flutter/generated_plugins.cmake
+haravara/linux/flutter/generated_plugin_registrant.h
+haravara/linux/flutter/generated_plugin_registrant.cc

@@ -1,7 +1,7 @@
 import UIKit
 import Flutter
-import GoogleMaps
 import Firebase
+import flutter_background_service_ios
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -10,13 +10,12 @@ import Firebase
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     FirebaseApp.configure()
-    GMSServices.provideAPIKey("AIzaSyCgHVN9XIIgGyCxlDYvOloDIkEcArxMkRw")
+    SwiftFlutterBackgroundServicePlugin.taskIdentifier = "com.example.haravara"
     GeneratedPluginRegistrant.register(with: self)
 
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
     }
-
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

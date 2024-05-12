@@ -26,6 +26,6 @@ class NotificationController {
   @pragma("vm:entry-point")
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
-    // Your code goes here
+    print(receivedAction.toString());
   }
 }
