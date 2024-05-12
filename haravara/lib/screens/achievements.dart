@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'dart:developer';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,10 +9,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/places_service.dart';
+import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/achievement.dart';
 import 'package:haravara/widgets/footer.dart'; // Import Footer widget
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AchievementsScreen extends ConsumerStatefulWidget {
@@ -30,6 +34,17 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
   @override
   void initState() {
     super.initState();
+    initPlaces();
+  }
+
+  initPlaces() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    log('${prefs.getStringList('collectedPlaces')}');
+    final places = await PlacesService().loadPlaces();
+    ref.read(placesProvider.notifier).addPlaces(places);
+    setState(() {
+      isInit = true;
+    });
     initPlaces();
   }
 

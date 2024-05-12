@@ -9,6 +9,7 @@ import 'package:haravara/screens/map_screen.dart';
 import 'package:haravara/screens/news_screen.dart';
 import 'package:haravara/screens/prizes_screen.dart';
 import 'package:haravara/screens/profil.dart';
+import 'package:haravara/screens/profil.dart';
 import 'package:haravara/screens/summary_screen.dart';
 
 enum ScreenType {
@@ -21,6 +22,7 @@ enum ScreenType {
   code,
   detailMap,
   prizes,
+  profile
   profile
 }
 

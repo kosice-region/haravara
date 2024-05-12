@@ -74,6 +74,7 @@ dependencies:
   flutter_background_service_ios: ^5.0.0
   page_view_indicators: ^2.0.0
   smooth_page_indicator: ^1.1.0
+  google_maps_flutter: ^2.5.3
 
 
 dev_dependencies:
