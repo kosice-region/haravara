@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:haravara/models/user.dart';
@@ -51,6 +52,13 @@ class AuthRepository {
       'username': user.username,
     };
     await usersRef.child(user.id!).update(updatedData);
+  }
+
+  Future<void> updateUserName(String username, String userId) async {
+    Map<String, dynamic> updatedData = {
+      'username': username,
+    };
+    await usersRef.child(userId).update(updatedData);
   }
 
   static Map<String, dynamic> decodeJsonFromSnapshot(DataSnapshot snapshot) {

@@ -143,7 +143,7 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
         calculateCompassDirection(heading ?? 0, bearingToTarget ?? 0);
 
     return Scaffold(
-      endDrawer: const HeaderMenu(),
+      endDrawer: HeaderMenu(),
       body: Stack(
         children: [
           Image.asset(

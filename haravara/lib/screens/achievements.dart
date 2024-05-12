@@ -1,14 +1,21 @@
+import 'dart:developer';
+
+import 'dart:developer';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:haravara/models/place.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/places_service.dart';
+import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/achievement.dart';
+import 'package:haravara/widgets/footer.dart'; // Import Footer widget
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AchievementsScreen extends ConsumerStatefulWidget {
   const AchievementsScreen({super.key});
@@ -18,22 +25,33 @@ class AchievementsScreen extends ConsumerStatefulWidget {
 }
 
 class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
-  final List<String> sortItems = ['Opened first', 'Closed first'];
-  final List<String> viewItems = ['2x2', '3x3'];
-  String? selectedValueSort = 'Opened first';
-  String? selectedValueView = '2x2';
-  late List<Place> places;
+  final List<String> sortItems = ['Otvorene', 'Zatvorene'];
+  final List<String> viewItems = ['Menej', 'Viac'];
+  String? selectedValueSort = 'Otvorene';
+  String? selectedValueView = 'Menej';
+  var isInit = false;
 
   @override
   void initState() {
     super.initState();
+    initPlaces();
+  }
+
+  initPlaces() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    log('${prefs.getStringList('collectedPlaces')}');
+    final places = await PlacesService().loadPlaces();
+    ref.read(placesProvider.notifier).addPlaces(places);
+    setState(() {
+      isInit = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return Scaffold(
-      endDrawer: const HeaderMenu(),
+      endDrawer: HeaderMenu(),
       body: Column(
         children: [
           Padding(
@@ -54,29 +72,70 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
               ],
             ),
           ),
-          Consumer(
-            builder: (context, ref, child) {
-              final places = ref
-                  .watch(placesProvider.notifier)
-                  .getSortedPlaces(selectedValueSort == 'Opened first');
-              return Expanded(
-                child: GridView.count(
-                  crossAxisCount: selectedValueView == '2x2' ? 2 : 3,
-                  childAspectRatio:
-                      5 / (selectedValueView == '2x2' ? 4.h : 5.h),
-                  children: [
-                    for (final place in places)
-                      Achievement(
-                        place: place,
-                        size: (selectedValueView == '2x2'
-                            ? ScreenSize.two
-                            : ScreenSize.three),
-                      ),
-                  ],
-                ),
-              );
-            },
-          )
+          if (isInit)
+            Consumer(
+              builder: (context, ref, child) {
+                final places = ref
+                    .watch(placesProvider.notifier)
+                    .getSortedPlaces(selectedValueSort == 'Otvorene');
+                places.forEach(
+                  (element) {
+                    if (element.isReached) {
+                      log('${element.name}');
+                    }
+                  },
+                );
+                return Expanded(
+                  child: GridView.count(
+                    crossAxisCount: selectedValueView == 'Menej' ? 2 : 3,
+                    childAspectRatio:
+                        5 / (selectedValueView == 'Menej' ? 4.h : 5.h),
+                    children: [
+                      for (final place in places)
+                        Achievement(
+                          place: place,
+                          size: (selectedValueView == 'Menej'
+                              ? ScreenSize.two
+                              : ScreenSize.three),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          if (!isInit)
+            Consumer(
+              builder: (context, ref, child) {
+                final places =
+                    ref.watch(placesProvider.notifier).getSortedPlaces(true);
+                places.forEach(
+                  (element) {
+                    if (element.isReached) {
+                      log('${element.name}');
+                    }
+                  },
+                );
+                return Expanded(
+                  child: GridView.count(
+                    crossAxisCount: selectedValueView == 'Menej' ? 2 : 3,
+                    childAspectRatio:
+                        5 / (selectedValueView == 'Menej' ? 4.h : 5.h),
+                    children: [
+                      for (final place in places)
+                        Achievement(
+                          place: place,
+                          size: (selectedValueView == 'Menej'
+                              ? ScreenSize.two
+                              : ScreenSize.three),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          Footer(
+            height: 40,
+          ),
         ],
       ),
     );

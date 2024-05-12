@@ -4,12 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 class PickedLocationBottomBar extends StatefulWidget {
   const PickedLocationBottomBar({
-    Key? key,
+    super.key,
     required this.location,
     required this.onStop,
     this.distance,
     required this.onPrize,
-  }) : super(key: key);
+  });
 
   final String location;
   final double? distance;

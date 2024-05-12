@@ -16,7 +16,7 @@ class Header extends ConsumerStatefulWidget {
     this.showMenu = true,
     this.isCenter = false,
     this.backButton = false,
-    this.backGroundColor = const Color.fromARGB(255, 91, 187, 75),
+    this.backGroundColor = const Color.fromARGB(255, 35, 146, 115),
   });
   @override
   ConsumerState<Header> createState() => _HeaderState();
@@ -83,44 +83,11 @@ class _HeaderState extends ConsumerState<Header> {
                         GestureDetector(
                           onTap: () {
                             ScreenRouter()
-                                .routeToNextScreen(context, const HeaderMenu());
+                                .routeToNextScreen(context, HeaderMenu());
                           },
                           child: Container(
                             height: 43.h,
                             width: 58.w,
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(14)).r,
-                              color: widget.backGroundColor,
-                            ),
-                            child: Column(
-                              children: [
-                                8.70.verticalSpace,
-                                SizedBox(
-                                  height: 3.5.h,
-                                  width: 35.48.w,
-                                  child: const ColoredBox(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                8.33.verticalSpace,
-                                SizedBox(
-                                  height: 3.5.h,
-                                  width: 35.48.w,
-                                  child: const ColoredBox(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                8.33.verticalSpace,
-                                SizedBox(
-                                  height: 3.5.h,
-                                  width: 35.48.w,
-                                  child: const ColoredBox(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
                         )
                     ],

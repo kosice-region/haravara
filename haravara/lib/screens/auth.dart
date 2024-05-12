@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +7,6 @@ import 'package:haravara/providers/current_screen_provider.dart';
 import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/services/auth_service.dart';
 import 'package:haravara/services/screen_router.dart';
-import 'package:haravara/widgets/footer.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:uuid/uuid.dart';
 
@@ -36,7 +33,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   late AuthNotifier authNotifier;
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _usernameFocusNode = FocusNode();
-
+  var userId = '';
   @override
   void initState() {
     authNotifier = ref.read(authNotifierProvider.notifier);
@@ -286,30 +283,30 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                 ],
               ),
-              Expanded(
-                child: Stack(
-                  children: [
-                    Positioned(
-                      bottom: 0.h,
-                      child: const Footer(
-                        height: 160,
-                        boxFit: BoxFit.fill,
-                      ),
-                    ),
-                    if (deviceHeight > 700)
-                      Positioned(
-                        bottom: 0.h,
-                        left: 105.w,
-                        child: Image.asset(
-                          'assets/Hero.jpeg',
-                          width: 138.w,
-                          height: 160.h,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+              // Expanded(
+              //   child: Stack(
+              //     children: [
+              //       Positioned(
+              //         bottom: 0.h,
+              //         child: const Footer(
+              //           height: 160,
+              //           boxFit: BoxFit.fill,
+              //         ),
+              //       ),
+              //       if (deviceHeight > 700)
+              //         Positioned(
+              //           bottom: 0.h,
+              //           left: 105.w,
+              //           child: Image.asset(
+              //             'assets/Hero.jpeg',
+              //             width: 138.w,
+              //             height: 160.h,
+              //             fit: BoxFit.fill,
+              //           ),
+              //         ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -323,6 +320,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       _showSnackBar('We cant find your email, register instead');
       return;
     }
+    this.userId = userId;
     List<String> deviceInfo = await authService.getDeviceDetails();
     User user = await authService.getUserById(userId);
     if (user.phones.contains(deviceInfo[0])) {

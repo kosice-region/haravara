@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
+import 'package:haravara/widgets/footer.dart';
 
 class SummaryScreen extends StatefulWidget {
   const SummaryScreen({Key? key}) : super(key: key);
@@ -12,8 +13,14 @@ class SummaryScreen extends StatefulWidget {
 }
 
 class _SummaryScreenState extends State<SummaryScreen> {
+  final List<String> imageAssets = [
+    'assets/background-summary.png',
+    'assets/budik.png',
+  ];
+
   @override
   Widget build(BuildContext context) {
+    imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     return Scaffold(
       endDrawer: HeaderMenu(),
       body: Stack(
@@ -41,6 +48,12 @@ class _SummaryScreenState extends State<SummaryScreen> {
               summaryItem(),
               summaryItem(),
             ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Footer(height: 40),
           ),
         ],
       ),

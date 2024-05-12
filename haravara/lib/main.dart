@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -18,7 +15,6 @@ import 'package:haravara/screens/news_screen.dart';
 import 'package:haravara/screens/splash_screen.dart';
 import 'package:haravara/services/init_service.dart';
 import 'package:haravara/services/notification_controller.dart';
-import 'package:haravara/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sharedPreferencesProvider =
@@ -31,7 +27,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   AwesomeNotifications().initialize(
       null,
       [
@@ -142,6 +137,8 @@ class _ConsumerAppState extends ConsumerState<ConsumerApp> {
       _isInitCalled = true;
     }
     precacheImage(const AssetImage('assets/places-map.jpg'), context);
+    precacheImage(const AssetImage('assets/background_menu.png'), context);
+
     super.didChangeDependencies();
   }
 
