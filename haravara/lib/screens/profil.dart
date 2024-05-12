@@ -15,15 +15,16 @@ class ProfilScreen extends StatefulWidget {
 
 class _ProfilScreenState extends State<ProfilScreen> {
   late SharedPreferences _prefs;
-  String userName = 'Tvoje Meno';
+  String userName = 'Tvoje Meno'; // Používateľské meno
   String selectedProfileImage =
-      'assets/profil.png';
+      'assets/profil.png'; // Predvolený profilový obrázok
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
   }
+
   void _loadUserData() async {
     _prefs = await SharedPreferences.getInstance();
     String? storedName = _prefs.getString('userName');
@@ -77,10 +78,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
                             GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  selectedProfileImage =
-                                      'assets/profil.png';
+                                  selectedProfileImage = 'assets/profil.png';
                                 });
-                                Navigator.of(context).pop(); 
+                                Navigator.of(context).pop();
                               },
                               child: Image.asset(
                                 'assets/profil.png',
@@ -110,14 +110,14 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   );
                 },
                 child: Image.asset(
-                  selectedProfileImage, 
+                  selectedProfileImage, // Zobraziť aktuálny profilový obrázok
                   width: 120.w,
                   height: 120.h,
                 ),
               ),
               5.verticalSpace,
               Text(
-                userName,
+                userName, // Používateľské meno
                 style: GoogleFonts.titanOne(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
@@ -126,9 +126,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: const Color.fromRGBO(
-                      41, 141, 116, 1),
-                  onPrimary: Colors.white, 
+                  primary: const Color.fromRGBO(41, 141, 116, 1),
+                  onPrimary: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -147,7 +146,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                           onChanged: (value) {
                             setState(() {
                               userName =
-                                  value;
+                                  value; // Aktualizovať používateľské meno
                             });
                           },
                           decoration: InputDecoration(hintText: 'Nové meno'),
@@ -155,13 +154,13 @@ class _ProfilScreenState extends State<ProfilScreen> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              Navigator.of(context).pop(); // Zavrieť dialog
                             },
                             child: Text('Zrušiť'),
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              _saveUserData(); 
+                              _saveUserData();
                               Navigator.of(context).pop();
                             },
                             child: Text('Uložiť'),
@@ -173,7 +172,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 },
                 child: Text(
                   'Upraviť',
-                  style: GoogleFonts.titanOne(), 
+                  style: GoogleFonts.titanOne(),
                 ),
               ),
             ],
