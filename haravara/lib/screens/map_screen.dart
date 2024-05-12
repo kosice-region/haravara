@@ -16,7 +16,6 @@ import 'package:page_transition/page_transition.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
-  const MapScreen({super.key});
 
   @override
   _MapScreenState createState() => _MapScreenState();
@@ -46,7 +45,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         padding: EdgeInsets.only(top: 12.h),
         child: Column(
           children: [
-            const const Header(),
+            const Header(),
             10.verticalSpace,
             Center(
               child: Text(

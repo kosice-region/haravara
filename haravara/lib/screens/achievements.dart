@@ -45,17 +45,6 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
     setState(() {
       isInit = true;
     });
-    initPlaces();
-  }
-
-  initPlaces() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    log('${prefs.getStringList('collectedPlaces')}');
-    final places = await PlacesService().loadPlaces();
-    ref.read(placesProvider.notifier).addPlaces(places);
-    setState(() {
-      isInit = true;
-    });
   }
 
   @override

@@ -22,8 +22,7 @@ enum ScreenType {
   code,
   detailMap,
   prizes,
-  profile
-  profile
+  profile,
 }
 
 Map screenTypeToWidget = <ScreenType, Widget>{

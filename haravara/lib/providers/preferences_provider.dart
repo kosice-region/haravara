@@ -100,6 +100,30 @@ class AuthNotifier extends StateNotifier<AuthState> {
   void toggleLoginState(bool newState) {
     state = state.copyWith(isLogin: newState);
   }
+
+  String? getEnteredUsername() {
+    return state.enteredUsername;
+  }
+
+  String? getEnteredEmail() {
+    return state.enteredEmail;
+  }
+
+  String? getUserId() {
+    return state.userId;
+  }
+
+  bool isLogin() {
+    return state.isLogin;
+  }
+
+  UserModel getUserData() {
+    return UserModel(
+        email: state.enteredEmail!,
+        id: state.userId,
+        isLoggedIn: true,
+        username: state.enteredUsername ?? '');
+  }
 }
 
 final authNotifierProvider =

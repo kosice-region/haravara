@@ -5,6 +5,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/models/user.dart';
+import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/repositories/auth_repository.dart';
 import 'package:haravara/repositories/location_repository.dart';
 import 'package:haravara/screens/auth.dart';
@@ -19,13 +20,16 @@ final AuthRepository authRepository = AuthRepository();
 final LocationRepository locationRepository = LocationRepository();
 
 class AuthService {
-  registerUserByEmail(String email, String username, WidgetRef ref) async {
+  registerUserByEmail(String email, String username) async {
     List<String> phoneDetail = await getDeviceDetails();
     print(phoneDetail[0]);
-    final user =
-        User(username: username, phones: [phoneDetail[0]], email: email);
     final id = uuid.v4();
     final base64Id = generateBase64(email).toString();
+    final user = User(
+        username: username,
+        phones: [phoneDetail[0]],
+        email: email,
+        id: base64Id);
     await authRepository.registerUser(user, id, base64Id);
     setLoginPreferences(email, id, username);
   }

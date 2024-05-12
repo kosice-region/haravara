@@ -1,33 +1,42 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/models/user.dart';
+import 'package:haravara/providers/preferences_provider.dart';
+import 'package:haravara/repositories/auth_repository.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
 import 'package:haravara/widgets/footer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfilScreen extends StatefulWidget {
+final AuthRepository authRepository = AuthRepository();
+
+class ProfilScreen extends ConsumerStatefulWidget {
   const ProfilScreen({super.key});
 
   @override
-  _ProfilScreenState createState() => _ProfilScreenState();
+  ConsumerState createState() => _ProfilScreenState();
 }
 
-class _ProfilScreenState extends State<ProfilScreen> {
+class _ProfilScreenState extends ConsumerState<ProfilScreen> {
   late SharedPreferences _prefs;
-  String userName = 'Tvoje Meno'; // Používateľské meno
-  String selectedProfileImage =
-      'assets/profil.png'; // Predvolený profilový obrázok
+  String userName = 'Tvoje Meno';
+  String selectedProfileImage = 'assets/profil.png';
+  late AuthNotifier authNotifier;
 
   @override
   void initState() {
+    authNotifier = ref.read(authNotifierProvider.notifier);
     super.initState();
     _loadUserData();
   }
 
   void _loadUserData() async {
     _prefs = await SharedPreferences.getInstance();
-    String? storedName = _prefs.getString('userName');
+    String? storedName = _prefs.getString('username');
     if (storedName != null) {
       setState(() {
         userName = storedName;
@@ -35,14 +44,17 @@ class _ProfilScreenState extends State<ProfilScreen> {
     }
   }
 
-  void _saveUserData() {
-    _prefs.setString('userName', userName);
+  _saveUserData() async {
+    var userId = _prefs.getString('id');
+    await authRepository.updateUserName(userName, userId!);
+    authNotifier.setEnteredUsername(userName);
+    await _prefs.setString('username', userName);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: const HeaderMenu(),
+      endDrawer: HeaderMenu(),
       body: Stack(
         children: [
           Image.asset(
@@ -154,7 +166,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop(); // Zavrieť dialog
+                              Navigator.of(context).pop();
                             },
                             child: Text('Zrušiť'),
                           ),

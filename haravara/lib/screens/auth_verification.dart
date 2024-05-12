@@ -124,7 +124,7 @@ class _AuthVerificationScreenState
       routeToNewsScreen();
     } else {
       await authService.registerUserByEmail(
-          authState.enteredEmail!, authState.enteredUsername!, ref);
+          authState.enteredEmail!, authState.enteredUsername!);
       routeToNewsScreen();
     }
     _showSnackBar('Success');

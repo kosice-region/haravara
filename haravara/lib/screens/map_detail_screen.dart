@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:developer';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,10 +11,8 @@ import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/event_bus.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/services/places_service.dart';
-import 'package:haravara/services/places_service.dart';
 import 'package:haravara/services/screen_router.dart';
 import 'package:haravara/widgets/map_marker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MapDetailScreen extends ConsumerStatefulWidget {
@@ -37,7 +34,6 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
   @override
   void initState() {
     super.initState();
-    initPlaces();
     initPlaces();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       const double initialScale = 0.23;
@@ -172,13 +168,6 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     ref.read(placesProvider.notifier).addPlaces(places);
   }
 
-  initPlaces() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    log('${prefs.getStringList('collectedPlaces')}');
-    final places = await PlacesService().loadPlaces();
-    ref.read(placesProvider.notifier).addPlaces(places);
-  }
-
   void _setInitialTransformation(double scale, Offset position) {
     final Matrix4 matrix = Matrix4.identity()
       ..scale(scale)
@@ -210,44 +199,6 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                       details.globalPosition.dx, details.globalPosition.dy));
                 });
               },
-              child: Consumer(
-                builder: (context, ref, child) {
-                  List<Place> places = ref.watch(placesProvider);
-                  return Stack(children: [
-                    Image.asset(
-                      'assets/places-map.jpg',
-                      fit: BoxFit.cover,
-                    ),
-                    // ...tapPositions.map((entry) {
-                    //   return Positioned(
-                    //     left: entry.dx.w,
-                    //     top: entry.dy.h,
-                    //     child: Container(
-                    //       width: 85.w,
-                    //       height: 85.h,
-                    //       decoration: const BoxDecoration(
-                    //         shape: BoxShape.circle,
-                    //         color: Colors.red,
-                    //       ),
-                    //     ),
-                    //   );
-                    // }),
-                    ...places.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      Place place = entry.value;
-                      return Positioned(
-                        left: place.geoData.primary.pixelCoordinates[0],
-                        top: place.geoData.primary.pixelCoordinates[1],
-                        child: MapMarker(
-                          isCollected: place.isReached,
-                          index: index,
-                          placeId: place.id!,
-                        ),
-                      );
-                    }),
-                  ]);
-                },
-              ),
               child: Consumer(
                 builder: (context, ref, child) {
                   List<Place> places = ref.watch(placesProvider);
