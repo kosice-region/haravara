@@ -62,6 +62,14 @@ PODS:
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
+  - google_maps_flutter_ios (0.0.1):
+    - Flutter
+    - GoogleMaps (< 9.0, >= 8.4)
+  - GoogleMaps (8.4.0):
+    - GoogleMaps/Maps (= 8.4.0)
+  - GoogleMaps/Base (8.4.0)
+  - GoogleMaps/Maps (8.4.0):
+    - GoogleMaps/Base
   - GoogleUtilities/Environment (7.12.0):
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleUtilities/Logger (7.12.0):
@@ -100,6 +108,7 @@ DEPENDENCIES:
   - flutter_foreground_task (from `.symlinks/plugins/flutter_foreground_task/ios`)
   - geofence_service (from `.symlinks/plugins/geofence_service/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - map_launcher (from `.symlinks/plugins/map_launcher/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -117,6 +126,7 @@ SPEC REPOS:
     - FirebaseDatabase
     - FirebaseSharedSwift
     - FirebaseStorage
+    - GoogleMaps
     - GoogleUtilities
     - GTMSessionFetcher
     - IosAwnCore
@@ -152,6 +162,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geofence_service/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
+  google_maps_flutter_ios:
+    :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
   map_launcher:
     :path: ".symlinks/plugins/map_launcher/ios"
   path_provider_foundation:
@@ -187,6 +199,8 @@ SPEC CHECKSUMS:
   flutter_foreground_task: 21ef182ab0a29a3005cc72cd70e5f45cb7f7f817
   geofence_service: e007ddec3cf8b85531e8f7b202c1ceabca669d64
   geolocator_apple: 9157311f654584b9bb72686c55fc02a97b73f461
+  google_maps_flutter_ios: c454f18e0e22df6ac0e9f2a4df340858f5a3680c
+  GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
   GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   GTMSessionFetcher: 8a1b34ad97ebe6f909fb8b9b77fba99943007556
   IosAwnCore: 4691f457bd8dc9a3a0a941cee6439a894a0b81aa
