@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'dart:developer';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,10 +9,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/places_service.dart';
+import 'package:haravara/services/places_service.dart';
 import 'package:haravara/widgets/achievement.dart';
 import 'package:haravara/widgets/footer.dart'; // Import Footer widget
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AchievementsScreen extends ConsumerStatefulWidget {
@@ -47,7 +51,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return Scaffold(
-      endDrawer: const HeaderMenu(),
+      endDrawer: HeaderMenu(),
       body: Column(
         children: [
           Padding(
@@ -103,7 +107,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
             Consumer(
               builder: (context, ref, child) {
                 final places =
-                    ref.watch(placesProvider.notifier).getSortedPlaces(false);
+                    ref.watch(placesProvider.notifier).getSortedPlaces(true);
                 places.forEach(
                   (element) {
                     if (element.isReached) {

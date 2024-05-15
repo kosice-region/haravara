@@ -177,6 +177,7 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    precacheImage(const AssetImage('assets/places-map.jpg'), context);
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return Scaffold(
       body: Stack(

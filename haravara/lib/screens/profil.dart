@@ -1,52 +1,69 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/models/user.dart';
+import 'package:haravara/providers/preferences_provider.dart';
+import 'package:haravara/repositories/auth_repository.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
 import 'package:haravara/widgets/footer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfilScreen extends StatefulWidget {
-  const ProfilScreen({Key? key}) : super(key: key);
+final AuthRepository authRepository = AuthRepository();
+
+class ProfilScreen extends ConsumerStatefulWidget {
+  const ProfilScreen({super.key});
 
   @override
-  _ProfilScreenState createState() => _ProfilScreenState();
+  ConsumerState createState() => _ProfilScreenState();
 }
 
-class _ProfilScreenState extends State<ProfilScreen> {
+class _ProfilScreenState extends ConsumerState<ProfilScreen> {
   late SharedPreferences _prefs;
-  String userName = 'Tvoje Meno'; // Používateľské meno
-  String selectedProfileImage =
-      'assets/profil.png'; // Predvolený profilový obrázok
+  String userName = 'Tvoje Meno';
+  String selectedProfileImage = 'assets/kasko.png';
+  late AuthNotifier authNotifier;
 
   @override
   void initState() {
+    authNotifier = ref.read(authNotifierProvider.notifier);
     super.initState();
     _loadUserData();
   }
 
   void _loadUserData() async {
     _prefs = await SharedPreferences.getInstance();
-    String? storedName = _prefs.getString('userName');
+    String? storedName = _prefs.getString('username');
+    String? storedImage = _prefs.getString('profile_image');
     if (storedName != null) {
       setState(() {
         userName = storedName;
+        selectedProfileImage = storedImage ??
+            'assets/kasko.png'; // Ak nie je uložený obrázok, použije sa predvolený
       });
     }
   }
 
-  void _saveUserData() {
-    _prefs.setString('userName', userName);
+  _saveUserData() async {
+    var userId = _prefs.getString('id');
+    await authRepository.updateUserName(userName, userId!);
+    authNotifier.setEnteredUsername(userName);
+    await _prefs.setString('username', userName);
+    await _prefs.setString('profile_image',
+        selectedProfileImage); // Uložiť vybraný obrázok do zdieľaných preferencií
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: const HeaderMenu(),
+      endDrawer: HeaderMenu(),
       body: Stack(
         children: [
           Image.asset(
-            'assets/clovece.jpg',
+            'assets/HARAVARA_profil.jpg',
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
@@ -71,39 +88,73 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Vyberte si profilovú fotku'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedProfileImage = 'assets/profil.png';
-                                });
-                                Navigator.of(context).pop();
-                              },
-                              child: Image.asset(
-                                'assets/profil.png',
-                                width: 100.w,
-                                height: 100.h,
+                        title: Text('Vyberte si profilovku'),
+                        content: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedProfileImage =
+                                        'assets/sprievodca.png';
+                                  });
+                                  _saveUserData(); // Uložiť vybraný obrázok
+                                  Navigator.of(context).pop();
+                                },
+                                child: Image.asset(
+                                  'assets/sprievodca.png',
+                                  width: 100.w,
+                                  height: 100.h,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 20.h),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedProfileImage =
-                                      'assets/mayka_shows.png';
-                                });
-                                Navigator.of(context).pop();
-                              },
-                              child: Image.asset(
-                                'assets/mayka_shows.png',
-                                width: 100.w,
-                                height: 100.h,
+                              SizedBox(width: 20.w),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedProfileImage = 'assets/kasko.png';
+                                  });
+                                  _saveUserData(); // Uložiť vybraný obrázok
+                                  Navigator.of(context).pop();
+                                },
+                                child: Image.asset(
+                                  'assets/kasko.png',
+                                  width: 100.w,
+                                  height: 100.h,
+                                ),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 20.w),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedProfileImage = 'assets/max.png';
+                                  });
+                                  _saveUserData(); // Uložiť vybraný obrázok
+                                  Navigator.of(context).pop();
+                                },
+                                child: Image.asset(
+                                  'assets/max.png',
+                                  width: 100.w,
+                                  height: 100.h,
+                                ),
+                              ),
+                              SizedBox(width: 20.w),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedProfileImage = 'assets/majka.png';
+                                  });
+                                  _saveUserData(); // Uložiť vybraný obrázok
+                                  Navigator.of(context).pop();
+                                },
+                                child: Image.asset(
+                                  'assets/majka.png',
+                                  width: 100.w,
+                                  height: 100.h,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -126,8 +177,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: const Color.fromRGBO(41, 141, 116, 1),
-                  onPrimary: Colors.white,
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color.fromRGBO(41, 141, 116, 1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -154,7 +205,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop(); // Zavrieť dialog
+                              Navigator.of(context).pop();
                             },
                             child: Text('Zrušiť'),
                           ),

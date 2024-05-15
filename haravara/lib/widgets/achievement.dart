@@ -57,9 +57,9 @@ class _AchievementState extends ConsumerState<Achievement> {
                 ),
                 child: Center(
                   child: FractionallySizedBox(
-                    widthFactor: 0.5,
+                    widthFactor: 0.7,
                     heightFactor: 0.7,
-                    child: Image.asset('assets/Icon.jpeg', fit: BoxFit.fill),
+                    child: Image.asset('assets/PECIATKA.png', fit: BoxFit.fill),
                   ),
                 ),
               ),

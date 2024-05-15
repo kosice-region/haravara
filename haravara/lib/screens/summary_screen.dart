@@ -13,8 +13,14 @@ class SummaryScreen extends StatefulWidget {
 }
 
 class _SummaryScreenState extends State<SummaryScreen> {
+  final List<String> imageAssets = [
+    'assets/background-summary.png',
+    'assets/budik.png',
+  ];
+
   @override
   Widget build(BuildContext context) {
+    imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     return Scaffold(
       endDrawer: HeaderMenu(),
       body: Stack(
@@ -80,7 +86,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
             top: -15.h,
             left: -20.w,
             child: Image.asset(
-              'assets/budik.png',
+              'assets/BUDIK.png',
               width: 60.w,
               fit: BoxFit.contain,
             ),
