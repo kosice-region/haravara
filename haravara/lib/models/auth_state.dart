@@ -13,7 +13,6 @@ class AuthState {
     this.isLogin = false,
   });
 
-  // CopyWith method to create a new instance of AuthState with updated fields
   AuthState copyWith({
     String? code,
     String? enteredUsername,

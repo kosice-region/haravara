@@ -145,7 +145,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildButton('Sort', Icons.sort, sortItems, true),
+        _buildButton('Sort', Icons.sort_rounded, sortItems, true),
         20.horizontalSpace,
         _buildButton('View', Icons.view_compact, viewItems, false),
       ],
@@ -154,6 +154,8 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
 
   Widget _buildButton(
       String text, IconData icon, List<String> items, bool isSort) {
+    String? selectedValue = isSort ? selectedValueSort : selectedValueView;
+
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
         isExpanded: true,
@@ -164,9 +166,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
               size: 16,
               color: Colors.yellow,
             ),
-            const SizedBox(
-              width: 4,
-            ),
+            const SizedBox(width: 4),
             Expanded(
               child: Text(
                 text,
@@ -180,21 +180,45 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
             ),
           ],
         ),
-        items: items
-            .map((String item) => DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+        items: items.map((String item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(
+              item,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
+        }).toList(),
+        value: selectedValue,
+        selectedItemBuilder: (BuildContext context) {
+          return items.asMap().entries.map((entry) {
+            String item = entry.value;
+            return Row(
+              children: [
+                Icon(
+                  icon,
+                  size: 16,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '$item',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                ))
-            .toList(),
-        value: isSort ? selectedValueSort : selectedValueView,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            );
+          }).toList();
+        },
         onChanged: (value) {
           setState(() {
             if (isSort) {

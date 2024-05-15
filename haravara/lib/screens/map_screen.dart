@@ -71,51 +71,50 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 width: 302.w,
                 height: 150.h,
                 child: Image.asset(
-                  'assets/places-map.jpg',
+                  'assets/places-map-preview.png',
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-
             14.verticalSpace,
-            if (Platform.isIOS)
-              Column(
-                children: [
-                  CupertinoButton(
-                    onPressed: () {
-                      navigateToMap();
-                    },
-                    color: places.isNotEmpty
-                        ? const Color.fromARGB(255, 7, 179, 25)
-                        : Colors.grey,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Text(
-                      'Otvoriť mapu',
-                      style: GoogleFonts.titanOne(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            if (Platform.isAndroid)
-              Column(
-                children: [
-                  // ElevatedButton(
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: places.isNotEmpty
-                  //         ? const Color.fromARGB(255, 7, 179, 25)
-                  //         : Colors.grey,
-                  //   ),
-                  //   onPressed: () {
-                  //     navigateToMap();
-                  //   },
-                  //   child: Text(
-                  //     'Otvoriť mapu',
-                  //     style: GoogleFonts.titanOne(color: Colors.white),
-                  //   ),
-                  // ),
-                  10.verticalSpace,
-                ],
-              ),
+            // if (Platform.isIOS)
+            //   Column(
+            //     children: [
+            //       CupertinoButton(
+            //         onPressed: () {
+            //           navigateToMap();
+            //         },
+            //         color: places.isNotEmpty
+            //             ? const Color.fromARGB(255, 7, 179, 25)
+            //             : Colors.grey,
+            //         borderRadius: BorderRadius.circular(20),
+            //         child: Text(
+            //           'Otvoriť mapu',
+            //           style: GoogleFonts.titanOne(color: Colors.white),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // if (Platform.isAndroid)
+            //   Column(
+            //     children: [
+            //       ElevatedButton(
+            //         style: ElevatedButton.styleFrom(
+            //           backgroundColor: places.isNotEmpty
+            //               ? const Color.fromARGB(255, 7, 179, 25)
+            //               : Colors.grey,
+            //         ),
+            //         onPressed: () {
+            //           navigateToMap();
+            //         },
+            //         child: Text(
+            //           'Otvoriť mapu',
+            //           style: GoogleFonts.titanOne(color: Colors.white),
+            //         ),
+            //       ),
+            //       10.verticalSpace,
+            //     ],
+            //   ),
             Image.asset(
               'assets/peopleMapScreen.png',
             ),
