@@ -86,7 +86,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
             top: -15.h,
             left: -20.w,
             child: Image.asset(
-              'assets/budik.png',
+              'assets/BUDIK.png',
               width: 60.w,
               fit: BoxFit.contain,
             ),

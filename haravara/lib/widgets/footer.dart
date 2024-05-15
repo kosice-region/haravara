@@ -61,7 +61,7 @@ class Footer extends ConsumerWidget {
                   const SizedBox(width: 2),
                   IconButton(
                     iconSize: 40.0,
-                    icon: Image.asset('assets/Icon.jpeg'),
+                    icon: Image.asset('assets/PECIATKA.png'),
                     onPressed: () {
                       routeToNextScreen(context, ScreenType.achievements, ref);
                     },
