@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -9,10 +10,11 @@ import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/repositories/auth_repository.dart';
 import 'package:haravara/repositories/location_repository.dart';
 import 'package:haravara/screens/auth.dart';
+import 'package:haravara/services/database_service.dart';
 import 'package:haravara/services/init_service.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,7 +33,7 @@ class AuthService {
         email: email,
         id: base64Id);
     await authRepository.registerUser(user, id, base64Id);
-    setLoginPreferences(email, id, username);
+    setLoginPreferences(user);
   }
 
   registerUserByPhoneNumber(String enteredCode, String enteredUsername) async {
@@ -52,13 +54,13 @@ class AuthService {
       User updatedUser =
           user.copyWith(phones: [...user.phones, phoneDetail[0]]);
       await authRepository.updateUser(updatedUser);
-      await setLoginPreferences(user.email!, userId, user.username);
+      await setLoginPreferences(updatedUser);
       await getCollectedPlacesByUser(user.id!);
     }
   }
 
   Future<void> getCollectedPlacesByUser(String id) async {
-    await placesService.getCollectedPlacesByUser(id);
+    await DatabaseService().getCollectedPlacesByUser(id);
   }
 
   getUserById(String userId) async {
@@ -85,7 +87,7 @@ class AuthService {
 
   Future<String> generateRandomNumbers() async {
     String code = '';
-    final random = Random();
+    final random = math.Random();
     for (int i = 0; i < 4; i++) {
       code += random.nextInt(10).toString();
     }
@@ -117,11 +119,12 @@ class AuthService {
     return code;
   }
 
-  setLoginPreferences(String email, String id, String username) async {
+  setLoginPreferences(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool("isLoggedIn", true);
-    prefs.setString('email', email);
-    prefs.setString('id', id);
-    prefs.setString('username', username);
+    prefs.setString('email', user.email!);
+    prefs.setString('id', user.id!);
+    prefs.setString('username', user.username);
+    prefs.setString('profile_image', user.userProfile!.avatar ?? '');
   }
 }

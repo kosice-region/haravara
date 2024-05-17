@@ -27,6 +27,8 @@ mixin _$User {
   String? get phoneNumber => throw _privateConstructorUsedError;
   @JsonKey(name: 'phone_ids')
   List<String> get phones => throw _privateConstructorUsedError;
+  @JsonKey(name: 'profile')
+  UserProfile? get userProfile => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -43,7 +45,10 @@ abstract class $UserCopyWith<$Res> {
       String username,
       String? email,
       @JsonKey(name: 'phone_number') String? phoneNumber,
-      @JsonKey(name: 'phone_ids') List<String> phones});
+      @JsonKey(name: 'phone_ids') List<String> phones,
+      @JsonKey(name: 'profile') UserProfile? userProfile});
+
+  $UserProfileCopyWith<$Res>? get userProfile;
 }
 
 /// @nodoc
@@ -64,6 +69,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? email = freezed,
     Object? phoneNumber = freezed,
     Object? phones = null,
+    Object? userProfile = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -86,7 +92,23 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.phones
           : phones // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      userProfile: freezed == userProfile
+          ? _value.userProfile
+          : userProfile // ignore: cast_nullable_to_non_nullable
+              as UserProfile?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserProfileCopyWith<$Res>? get userProfile {
+    if (_value.userProfile == null) {
+      return null;
+    }
+
+    return $UserProfileCopyWith<$Res>(_value.userProfile!, (value) {
+      return _then(_value.copyWith(userProfile: value) as $Val);
+    });
   }
 }
 
@@ -102,7 +124,11 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       String username,
       String? email,
       @JsonKey(name: 'phone_number') String? phoneNumber,
-      @JsonKey(name: 'phone_ids') List<String> phones});
+      @JsonKey(name: 'phone_ids') List<String> phones,
+      @JsonKey(name: 'profile') UserProfile? userProfile});
+
+  @override
+  $UserProfileCopyWith<$Res>? get userProfile;
 }
 
 /// @nodoc
@@ -120,6 +146,7 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? email = freezed,
     Object? phoneNumber = freezed,
     Object? phones = null,
+    Object? userProfile = freezed,
   }) {
     return _then(_$UserImpl(
       id: freezed == id
@@ -142,6 +169,10 @@ class __$$UserImplCopyWithImpl<$Res>
           ? _value._phones
           : phones // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      userProfile: freezed == userProfile
+          ? _value.userProfile
+          : userProfile // ignore: cast_nullable_to_non_nullable
+              as UserProfile?,
     ));
   }
 }
@@ -154,7 +185,8 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       required this.username,
       this.email,
       @JsonKey(name: 'phone_number') this.phoneNumber,
-      @JsonKey(name: 'phone_ids') required final List<String> phones})
+      @JsonKey(name: 'phone_ids') required final List<String> phones,
+      @JsonKey(name: 'profile') this.userProfile})
       : _phones = phones;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
@@ -179,8 +211,12 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   }
 
   @override
+  @JsonKey(name: 'profile')
+  final UserProfile? userProfile;
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'User(id: $id, username: $username, email: $email, phoneNumber: $phoneNumber, phones: $phones)';
+    return 'User(id: $id, username: $username, email: $email, phoneNumber: $phoneNumber, phones: $phones, userProfile: $userProfile)';
   }
 
   @override
@@ -192,7 +228,8 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       ..add(DiagnosticsProperty('username', username))
       ..add(DiagnosticsProperty('email', email))
       ..add(DiagnosticsProperty('phoneNumber', phoneNumber))
-      ..add(DiagnosticsProperty('phones', phones));
+      ..add(DiagnosticsProperty('phones', phones))
+      ..add(DiagnosticsProperty('userProfile', userProfile));
   }
 
   @override
@@ -206,13 +243,15 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
             (identical(other.email, email) || other.email == email) &&
             (identical(other.phoneNumber, phoneNumber) ||
                 other.phoneNumber == phoneNumber) &&
-            const DeepCollectionEquality().equals(other._phones, _phones));
+            const DeepCollectionEquality().equals(other._phones, _phones) &&
+            (identical(other.userProfile, userProfile) ||
+                other.userProfile == userProfile));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, username, email, phoneNumber,
-      const DeepCollectionEquality().hash(_phones));
+      const DeepCollectionEquality().hash(_phones), userProfile);
 
   @JsonKey(ignore: true)
   @override
@@ -230,12 +269,12 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
 
 abstract class _User implements User {
   const factory _User(
-          {final String? id,
-          required final String username,
-          final String? email,
-          @JsonKey(name: 'phone_number') final String? phoneNumber,
-          @JsonKey(name: 'phone_ids') required final List<String> phones}) =
-      _$UserImpl;
+      {final String? id,
+      required final String username,
+      final String? email,
+      @JsonKey(name: 'phone_number') final String? phoneNumber,
+      @JsonKey(name: 'phone_ids') required final List<String> phones,
+      @JsonKey(name: 'profile') final UserProfile? userProfile}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -252,7 +291,354 @@ abstract class _User implements User {
   @JsonKey(name: 'phone_ids')
   List<String> get phones;
   @override
+  @JsonKey(name: 'profile')
+  UserProfile? get userProfile;
+  @override
   @JsonKey(ignore: true)
   _$$UserImplCopyWith<_$UserImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+UserProfile _$UserProfileFromJson(Map<String, dynamic> json) {
+  return _UserProfile.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UserProfile {
+  @JsonKey(name: 'avatar')
+  String? get avatar => throw _privateConstructorUsedError;
+  @JsonKey(name: 'type')
+  ProfileType? get profileType => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $UserProfileCopyWith<UserProfile> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UserProfileCopyWith<$Res> {
+  factory $UserProfileCopyWith(
+          UserProfile value, $Res Function(UserProfile) then) =
+      _$UserProfileCopyWithImpl<$Res, UserProfile>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'avatar') String? avatar,
+      @JsonKey(name: 'type') ProfileType? profileType});
+}
+
+/// @nodoc
+class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
+    implements $UserProfileCopyWith<$Res> {
+  _$UserProfileCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? avatar = freezed,
+    Object? profileType = freezed,
+  }) {
+    return _then(_value.copyWith(
+      avatar: freezed == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      profileType: freezed == profileType
+          ? _value.profileType
+          : profileType // ignore: cast_nullable_to_non_nullable
+              as ProfileType?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UserProfileImplCopyWith<$Res>
+    implements $UserProfileCopyWith<$Res> {
+  factory _$$UserProfileImplCopyWith(
+          _$UserProfileImpl value, $Res Function(_$UserProfileImpl) then) =
+      __$$UserProfileImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'avatar') String? avatar,
+      @JsonKey(name: 'type') ProfileType? profileType});
+}
+
+/// @nodoc
+class __$$UserProfileImplCopyWithImpl<$Res>
+    extends _$UserProfileCopyWithImpl<$Res, _$UserProfileImpl>
+    implements _$$UserProfileImplCopyWith<$Res> {
+  __$$UserProfileImplCopyWithImpl(
+      _$UserProfileImpl _value, $Res Function(_$UserProfileImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? avatar = freezed,
+    Object? profileType = freezed,
+  }) {
+    return _then(_$UserProfileImpl(
+      avatar: freezed == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String?,
+      profileType: freezed == profileType
+          ? _value.profileType
+          : profileType // ignore: cast_nullable_to_non_nullable
+              as ProfileType?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UserProfileImpl with DiagnosticableTreeMixin implements _UserProfile {
+  const _$UserProfileImpl(
+      {@JsonKey(name: 'avatar') this.avatar,
+      @JsonKey(name: 'type') this.profileType});
+
+  factory _$UserProfileImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UserProfileImplFromJson(json);
+
+  @override
+  @JsonKey(name: 'avatar')
+  final String? avatar;
+  @override
+  @JsonKey(name: 'type')
+  final ProfileType? profileType;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'UserProfile(avatar: $avatar, profileType: $profileType)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'UserProfile'))
+      ..add(DiagnosticsProperty('avatar', avatar))
+      ..add(DiagnosticsProperty('profileType', profileType));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UserProfileImpl &&
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.profileType, profileType) ||
+                other.profileType == profileType));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, avatar, profileType);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UserProfileImplCopyWith<_$UserProfileImpl> get copyWith =>
+      __$$UserProfileImplCopyWithImpl<_$UserProfileImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UserProfileImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UserProfile implements UserProfile {
+  const factory _UserProfile(
+          {@JsonKey(name: 'avatar') final String? avatar,
+          @JsonKey(name: 'type') final ProfileType? profileType}) =
+      _$UserProfileImpl;
+
+  factory _UserProfile.fromJson(Map<String, dynamic> json) =
+      _$UserProfileImpl.fromJson;
+
+  @override
+  @JsonKey(name: 'avatar')
+  String? get avatar;
+  @override
+  @JsonKey(name: 'type')
+  ProfileType? get profileType;
+  @override
+  @JsonKey(ignore: true)
+  _$$UserProfileImplCopyWith<_$UserProfileImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+UserAvatar _$UserAvatarFromJson(Map<String, dynamic> json) {
+  return _UserAvatar.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UserAvatar {
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'location')
+  String? get location => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $UserAvatarCopyWith<UserAvatar> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UserAvatarCopyWith<$Res> {
+  factory $UserAvatarCopyWith(
+          UserAvatar value, $Res Function(UserAvatar) then) =
+      _$UserAvatarCopyWithImpl<$Res, UserAvatar>;
+  @useResult
+  $Res call({String? id, @JsonKey(name: 'location') String? location});
+}
+
+/// @nodoc
+class _$UserAvatarCopyWithImpl<$Res, $Val extends UserAvatar>
+    implements $UserAvatarCopyWith<$Res> {
+  _$UserAvatarCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? location = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      location: freezed == location
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UserAvatarImplCopyWith<$Res>
+    implements $UserAvatarCopyWith<$Res> {
+  factory _$$UserAvatarImplCopyWith(
+          _$UserAvatarImpl value, $Res Function(_$UserAvatarImpl) then) =
+      __$$UserAvatarImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? id, @JsonKey(name: 'location') String? location});
+}
+
+/// @nodoc
+class __$$UserAvatarImplCopyWithImpl<$Res>
+    extends _$UserAvatarCopyWithImpl<$Res, _$UserAvatarImpl>
+    implements _$$UserAvatarImplCopyWith<$Res> {
+  __$$UserAvatarImplCopyWithImpl(
+      _$UserAvatarImpl _value, $Res Function(_$UserAvatarImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? location = freezed,
+  }) {
+    return _then(_$UserAvatarImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      location: freezed == location
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UserAvatarImpl with DiagnosticableTreeMixin implements _UserAvatar {
+  const _$UserAvatarImpl({this.id, @JsonKey(name: 'location') this.location});
+
+  factory _$UserAvatarImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UserAvatarImplFromJson(json);
+
+  @override
+  final String? id;
+  @override
+  @JsonKey(name: 'location')
+  final String? location;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'UserAvatar(id: $id, location: $location)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'UserAvatar'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('location', location));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UserAvatarImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.location, location) ||
+                other.location == location));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, location);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UserAvatarImplCopyWith<_$UserAvatarImpl> get copyWith =>
+      __$$UserAvatarImplCopyWithImpl<_$UserAvatarImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UserAvatarImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UserAvatar implements UserAvatar {
+  const factory _UserAvatar(
+      {final String? id,
+      @JsonKey(name: 'location') final String? location}) = _$UserAvatarImpl;
+
+  factory _UserAvatar.fromJson(Map<String, dynamic> json) =
+      _$UserAvatarImpl.fromJson;
+
+  @override
+  String? get id;
+  @override
+  @JsonKey(name: 'location')
+  String? get location;
+  @override
+  @JsonKey(ignore: true)
+  _$$UserAvatarImplCopyWith<_$UserAvatarImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

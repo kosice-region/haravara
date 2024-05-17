@@ -9,11 +9,11 @@ part of 'place.dart';
 _$PlaceImpl _$$PlaceImplFromJson(Map<String, dynamic> json) => _$PlaceImpl(
       id: json['id'] as String?,
       active: json['active'] as bool,
-      created: json['created'] as int,
+      created: (json['created'] as num).toInt(),
       detail: Detail.fromJson(json['detail'] as Map<String, dynamic>),
       geoData: GeoData.fromJson(json['geoData'] as Map<String, dynamic>),
       name: json['name'] as String,
-      updated: json['updated'] as int,
+      updated: (json['updated'] as num).toInt(),
       isReached: json['isReached'] ?? false,
       placeImages: json['placeImages'] == null
           ? null
@@ -72,7 +72,7 @@ Map<String, dynamic> _$$PrimaryImplToJson(_$PrimaryImpl instance) =>
     };
 
 _$FenceImpl _$$FenceImplFromJson(Map<String, dynamic> json) => _$FenceImpl(
-      radius: json['radius'] as int,
+      radius: (json['radius'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$FenceImplToJson(_$FenceImpl instance) =>

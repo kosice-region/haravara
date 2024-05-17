@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/auth_service.dart';
-import 'package:haravara/services/places_service.dart';
+import 'package:haravara/services/database_service.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
 import 'package:haravara/widgets/footer.dart';
@@ -45,7 +45,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
   initPlaces() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     log('${prefs.getStringList('collectedPlaces')}');
-    final places = await PlacesService().loadPlaces();
+    final places = await DatabaseService().loadPlaces();
     ref.read(placesProvider.notifier).addPlaces(places);
   }
 

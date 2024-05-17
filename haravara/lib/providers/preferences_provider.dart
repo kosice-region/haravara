@@ -34,6 +34,8 @@ class LoginNotifier extends StateNotifier<UserModel> {
     pref.remove("username");
     pref.remove("email");
     pref.remove("id");
+    pref.remove("profile_image");
+    pref.setBool("isLoggedIn", false);
   }
 }
 
@@ -129,4 +131,37 @@ class AuthNotifier extends StateNotifier<AuthState> {
 final authNotifierProvider =
     StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   return AuthNotifier();
+});
+
+class AvatarsNotifier extends StateNotifier<List<UserAvatar>> {
+  AvatarsNotifier(this.pref) : super([]);
+  static String defaultId = '0387c644-249c-4c1e-ac0b-bc6c861d580c';
+  final SharedPreferences pref;
+
+  void addAvatars(List<UserAvatar> avatars) {
+    state = [...avatars];
+  }
+
+  UserAvatar getCurrentAvatar() {
+    String currentAvatarId = pref.getString("profile_image") ?? '';
+    if (currentAvatarId.isEmpty) {
+      currentAvatarId = defaultId;
+    }
+    return state.firstWhere(
+      (avatarImage) => avatarImage.id == currentAvatarId,
+    );
+  }
+
+  void updateAvatar(String id) {
+    if (id.isEmpty) {
+      return;
+    }
+    pref.setString("profile_image", id);
+  }
+}
+
+final avatarsProvider =
+    StateNotifierProvider<AvatarsNotifier, List<UserAvatar>>((ref) {
+  final pref = ref.read(sharedPreferencesProvider);
+  return AvatarsNotifier(pref);
 });

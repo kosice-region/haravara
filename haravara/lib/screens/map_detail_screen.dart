@@ -10,7 +10,7 @@ import 'package:haravara/providers/current_screen_provider.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/event_bus.dart';
 import 'package:haravara/services/map_service.dart';
-import 'package:haravara/services/places_service.dart';
+import 'package:haravara/services/database_service.dart';
 import 'package:haravara/services/screen_router.dart';
 import 'package:haravara/widgets/map_marker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -164,7 +164,7 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
   initPlaces() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     log('${prefs.getStringList('collectedPlaces')}');
-    final places = await PlacesService().loadPlaces();
+    final places = await DatabaseService().loadPlaces();
     ref.read(placesProvider.notifier).addPlaces(places);
   }
 

@@ -15,7 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/services/notification_service.dart';
-import 'package:haravara/services/places_service.dart';
+import 'package:haravara/services/database_service.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:haravara/widgets/header_menu.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -66,7 +66,7 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
   late Place pickedPlace;
   late StreamSubscription<CompassEvent> compassSubscription;
   late StreamSubscription<Position> positionStream;
-  PlacesService placesService = PlacesService();
+  DatabaseService placesService = DatabaseService();
   Timer? _backgroundTimer;
 
   late double targetLat;
@@ -334,7 +334,7 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
   }
 
   initPlaces() async {
-    final places = await PlacesService().loadPlaces();
+    final places = await DatabaseService().loadPlaces();
     ref.read(placesProvider.notifier).addPlaces(places);
     for (var place in places) {
       if (place.isReached) {

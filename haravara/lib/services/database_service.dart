@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/models/place.dart';
+import 'package:haravara/models/user.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/repositories/location_repository.dart';
@@ -43,13 +44,63 @@ Future<Database> _getDatabase() async {
            yCoordinate REAL,
            location_path TEXT,
            stamp_path TEXT)''');
+
+      await db.execute('''CREATE TABLE if not exists avatars(
+           id TEXT PRIMARY KEY,
+           location_path TEXT)''');
     },
     version: 1,
   );
   return db;
 }
 
-class PlacesService {
+class DatabaseService {
+  Future<void> saveAvatarsLocally() async {
+    final List<UserAvatar> avatars = await locationRepository.getAllAvatars();
+    Directory appDocDir = await _getDirectory();
+    await _downloadAvatarDataFromStorage(avatars);
+    final db = await _getDatabase();
+    for (final avatar in avatars) {
+      await db.insert(
+        'avatars',
+        {
+          'id': avatar.id!,
+          'location_path': '${appDocDir.path}/${avatar.location}',
+        },
+      );
+    }
+  }
+
+  Future<void> _downloadAvatarDataFromStorage(List<UserAvatar> avatars) async {
+    Directory appDocDir = await _getDirectory();
+
+    for (final avatar in avatars) {
+      String fileToDownloadLocationImage = avatar.location!;
+      try {
+        final locationUrl = await firebase_storage.FirebaseStorage.instance
+            .ref(fileToDownloadLocationImage)
+            .getDownloadURL();
+        await Dio()
+            .download(locationUrl, '${appDocDir.path}/${avatar.location}');
+      } catch (e) {
+        print('Download error: $e');
+      }
+    }
+  }
+
+  Future<List<UserAvatar>> loadAvatars() async {
+    final db = await _getDatabase();
+    final data = await db.query('avatars');
+
+    final List<UserAvatar> avatars = data.map<UserAvatar>((row) {
+      return UserAvatar(
+        id: row['id'] as String,
+        location: row['location_path'] as String,
+      );
+    }).toList();
+    return avatars;
+  }
+
   Future<void> savePlacesLocally() async {
     final List<Place> places = await locationRepository.getAllPlaces();
     Directory appDocDir = await _getDirectory();
@@ -89,7 +140,6 @@ class PlacesService {
       String fileToDownloadLocationImage = image.location;
       String fileToDownloadStampImage = image.stamp;
       try {
-        print('downloading');
         final locationUrl = await firebase_storage.FirebaseStorage.instance
             .ref(fileToDownloadLocationImage)
             .getDownloadURL();
@@ -109,18 +159,13 @@ class PlacesService {
     await locationRepository.addCollectedPlaceForUser(id);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? collectedPlaces = prefs.getStringList('collectedPlaces');
-    log('Collected Places from service ${collectedPlaces}');
-
     if (collectedPlaces == null) {
       collectedPlaces = [id];
     } else {
       collectedPlaces.add(id);
     }
-
-    log('Collected Places from service 2 ${collectedPlaces}');
     await setReachedPlace(id);
     prefs.setStringList('collectedPlaces', collectedPlaces);
-    log('Collected Places from service 3 ${await prefs.getStringList('collectedPlaces')}');
   }
 
   Future<void> getCollectedPlacesByUser(String id) async {

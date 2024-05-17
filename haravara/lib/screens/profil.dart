@@ -24,31 +24,52 @@ class ProfilScreen extends ConsumerStatefulWidget {
 class _ProfilScreenState extends ConsumerState<ProfilScreen> {
   late SharedPreferences _prefs;
   String userName = 'Tvoje Meno';
-  String selectedProfileImage = 'assets/profil.png';
+  String selectedProfileImage = 'assets/kasko.png';
   late AuthNotifier authNotifier;
+  late List<UserAvatar> avatars;
 
   @override
   void initState() {
-    authNotifier = ref.read(authNotifierProvider.notifier);
     super.initState();
-    _loadUserData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserData();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    authNotifier = ref.read(authNotifierProvider.notifier);
+    avatars = ref.watch(avatarsProvider);
   }
 
   void _loadUserData() async {
     _prefs = await SharedPreferences.getInstance();
     String? storedName = _prefs.getString('username');
+    UserAvatar currentAvatar =
+        ref.watch(avatarsProvider.notifier).getCurrentAvatar();
     if (storedName != null) {
       setState(() {
         userName = storedName;
+        selectedProfileImage = currentAvatar.location!;
       });
     }
   }
 
-  _saveUserData() async {
+  _updateUsername() async {
     var userId = _prefs.getString('id');
     await authRepository.updateUserName(userName, userId!);
     authNotifier.setEnteredUsername(userName);
     await _prefs.setString('username', userName);
+  }
+
+  _updateUserAvatar(UserAvatar userAvatar) async {
+    var userId = _prefs.getString('id');
+    await authRepository.updateUserAvatar(userAvatar.id!, userId!);
+    ref.read(avatarsProvider.notifier).updateAvatar(userAvatar.id!);
+    setState(() {
+      selectedProfileImage = userAvatar.location!;
+    });
   }
 
   @override
@@ -58,7 +79,7 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
       body: Stack(
         children: [
           Image.asset(
-            'assets/clovece.jpg',
+            'assets/HARAVARA_profil.jpg',
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
@@ -79,50 +100,10 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
               10.verticalSpace,
               GestureDetector(
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Vyberte si profilovú fotku'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedProfileImage = 'assets/profil.png';
-                                });
-                                Navigator.of(context).pop();
-                              },
-                              child: Image.asset(
-                                'assets/profil.png',
-                                width: 100.w,
-                                height: 100.h,
-                              ),
-                            ),
-                            SizedBox(height: 20.h),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedProfileImage =
-                                      'assets/mayka_shows.png';
-                                });
-                                Navigator.of(context).pop();
-                              },
-                              child: Image.asset(
-                                'assets/mayka_shows.png',
-                                width: 100.w,
-                                height: 100.h,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
+                  _showAvatarDialog(context, avatars);
                 },
                 child: Image.asset(
-                  selectedProfileImage, // Zobraziť aktuálny profilový obrázok
+                  selectedProfileImage,
                   width: 120.w,
                   height: 120.h,
                 ),
@@ -157,8 +138,7 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
                           autofocus: true,
                           onChanged: (value) {
                             setState(() {
-                              userName =
-                                  value; // Aktualizovať používateľské meno
+                              userName = value;
                             });
                           },
                           decoration: InputDecoration(hintText: 'Nové meno'),
@@ -172,7 +152,7 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              _saveUserData();
+                              _updateUsername();
                               Navigator.of(context).pop();
                             },
                             child: Text('Uložiť'),
@@ -192,6 +172,40 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
         ],
       ),
       bottomSheet: const Footer(height: 175, boxFit: BoxFit.fill),
+    );
+  }
+
+  void _showAvatarDialog(BuildContext context, List<UserAvatar> avatars) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Vyberte si profilovku'),
+          content: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: avatars.isNotEmpty
+                  ? avatars
+                      .map((avatar) => GestureDetector(
+                            onTap: () {
+                              _updateUserAvatar(avatar);
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              child: Image.asset(
+                                avatar.location ?? 'assets/max.png',
+                                width: 100,
+                                height: 100,
+                              ),
+                            ),
+                          ))
+                      .toList()
+                  : [Text("No avatars available")],
+            ),
+          ),
+        );
+      },
     );
   }
 }

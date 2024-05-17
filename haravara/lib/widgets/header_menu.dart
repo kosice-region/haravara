@@ -8,7 +8,7 @@ import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/screens/news_screen.dart';
 import 'package:haravara/screens/prizes_screen.dart';
 import 'package:haravara/screens/summary_screen.dart'; // Import SummaryScreen
-import 'package:haravara/services/places_service.dart';
+import 'package:haravara/services/database_service.dart';
 import 'package:haravara/services/screen_router.dart';
 import 'package:provider/provider.dart';
 
@@ -157,7 +157,7 @@ class HeaderMenu extends ConsumerWidget {
   handleLogout(WidgetRef ref, context) async {
     ref.read(loginNotifierProvider.notifier).logout();
     ref.read(richedPlacesProvider.notifier).deleteAllPlaces();
-    await PlacesService().clearRichedPlaces();
+    await DatabaseService().clearRichedPlaces();
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
         context, ScreenRouter().getScreenWidget(ScreenType.auth));
   }

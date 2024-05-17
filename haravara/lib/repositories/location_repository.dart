@@ -4,14 +4,34 @@ import 'dart:developer';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:dio/dio.dart';
 import 'package:haravara/models/place.dart';
+import 'package:haravara/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 FirebaseDatabase database = FirebaseDatabase.instance;
 DatabaseReference placesRef = FirebaseDatabase.instance.ref('locations');
+DatabaseReference avatarsRef = FirebaseDatabase.instance.ref('avatars');
 DatabaseReference imagesToPlacesRef = FirebaseDatabase.instance.ref('images');
 
 class LocationRepository {
   final dio = Dio();
+
+  Future<List<UserAvatar>> getAllAvatars() async {
+    DataSnapshot avatarsSnapshot = await avatarsRef.get();
+    final avatarsJson = decodeJsonFromSnapshot(avatarsSnapshot);
+    List<UserAvatar> avatars = [];
+    avatarsJson.forEach((key, value) {
+      try {
+        Map<String, dynamic>? imageMap =
+            avatarsJson[key] as Map<String, dynamic>?;
+        UserAvatar imageFromDB =
+            UserAvatar.fromJson(imageMap!).copyWith(id: key);
+        avatars.add(imageFromDB);
+      } catch (e) {
+        print('Error parsing place data for key $key: $e');
+      }
+    });
+    return avatars;
+  }
 
   Future<List<Place>> getAllPlaces() async {
     DataSnapshot placesSnapshot = await placesRef.get();
@@ -45,13 +65,11 @@ class LocationRepository {
           FirebaseDatabase.instance.ref('collectedLocationsByUsers');
 
       var places = prefs.getStringList('collectedPlaces');
-      log('places before $places');
       if (places == null) {
         places = [placeId];
       } else {
         places = [...places, placeId];
       }
-      log('places after $places');
       await placesRef.update({userId: places});
     }
   }

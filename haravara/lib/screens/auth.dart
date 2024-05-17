@@ -324,6 +324,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     List<String> deviceInfo = await authService.getDeviceDetails();
     User user = await authService.getUserById(userId);
     if (user.phones.contains(deviceInfo[0])) {
+      ref
+          .read(avatarsProvider.notifier)
+          .updateAvatar(user.userProfile!.avatar!);
+
       ref.read(currentScreenProvider.notifier).changeScreen(ScreenType.news);
       ref
           .read(loginNotifierProvider.notifier)

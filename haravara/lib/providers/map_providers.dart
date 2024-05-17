@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/main.dart';
 import 'package:haravara/models/place.dart';
-import 'package:haravara/services/places_service.dart';
+import 'package:haravara/services/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PlacesNotifier extends StateNotifier<List<Place>> {
@@ -43,7 +43,7 @@ final placesProvider =
 });
 
 final placesFutureProvider = FutureProvider<List<Place>>((ref) async {
-  return await PlacesService().loadPlaces();
+  return await DatabaseService().loadPlaces();
 });
 
 class RichedPlacesNotifier extends StateNotifier<List<String>> {

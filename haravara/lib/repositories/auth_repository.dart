@@ -61,12 +61,31 @@ class AuthRepository {
     await usersRef.child(userId).update(updatedData);
   }
 
+  Future<void> updateUserAvatar(String avatarId, String userId) async {
+    Map<String, dynamic> updatedData = {
+      'profile': {
+        'avatar': avatarId,
+        'type': 'individual',
+      },
+    };
+    await usersRef.child(userId).update(updatedData);
+  }
+
   static Map<String, dynamic> decodeJsonFromSnapshot(DataSnapshot snapshot) {
     if (snapshot.exists) {
       Map<dynamic, dynamic> dataFromSnapshot =
           snapshot.value as Map<dynamic, dynamic>;
+      final jsonToReturn = <String, dynamic>{};
 
-      final jsonToReturn = Map<String, dynamic>.from(dataFromSnapshot);
+      dataFromSnapshot.forEach((key, value) {
+        if (key is String) {
+          if (value is Map) {
+            jsonToReturn[key] = Map<String, dynamic>.from(value);
+          } else {
+            jsonToReturn[key] = value;
+          }
+        }
+      });
 
       if (jsonToReturn['phone_ids'] is String) {
         final phoneIdsString = jsonToReturn['phone_ids'] as String;
