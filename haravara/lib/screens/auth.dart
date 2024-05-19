@@ -381,7 +381,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   Future<void> _handleRegistration() async {
     final userId = await authService.findUserByEmail(_enteredEmail);
-    if (userId.isNotEmpty) {
+    log('userId $userId');
+    // ignore: unnecessary_null_comparison
+    if (userId == null || userId.isNotEmpty) {
       _showSnackBar('This email already exists');
       return;
     }
