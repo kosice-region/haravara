@@ -15,7 +15,11 @@ class AuthRepository {
       'username': user.username,
       'email': user.email ?? 'null',
       'phone_ids': json.encode(user.phones),
-      'phone_number': user.phoneNumber ?? 'null'
+      'phone_number': user.phoneNumber ?? 'null',
+      'profile': {
+        'avatar': user.userProfile!.avatar,
+        'type': user.userProfile!.profileType.toString(),
+      }
     });
     final newUsersIdRef = database.ref('userIds/$base64');
     newUsersIdRef.set(id);
@@ -61,11 +65,12 @@ class AuthRepository {
     await usersRef.child(userId).update(updatedData);
   }
 
-  Future<void> updateUserAvatar(String avatarId, String userId) async {
+  Future<void> updateUserProfile(
+      String userId, String avatarId, String profileType) async {
     Map<String, dynamic> updatedData = {
       'profile': {
         'avatar': avatarId,
-        'type': 'individual',
+        'type': profileType,
       },
     };
     await usersRef.child(userId).update(updatedData);

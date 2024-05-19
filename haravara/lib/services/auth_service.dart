@@ -22,16 +22,20 @@ final AuthRepository authRepository = AuthRepository();
 final LocationRepository locationRepository = LocationRepository();
 
 class AuthService {
-  registerUserByEmail(String email, String username) async {
+  registerUserByEmail(String email, String username, bool isFamilyType) async {
     List<String> phoneDetail = await getDeviceDetails();
-    print(phoneDetail[0]);
     final id = uuid.v4();
     final base64Id = generateBase64(email).toString();
     final user = User(
-        username: username,
-        phones: [phoneDetail[0]],
-        email: email,
-        id: base64Id);
+      username: username,
+      phones: [phoneDetail[0]],
+      userProfile: UserProfile(
+        avatar: '0387c644-249c-4c1e-ac0b-bc6c861d580c',
+        profileType: isFamilyType ? ProfileType.family : ProfileType.individual,
+      ),
+      email: email,
+      id: id,
+    );
     await authRepository.registerUser(user, id, base64Id);
     setLoginPreferences(user);
   }
@@ -125,6 +129,7 @@ class AuthService {
     prefs.setString('email', user.email!);
     prefs.setString('id', user.id!);
     prefs.setString('username', user.username);
+    prefs.setString('profileType', user.userProfile!.profileType.toString());
     prefs.setString('profile_image', user.userProfile!.avatar ?? '');
   }
 }

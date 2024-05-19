@@ -58,30 +58,29 @@ class DatabaseService {
   Future<void> saveAvatarsLocally() async {
     final List<UserAvatar> avatars = await locationRepository.getAllAvatars();
     Directory appDocDir = await _getDirectory();
-    await _downloadAvatarDataFromStorage(avatars);
+    String dirPath = appDocDir.path;
+    await _downloadAvatarDataFromStorage(avatars, dirPath);
     final db = await _getDatabase();
     for (final avatar in avatars) {
       await db.insert(
         'avatars',
         {
           'id': avatar.id!,
-          'location_path': '${appDocDir.path}/${avatar.location}',
+          'location_path': '${dirPath}/${avatar.location}',
         },
       );
     }
   }
 
-  Future<void> _downloadAvatarDataFromStorage(List<UserAvatar> avatars) async {
-    Directory appDocDir = await _getDirectory();
-
+  Future<void> _downloadAvatarDataFromStorage(
+      List<UserAvatar> avatars, String dirPath) async {
     for (final avatar in avatars) {
       String fileToDownloadLocationImage = avatar.location!;
       try {
         final locationUrl = await firebase_storage.FirebaseStorage.instance
             .ref(fileToDownloadLocationImage)
             .getDownloadURL();
-        await Dio()
-            .download(locationUrl, '${appDocDir.path}/${avatar.location}');
+        await Dio().download(locationUrl, '${dirPath}/${avatar.location}');
       } catch (e) {
         print('Download error: $e');
       }
@@ -104,7 +103,8 @@ class DatabaseService {
   Future<void> savePlacesLocally() async {
     final List<Place> places = await locationRepository.getAllPlaces();
     Directory appDocDir = await _getDirectory();
-    await _downloadLocationDataFromStorage(places);
+    String dirPath = appDocDir.path;
+    await _downloadLocationDataFromStorage(places, dirPath);
     final db = await _getDatabase();
     for (final place in places) {
       await db.insert(
@@ -122,15 +122,15 @@ class DatabaseService {
           'lng_primary': place.geoData.primary.coordinates[1],
           'xCoordinate': place.geoData.primary.pixelCoordinates[0],
           'yCoordinate': place.geoData.primary.pixelCoordinates[1],
-          'location_path': '${appDocDir.path}/${place.placeImages!.location}',
-          'stamp_path': '${appDocDir.path}/${place.placeImages!.stamp}',
+          'location_path': '${dirPath}/${place.placeImages!.location}',
+          'stamp_path': '${dirPath}/${place.placeImages!.stamp}',
         },
       );
     }
   }
 
-  Future<void> _downloadLocationDataFromStorage(List<Place> places) async {
-    Directory appDocDir = await _getDirectory();
+  Future<void> _downloadLocationDataFromStorage(
+      List<Place> places, String dirPath) async {
     List<PlaceImageFromDB> images = places
         .where((place) => place.placeImages != null)
         .map((place) => place.placeImages!)
@@ -146,9 +146,8 @@ class DatabaseService {
         final stampUrl = await firebase_storage.FirebaseStorage.instance
             .ref(fileToDownloadStampImage)
             .getDownloadURL();
-        await Dio()
-            .download(locationUrl, '${appDocDir.path}/${image.location}');
-        await Dio().download(stampUrl, '${appDocDir.path}/${image.stamp}');
+        await Dio().download(locationUrl, '${dirPath}/${image.location}');
+        await Dio().download(stampUrl, '${dirPath}/${image.stamp}');
       } catch (e) {
         print('Download error: $e');
       }

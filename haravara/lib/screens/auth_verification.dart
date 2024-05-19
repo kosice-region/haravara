@@ -123,8 +123,8 @@ class _AuthVerificationScreenState
       await authService.loginUserByEmail(authState.enteredEmail!);
       routeToNewsScreen();
     } else {
-      await authService.registerUserByEmail(
-          authState.enteredEmail!, authState.enteredUsername!);
+      await authService.registerUserByEmail(authState.enteredEmail!,
+          authState.enteredUsername!, authState.isFamily);
       routeToNewsScreen();
     }
     _showSnackBar('Success');

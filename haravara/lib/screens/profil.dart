@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +28,7 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
   String selectedProfileImage = 'assets/kasko.png';
   late AuthNotifier authNotifier;
   late List<UserAvatar> avatars;
-
+  bool isInit = false;
   @override
   void initState() {
     super.initState();
@@ -52,6 +53,7 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
       setState(() {
         userName = storedName;
         selectedProfileImage = currentAvatar.location!;
+        isInit = true;
       });
     }
   }
@@ -63,9 +65,11 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
     await _prefs.setString('username', userName);
   }
 
-  _updateUserAvatar(UserAvatar userAvatar) async {
+  _updateUserProfile(UserAvatar userAvatar) async {
     var userId = _prefs.getString('id');
-    await authRepository.updateUserAvatar(userAvatar.id!, userId!);
+    String userProfileType = _prefs.getString('profileType') ?? 'family';
+    await authRepository.updateUserProfile(
+        userId!, userAvatar.id!, userProfileType);
     ref.read(avatarsProvider.notifier).updateAvatar(userAvatar.id!);
     setState(() {
       selectedProfileImage = userAvatar.location!;
@@ -98,16 +102,16 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
                 ),
               ),
               10.verticalSpace,
-              GestureDetector(
-                onTap: () {
-                  _showAvatarDialog(context, avatars);
-                },
-                child: Image.asset(
-                  selectedProfileImage,
-                  width: 120.w,
-                  height: 120.h,
-                ),
-              ),
+              if (isInit)
+                GestureDetector(
+                    onTap: () {
+                      _showAvatarDialog(context, avatars);
+                    },
+                    child: Image.file(
+                      File(selectedProfileImage),
+                      height: 120.h,
+                      width: 120.w,
+                    )),
               5.verticalSpace,
               Text(
                 userName, // Používateľské meno
@@ -188,16 +192,23 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
                   ? avatars
                       .map((avatar) => GestureDetector(
                             onTap: () {
-                              _updateUserAvatar(avatar);
+                              _updateUserProfile(avatar);
                               Navigator.of(context).pop();
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 10),
-                              child: Image.asset(
-                                avatar.location ?? 'assets/max.png',
-                                width: 100,
-                                height: 100,
-                              ),
+                              child: avatar.location != null &&
+                                      avatar.location!.isNotEmpty
+                                  ? Image.file(
+                                      File(avatar.location!),
+                                      width: 100,
+                                      height: 100,
+                                    )
+                                  : Image.asset(
+                                      'assets/max.png',
+                                      width: 100,
+                                      height: 100,
+                                    ),
                             ),
                           ))
                       .toList()

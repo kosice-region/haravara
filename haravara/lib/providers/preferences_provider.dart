@@ -103,6 +103,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLogin: newState);
   }
 
+  void toggleFamilyState(bool newState) {
+    state = state.copyWith(isFamily: newState);
+  }
+
   String? getEnteredUsername() {
     return state.enteredUsername;
   }
@@ -119,11 +123,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
     return state.isLogin;
   }
 
+  bool isFamily() {
+    return state.isFamily;
+  }
+
   UserModel getUserData() {
     return UserModel(
         email: state.enteredEmail!,
         id: state.userId,
         isLoggedIn: true,
+        isFamily: state.isFamily,
         username: state.enteredUsername ?? '');
   }
 }

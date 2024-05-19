@@ -44,18 +44,20 @@ class UserAvatar with _$UserAvatar {
 
 class UserModel {
   final bool isLoggedIn;
+  final bool isFamily;
   final String username;
   final String email;
   final String id;
 
   UserModel(
       {this.isLoggedIn = false,
+      this.isFamily = true,
       this.username = '',
       this.email = '',
       this.id = ''});
 
   @override
   String toString() {
-    return 'UserModel(isLoggedIn: $isLoggedIn, username: $username, email: $email, id: $id)';
+    return 'UserModel(isLoggedIn: $isLoggedIn, username: $username, email: $email, id: $id, Invidual: $isFamily)';
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,6 +29,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   final TextEditingController _usernameController = TextEditingController();
   var _enteredEmail = '';
   var _enteredUsername = '';
+  bool isFamily = false;
   bool isCodeSent = false;
   bool isInputByPhoneNumber = false;
   late String code;
@@ -34,6 +37,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _usernameFocusNode = FocusNode();
   var userId = '';
+
   @override
   void initState() {
     authNotifier = ref.read(authNotifierProvider.notifier);
@@ -72,7 +76,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
     var deviceHeight = MediaQuery.of(context).size.height;
-    var registrationHeight = 145;
+    var registrationHeight = 165;
     var loginHeight = 110;
     if (deviceHeight < 850) {
       registrationHeight = 160;
@@ -229,7 +233,39 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                       ),
                                     ),
                                   ),
-                                15.verticalSpace,
+                                5.verticalSpace,
+                                if (!_isLogin && !isCodeSent)
+                                  SizedBox(
+                                    width: 166.w,
+                                    child: Row(
+                                      children: [
+                                        Checkbox(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                          ),
+                                          activeColor: Color.fromARGB(
+                                              255, 155, 221, 153),
+                                          value: isFamily,
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              this.isFamily = !this.isFamily;
+                                            });
+                                          },
+                                        ),
+                                        Text(
+                                          'Som rodič',
+                                          style: GoogleFonts.titanOne(
+                                            color: const Color.fromARGB(
+                                                255, 86, 162, 73),
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 11.sp,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                2.verticalSpace,
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     textStyle:
@@ -345,13 +381,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   Future<void> _handleRegistration() async {
     final userId = await authService.findUserByEmail(_enteredEmail);
-    if (userId.isEmpty) {
+    if (userId.isNotEmpty) {
       _showSnackBar('This email already exists');
       return;
     }
     authNotifier.setEnteredUsername(_enteredUsername);
     authNotifier.setEnteredEmail(_enteredEmail);
     authNotifier.toggleLoginState(false);
+    authNotifier.toggleFamilyState(isFamily);
     onSendCode();
   }
 
@@ -382,7 +419,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   @override
   void dispose() {
-    // Очищаем FocusNode при уничтожении виджета
     _emailFocusNode.dispose();
     _usernameFocusNode.dispose();
     super.dispose();
