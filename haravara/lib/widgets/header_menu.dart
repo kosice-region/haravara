@@ -158,6 +158,7 @@ class HeaderMenu extends ConsumerWidget {
     ref.read(loginNotifierProvider.notifier).logout();
     ref.read(richedPlacesProvider.notifier).deleteAllPlaces();
     await DatabaseService().clearRichedPlaces();
+    await DatabaseService().clearUserAllAvatarsFromDatabase();
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
         context, ScreenRouter().getScreenWidget(ScreenType.auth));
   }

@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/models/user.dart';
 import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/repositories/auth_repository.dart';
-import 'package:haravara/repositories/location_repository.dart';
+import 'package:haravara/repositories/database_repository.dart';
 import 'package:haravara/screens/auth.dart';
 import 'package:haravara/services/database_service.dart';
 import 'package:haravara/services/init_service.dart';
@@ -17,9 +17,11 @@ import 'package:mailer/smtp_server.dart';
 import 'dart:math' as math;
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
+var uuid = Uuid();
 final AuthRepository authRepository = AuthRepository();
-final LocationRepository locationRepository = LocationRepository();
+final DatabaseRepository databaseRepository = DatabaseRepository();
 
 class AuthService {
   registerUserByEmail(String email, String username, bool isFamilyType) async {
@@ -129,7 +131,11 @@ class AuthService {
     prefs.setString('email', user.email!);
     prefs.setString('id', user.id!);
     prefs.setString('username', user.username);
-    prefs.setString('profileType', user.userProfile!.profileType.toString());
+    prefs.setString(
+        'profileType',
+        user.userProfile!.profileType == ProfileType.family
+            ? 'family'
+            : 'individual');
     prefs.setString('profile_image', user.userProfile!.avatar ?? '');
   }
 }

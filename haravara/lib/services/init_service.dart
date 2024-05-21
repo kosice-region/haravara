@@ -7,7 +7,7 @@ import 'package:haravara/models/setup_model.dart';
 import 'package:haravara/models/user.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
-import 'package:haravara/repositories/location_repository.dart';
+import 'package:haravara/repositories/database_repository.dart';
 import 'package:haravara/services/map_service.dart';
 import 'package:haravara/services/database_service.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -43,8 +43,8 @@ class Init {
   static _defaultSetup(WidgetRef ref) async {
     await _requestLocationPermission();
     final List<Place> places = await databaseService.loadPlaces();
-    final List<UserAvatar> avatars = await databaseService.loadAvatars();
     ref.read(placesProvider.notifier).addPlaces(places);
+    final List<UserAvatar> avatars = await databaseService.loadAvatars();
     ref.read(avatarsProvider.notifier).addAvatars(avatars);
   }
 

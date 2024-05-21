@@ -8,6 +8,8 @@ import 'package:haravara/models/user.dart';
 import 'package:haravara/providers/current_screen_provider.dart';
 import 'package:haravara/providers/preferences_provider.dart';
 import 'package:haravara/services/auth_service.dart';
+import 'package:haravara/services/database_service.dart';
+import 'package:haravara/services/init_service.dart';
 import 'package:haravara/services/screen_router.dart';
 import 'package:haravara/widgets/header.dart';
 import 'package:uuid/uuid.dart';
@@ -359,6 +361,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     this.userId = userId;
     List<String> deviceInfo = await authService.getDeviceDetails();
     User user = await authService.getUserById(userId);
+    await DatabaseService().saveUserAvatarsLocally(userId);
+    final List<UserAvatar> avatars = await databaseService.loadAvatars();
+    await authService.getCollectedPlacesByUser(userId);
+    ref.read(avatarsProvider.notifier).addAvatars(avatars);
     if (user.phones.contains(deviceInfo[0])) {
       ref
           .read(avatarsProvider.notifier)
@@ -368,7 +374,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       ref
           .read(loginNotifierProvider.notifier)
           .login(user.username, user.email!, user.id!);
-      await authService.getCollectedPlacesByUser(userId);
       routeToNewsScreen();
     } else {
       authNotifier.setEnteredUsername(user.username);
@@ -381,9 +386,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   Future<void> _handleRegistration() async {
     final userId = await authService.findUserByEmail(_enteredEmail);
-    log('userId $userId');
-    // ignore: unnecessary_null_comparison
-    if (userId == null || userId.isNotEmpty) {
+    if (userId.isNotEmpty) {
       _showSnackBar('This email already exists');
       return;
     }

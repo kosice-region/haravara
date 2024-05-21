@@ -151,6 +151,14 @@ class AvatarsNotifier extends StateNotifier<List<UserAvatar>> {
     state = [...avatars];
   }
 
+  void addAvatar(UserAvatar avatar) {
+    state = [avatar, ...state];
+  }
+
+  void deleteAvatar(UserAvatar avatar) {
+    state = state.where((a) => a.id != avatar.id).toList();
+  }
+
   UserAvatar getCurrentAvatar() {
     String currentAvatarId = pref.getString("profile_image") ?? '';
     if (currentAvatarId.isEmpty) {

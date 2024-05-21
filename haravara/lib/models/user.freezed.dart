@@ -485,6 +485,7 @@ mixin _$UserAvatar {
   String? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'location')
   String? get location => throw _privateConstructorUsedError;
+  bool? get isDefaultAvatar => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -498,7 +499,10 @@ abstract class $UserAvatarCopyWith<$Res> {
           UserAvatar value, $Res Function(UserAvatar) then) =
       _$UserAvatarCopyWithImpl<$Res, UserAvatar>;
   @useResult
-  $Res call({String? id, @JsonKey(name: 'location') String? location});
+  $Res call(
+      {String? id,
+      @JsonKey(name: 'location') String? location,
+      bool? isDefaultAvatar});
 }
 
 /// @nodoc
@@ -516,6 +520,7 @@ class _$UserAvatarCopyWithImpl<$Res, $Val extends UserAvatar>
   $Res call({
     Object? id = freezed,
     Object? location = freezed,
+    Object? isDefaultAvatar = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -526,6 +531,10 @@ class _$UserAvatarCopyWithImpl<$Res, $Val extends UserAvatar>
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as String?,
+      isDefaultAvatar: freezed == isDefaultAvatar
+          ? _value.isDefaultAvatar
+          : isDefaultAvatar // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -538,7 +547,10 @@ abstract class _$$UserAvatarImplCopyWith<$Res>
       __$$UserAvatarImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? id, @JsonKey(name: 'location') String? location});
+  $Res call(
+      {String? id,
+      @JsonKey(name: 'location') String? location,
+      bool? isDefaultAvatar});
 }
 
 /// @nodoc
@@ -554,6 +566,7 @@ class __$$UserAvatarImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? location = freezed,
+    Object? isDefaultAvatar = freezed,
   }) {
     return _then(_$UserAvatarImpl(
       id: freezed == id
@@ -564,6 +577,10 @@ class __$$UserAvatarImplCopyWithImpl<$Res>
           ? _value.location
           : location // ignore: cast_nullable_to_non_nullable
               as String?,
+      isDefaultAvatar: freezed == isDefaultAvatar
+          ? _value.isDefaultAvatar
+          : isDefaultAvatar // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -571,7 +588,10 @@ class __$$UserAvatarImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$UserAvatarImpl with DiagnosticableTreeMixin implements _UserAvatar {
-  const _$UserAvatarImpl({this.id, @JsonKey(name: 'location') this.location});
+  const _$UserAvatarImpl(
+      {this.id,
+      @JsonKey(name: 'location') this.location,
+      this.isDefaultAvatar});
 
   factory _$UserAvatarImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserAvatarImplFromJson(json);
@@ -581,10 +601,12 @@ class _$UserAvatarImpl with DiagnosticableTreeMixin implements _UserAvatar {
   @override
   @JsonKey(name: 'location')
   final String? location;
+  @override
+  final bool? isDefaultAvatar;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'UserAvatar(id: $id, location: $location)';
+    return 'UserAvatar(id: $id, location: $location, isDefaultAvatar: $isDefaultAvatar)';
   }
 
   @override
@@ -593,7 +615,8 @@ class _$UserAvatarImpl with DiagnosticableTreeMixin implements _UserAvatar {
     properties
       ..add(DiagnosticsProperty('type', 'UserAvatar'))
       ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('location', location));
+      ..add(DiagnosticsProperty('location', location))
+      ..add(DiagnosticsProperty('isDefaultAvatar', isDefaultAvatar));
   }
 
   @override
@@ -603,12 +626,14 @@ class _$UserAvatarImpl with DiagnosticableTreeMixin implements _UserAvatar {
             other is _$UserAvatarImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.location, location) ||
-                other.location == location));
+                other.location == location) &&
+            (identical(other.isDefaultAvatar, isDefaultAvatar) ||
+                other.isDefaultAvatar == isDefaultAvatar));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, location);
+  int get hashCode => Object.hash(runtimeType, id, location, isDefaultAvatar);
 
   @JsonKey(ignore: true)
   @override
@@ -627,7 +652,8 @@ class _$UserAvatarImpl with DiagnosticableTreeMixin implements _UserAvatar {
 abstract class _UserAvatar implements UserAvatar {
   const factory _UserAvatar(
       {final String? id,
-      @JsonKey(name: 'location') final String? location}) = _$UserAvatarImpl;
+      @JsonKey(name: 'location') final String? location,
+      final bool? isDefaultAvatar}) = _$UserAvatarImpl;
 
   factory _UserAvatar.fromJson(Map<String, dynamic> json) =
       _$UserAvatarImpl.fromJson;
@@ -637,6 +663,8 @@ abstract class _UserAvatar implements UserAvatar {
   @override
   @JsonKey(name: 'location')
   String? get location;
+  @override
+  bool? get isDefaultAvatar;
   @override
   @JsonKey(ignore: true)
   _$$UserAvatarImplCopyWith<_$UserAvatarImpl> get copyWith =>

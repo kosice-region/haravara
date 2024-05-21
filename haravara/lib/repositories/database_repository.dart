@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/models/user.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 FirebaseDatabase database = FirebaseDatabase.instance;
@@ -12,7 +16,7 @@ DatabaseReference placesRef = FirebaseDatabase.instance.ref('locations');
 DatabaseReference avatarsRef = FirebaseDatabase.instance.ref('avatars');
 DatabaseReference imagesToPlacesRef = FirebaseDatabase.instance.ref('images');
 
-class LocationRepository {
+class DatabaseRepository {
   final dio = Dio();
 
   Future<List<UserAvatar>> getAllAvatars() async {
@@ -31,6 +35,18 @@ class LocationRepository {
       }
     });
     return avatars;
+  }
+
+  Future<void> uploadUserAvatar(
+      File image, String userId, String imageId) async {
+    var userAvatarsRef = FirebaseStorage.instance
+        .ref()
+        .child('images/users-avatars/$userId/$imageId.jpg');
+    try {
+      await userAvatarsRef.putFile(image);
+    } on FirebaseException catch (e) {
+      log('error while adding avatar $e');
+    }
   }
 
   Future<List<Place>> getAllPlaces() async {

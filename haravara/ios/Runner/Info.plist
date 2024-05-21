@@ -52,6 +52,10 @@
 	<string>Used to provide geofence service.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Used to recognize user activity information.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used to allow camera</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Used to allow camera</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

@@ -36,6 +36,7 @@ class UserAvatar with _$UserAvatar {
   const factory UserAvatar({
     String? id,
     @JsonKey(name: 'location') String? location,
+    bool? isDefaultAvatar,
   }) = _UserAvatar;
 
   factory UserAvatar.fromJson(Map<String, dynamic> json) =>

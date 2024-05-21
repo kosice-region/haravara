@@ -49,10 +49,12 @@ _$UserAvatarImpl _$$UserAvatarImplFromJson(Map<String, dynamic> json) =>
     _$UserAvatarImpl(
       id: json['id'] as String?,
       location: json['location'] as String?,
+      isDefaultAvatar: json['isDefaultAvatar'] as bool?,
     );
 
 Map<String, dynamic> _$$UserAvatarImplToJson(_$UserAvatarImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'location': instance.location,
+      'isDefaultAvatar': instance.isDefaultAvatar,
     };

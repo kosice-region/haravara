@@ -18,7 +18,9 @@ class AuthRepository {
       'phone_number': user.phoneNumber ?? 'null',
       'profile': {
         'avatar': user.userProfile!.avatar,
-        'type': user.userProfile!.profileType.toString(),
+        'type': user.userProfile!.profileType == ProfileType.family
+            ? 'family'
+            : 'individual',
       }
     });
     final newUsersIdRef = database.ref('userIds/$base64');
@@ -44,7 +46,7 @@ class AuthRepository {
       String userId = snapshot.value.toString();
       return userId;
     } else {
-      return 'null';
+      return '';
     }
   }
 

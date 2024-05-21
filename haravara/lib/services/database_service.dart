@@ -2,22 +2,27 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/models/user.dart';
 import 'package:haravara/providers/map_providers.dart';
 import 'package:haravara/providers/preferences_provider.dart';
-import 'package:haravara/repositories/location_repository.dart';
+import 'package:haravara/repositories/database_repository.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart' as syspaths;
 import 'package:path/path.dart' as path;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:sqflite/sqlite_api.dart';
+import 'package:uuid/uuid.dart';
+
+var uuid = Uuid();
 
 firebase_storage.FirebaseStorage storage =
     firebase_storage.FirebaseStorage.instance;
-final locationRepository = LocationRepository();
+final databaseRepository = DatabaseRepository();
 
 Future<Directory> _getDirectory() async {
   Directory appDocDir = await syspaths.getApplicationDocumentsDirectory();
@@ -47,7 +52,8 @@ Future<Database> _getDatabase() async {
 
       await db.execute('''CREATE TABLE if not exists avatars(
            id TEXT PRIMARY KEY,
-           location_path TEXT)''');
+           location_path TEXT,
+           isDefaultAvatar INTEGER)''');
     },
     version: 1,
   );
@@ -56,7 +62,7 @@ Future<Database> _getDatabase() async {
 
 class DatabaseService {
   Future<void> saveAvatarsLocally() async {
-    final List<UserAvatar> avatars = await locationRepository.getAllAvatars();
+    final List<UserAvatar> avatars = await databaseRepository.getAllAvatars();
     Directory appDocDir = await _getDirectory();
     String dirPath = appDocDir.path;
     await _downloadAvatarDataFromStorage(avatars, dirPath);
@@ -67,8 +73,41 @@ class DatabaseService {
         {
           'id': avatar.id!,
           'location_path': '${dirPath}/${avatar.location}',
+          'isDefaultAvatar': 1,
         },
       );
+    }
+  }
+
+  Future<void> saveUserAvatarsLocally(String userId) async {
+    Directory appDocDir = await _getDirectory();
+    String dirPath = appDocDir.path;
+    final db = await _getDatabase();
+    firebase_storage.ListResult results =
+        await storage.ref('images/users-avatars/$userId/').listAll();
+
+    if (results.items.isEmpty) {
+      return;
+    }
+    for (var ref in results.items) {
+      final imagePath = ref.fullPath;
+      final imageName = ref.name.split('.').first;
+      try {
+        final locationUrl = await firebase_storage.FirebaseStorage.instance
+            .ref(imagePath)
+            .getDownloadURL();
+        await Dio().download(locationUrl, '${dirPath}/${imagePath}');
+        await db.insert(
+          'avatars',
+          {
+            'id': imageName,
+            'location_path': '${dirPath}/${imagePath}',
+            'isDefaultAvatar': 0,
+          },
+        );
+      } catch (e) {
+        print('Download error: $e');
+      }
     }
   }
 
@@ -95,13 +134,40 @@ class DatabaseService {
       return UserAvatar(
         id: row['id'] as String,
         location: row['location_path'] as String,
+        isDefaultAvatar: row['isDefaultAvatar'] == 1,
       );
     }).toList();
     return avatars;
   }
 
+  Future<void> uploadAvatar(XFile avatar, String userId, String imageId) async {
+    File image = File(avatar.path);
+    await databaseRepository.uploadUserAvatar(image, userId, imageId);
+    final db = await _getDatabase();
+    await db.insert(
+      'avatars',
+      {
+        'id': imageId,
+        'location_path': '${avatar.path}',
+        'isDefaultAvatar': 0,
+      },
+    );
+  }
+
+  Future<void> deleteAvatar(String userId, String imageId) async {
+    var userAvatarsRef = FirebaseStorage.instance
+        .ref()
+        .child('images/users-avatars/$userId/$imageId.jpg');
+    await clearUserAvatarFromDatabase(imageId);
+    try {
+      await userAvatarsRef.delete();
+    } on FirebaseException catch (e) {
+      log('error while deleting avatar $e');
+    }
+  }
+
   Future<void> savePlacesLocally() async {
-    final List<Place> places = await locationRepository.getAllPlaces();
+    final List<Place> places = await databaseRepository.getAllPlaces();
     Directory appDocDir = await _getDirectory();
     String dirPath = appDocDir.path;
     await _downloadLocationDataFromStorage(places, dirPath);
@@ -155,7 +221,7 @@ class DatabaseService {
   }
 
   Future<void> addPlaceToCollectedByUser(String id) async {
-    await locationRepository.addCollectedPlaceForUser(id);
+    await databaseRepository.addCollectedPlaceForUser(id);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? collectedPlaces = prefs.getStringList('collectedPlaces');
     if (collectedPlaces == null) {
@@ -169,7 +235,7 @@ class DatabaseService {
 
   Future<void> getCollectedPlacesByUser(String id) async {
     final collectedPlaces =
-        await locationRepository.getCollectedPlacesByUser(id);
+        await databaseRepository.getCollectedPlacesByUser(id);
     log('collected places ${collectedPlaces}');
 
     for (String placeId in collectedPlaces) {
@@ -197,6 +263,16 @@ class DatabaseService {
       'places',
       {'isReached': 0},
     );
+  }
+
+  Future<void> clearUserAllAvatarsFromDatabase() async {
+    final db = await _getDatabase();
+    await db.delete('avatars', where: 'isDefaultAvatar = ?', whereArgs: [0]);
+  }
+
+  Future<void> clearUserAvatarFromDatabase(String avatarId) async {
+    final db = await _getDatabase();
+    await db.delete('avatars', where: 'id = ?', whereArgs: [avatarId]);
   }
 
   Future<List<Place>> loadPlaces() async {
