@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:path/path.dart' as path;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:haravara/models/place.dart';
 import 'package:haravara/models/user.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 FirebaseDatabase database = FirebaseDatabase.instance;
@@ -31,21 +30,29 @@ class DatabaseRepository {
             UserAvatar.fromJson(imageMap!).copyWith(id: key);
         avatars.add(imageFromDB);
       } catch (e) {
-        print('Error parsing place data for key $key: $e');
+        log('Error parsing place data for key $key: $e');
       }
     });
     return avatars;
   }
 
   Future<void> uploadUserAvatar(
-      File image, String userId, String imageId) async {
-    var userAvatarsRef = FirebaseStorage.instance
-        .ref()
-        .child('images/users-avatars/$userId/$imageId.jpg');
+      File image, String userId, String imageId, String mimeType) async {
+    var userAvatarsRef = await getUserAvatarsReference(userId, imageId);
     try {
-      await userAvatarsRef.putFile(image);
+      await userAvatarsRef.putFile(
+          image, SettableMetadata(contentType: mimeType));
     } on FirebaseException catch (e) {
-      log('error while adding avatar $e');
+      log('error while adding avatar for user $userId -> $e');
+    }
+  }
+
+  Future<void> deleteAvatar(String userId, String imageId) async {
+    var userAvatarsRef = await getUserAvatarsReference(userId, imageId);
+    try {
+      await userAvatarsRef.delete();
+    } on FirebaseException catch (e) {
+      log('error while deleting avatar for user $userId -> $e');
     }
   }
 
@@ -103,11 +110,25 @@ class DatabaseRepository {
     if (snapshot.value is List) {
       List<dynamic> placesDynamic = snapshot.value as List;
       List<String> collectedPlaces = placesDynamic.whereType<String>().toList();
-      log('$collectedPlaces');
       return collectedPlaces;
     } else {
       log('Unexpected data format for user $userId: ${snapshot.value}');
       return [];
+    }
+  }
+
+  Future<Reference> getUserAvatarsReference(
+      String userId, String imageId) async {
+    return FirebaseStorage.instance
+        .ref()
+        .child('images/users-avatars/$userId/$imageId');
+  }
+
+  Future<String?> getFileNameWithExtension(File file) async {
+    if (await file.exists()) {
+      return path.basename(file.path);
+    } else {
+      return null;
     }
   }
 

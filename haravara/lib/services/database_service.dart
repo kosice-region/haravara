@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:sqflite/sqlite_api.dart';
 import 'package:uuid/uuid.dart';
+import 'package:mime/mime.dart';
 
 var uuid = Uuid();
 
@@ -24,9 +25,9 @@ firebase_storage.FirebaseStorage storage =
     firebase_storage.FirebaseStorage.instance;
 final databaseRepository = DatabaseRepository();
 
-Future<Directory> _getDirectory() async {
+Future<String> _getDirectoryPath() async {
   Directory appDocDir = await syspaths.getApplicationDocumentsDirectory();
-  return appDocDir;
+  return appDocDir.path;
 }
 
 Future<Database> _getDatabase() async {
@@ -63,8 +64,7 @@ Future<Database> _getDatabase() async {
 class DatabaseService {
   Future<void> saveAvatarsLocally() async {
     final List<UserAvatar> avatars = await databaseRepository.getAllAvatars();
-    Directory appDocDir = await _getDirectory();
-    String dirPath = appDocDir.path;
+    String dirPath = await _getDirectoryPath();
     await _downloadAvatarDataFromStorage(avatars, dirPath);
     final db = await _getDatabase();
     for (final avatar in avatars) {
@@ -80,8 +80,7 @@ class DatabaseService {
   }
 
   Future<void> saveUserAvatarsLocally(String userId) async {
-    Directory appDocDir = await _getDirectory();
-    String dirPath = appDocDir.path;
+    String dirPath = await _getDirectoryPath();
     final db = await _getDatabase();
     firebase_storage.ListResult results =
         await storage.ref('images/users-avatars/$userId/').listAll();
@@ -142,7 +141,8 @@ class DatabaseService {
 
   Future<void> uploadAvatar(XFile avatar, String userId, String imageId) async {
     File image = File(avatar.path);
-    await databaseRepository.uploadUserAvatar(image, userId, imageId);
+    String mimeType = lookupMimeType(avatar.path)!;
+    await databaseRepository.uploadUserAvatar(image, userId, imageId, mimeType);
     final db = await _getDatabase();
     await db.insert(
       'avatars',
@@ -155,21 +155,13 @@ class DatabaseService {
   }
 
   Future<void> deleteAvatar(String userId, String imageId) async {
-    var userAvatarsRef = FirebaseStorage.instance
-        .ref()
-        .child('images/users-avatars/$userId/$imageId.jpg');
+    await databaseRepository.deleteAvatar(userId, imageId);
     await clearUserAvatarFromDatabase(imageId);
-    try {
-      await userAvatarsRef.delete();
-    } on FirebaseException catch (e) {
-      log('error while deleting avatar $e');
-    }
   }
 
   Future<void> savePlacesLocally() async {
     final List<Place> places = await databaseRepository.getAllPlaces();
-    Directory appDocDir = await _getDirectory();
-    String dirPath = appDocDir.path;
+    String dirPath = await _getDirectoryPath();
     await _downloadLocationDataFromStorage(places, dirPath);
     final db = await _getDatabase();
     for (final place in places) {

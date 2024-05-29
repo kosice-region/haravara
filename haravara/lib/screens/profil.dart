@@ -230,7 +230,7 @@ class _ProfilScreenState extends ConsumerState<ProfilScreen> {
         return AlertDialog(
           title: Text('Vyberte si profilovku'),
           content: SizedBox(
-            width: 400.w,
+            width: 150.w,
             height: 80.h,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
