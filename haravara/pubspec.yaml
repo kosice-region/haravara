@@ -40,14 +40,14 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_screenutil: ^5.9.0
   firebase_core: ^2.21.0
-  device_info_plus: ^10.1.0
+  device_info_plus: ^9.1.1
   uuid: ^4.2.2
   device_imei: ^0.0.4+2
   mailer: ^6.0.1
   firebase_database: ^10.3.3
   shared_preferences: ^2.2.2
   flutter_riverpod: ^2.4.9
-  riverpod_annotation: ^2.3.4
+  riverpod_annotation: ^2.3.5
   flutter_svg: ^2.0.9
   map_launcher: ^3.1.0
   page_transition: ^2.1.0
@@ -55,7 +55,7 @@ dependencies:
   flutter_compass: ^0.8.0
   swipeable_page_route: ^0.4.2
   provider: ^6.1.1
-  riverpod_lint: ^2.3.8
+  riverpod_lint: ^2.3.10
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0
   dio: ^5.4.0
@@ -69,14 +69,21 @@ dependencies:
   latlong2: ^0.9.1
   permission_handler: ^11.3.1
   flutter_background_service: ^5.0.5
-  geolocator: ^12.0.0
+  geolocator: ^11.0.0
   flutter_background_service_android: ^6.2.2
   flutter_background_service_ios: ^5.0.0
   page_view_indicators: ^2.0.0
   smooth_page_indicator: ^1.1.0
   google_maps_flutter: ^2.5.3
   image_picker: ^1.1.1
-  mime: ^1.0.5
+  webview_flutter: ^4.8.0
+  webview_flutter_wkwebview: ^3.13.1
+  webview_flutter_android: ^3.16.4
+  riverpod_generator: ^2.4.0
+  cloud_functions: ^4.7.6
+  cloud_firestore: ^4.17.5
+  firebase_auth: ^4.7.6
+  diacritic: ^0.1.2
 
 
 dev_dependencies:
@@ -119,11 +126,12 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/icons/
     - assets/Hero.jpeg
     - assets/Icon.jpeg
     - assets/nav-btn.png
     - assets/logo-haravara.png
-    - assets/background.png
+    - assets/backgrounds/background.png
     - assets/peopleMapScreen.png
     - assets/compass.jpg
     - assets/cadrant.jpg
@@ -131,35 +139,50 @@ flutter:
     - assets/menu-icons/map.png
     - assets/menu-icons/calendar.png
     - assets/menu-icons/mail.png
+    - assets/menu-icons/loop.png
+    - assets/menu-icons/headphones.png
+    - assets/menu-icons/batoh2.png
+    - assets/menu-icons/ship.png
+    - assets/menu-icons/steps2.png
+    - assets/menu-icons/questions.png
+    - assets/menu-icons/backbutton.png
+    - assets/menu-icons/horse.png
     - assets/lupa.png
     - assets/26.png
     - assets/16.png
-    - assets/kaso-detective.png
-    - assets/haravara-main.jpg
-    - assets/background_clouds.png
+    - assets/avatars/kaso-detective.png
+    - assets/backgrounds/haravara-main.jpg
+    - assets/backgrounds/background_clouds.png
     - assets/mayka_shows.png
-    - assets/background_menu.png
-    - assets/background_news.png
-    - assets/background-summary.png
+    - assets/backgrounds/background_menu.png
+    - assets/backgrounds/background_news.png
+    - assets/backgrounds/background-summary.png
     - assets/compass_mini.png
     - assets/places-map.jpg
     - assets/places-map-preview.png
     - assets/compass-fixed.png
-    - assets/pozadie8.jpg
+    - assets/backgrounds/pozadie8.jpg
     - assets/Majka pri ohni.png
     - assets/MAX s horalkou.png
     - assets/BATOH (1).png
-    - assets/clovece.jpg
+    - assets/backgrounds/clovece.jpg
     - assets/MINCE.png
-    - assets/profil.png
-    - assets/background.jpg
-    - assets/kasko.png
-    - assets/sprievodca.png
-    - assets/majka.png
-    - assets/max.png
+    - assets/avatars/profil.png
+    - assets/backgrounds/background.jpg
+    - assets/avatars/kasko.png
+    - assets/avatars/sprievodca.png
+    - assets/avatars/majka.png
+    - assets/avatars/max.png
     - assets/PECIATKA.png
-    - assets/HARAVARA_profil.jpg
+    - assets/backgrounds/HARAVARA_profil.jpg
     - assets/budik.png
+    - assets/haravara_1.jpg
+    - assets/backgrounds/pozadie_auth.jpg
+    - assets/backgrounds/VOZIK_BOK.jpg
+    - assets/avatars/KASO DETEKTIV.png
+    - assets/backgrounds/background_dark_green.png
+    - assets/backgrounds/verification_background.png
+    - assets/avatars/KASO_CITA (1).png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
