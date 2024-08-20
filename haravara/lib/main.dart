@@ -9,17 +9,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:haravara/firebase_options.dart';
-import 'package:haravara/providers/preferences_provider.dart';
-import 'package:haravara/screens/auth.dart';
-import 'package:haravara/screens/news_screen.dart';
-import 'package:haravara/screens/splash_screen.dart';
-import 'package:haravara/services/init_service.dart';
-import 'package:haravara/services/notification_controller.dart';
+import 'package:haravara/haravara_app_phone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sharedPreferencesProvider =
     Provider<SharedPreferences>((ref) => throw UnimplementedError());
 
+// AIzaSyAxCBF1tTD9zqryMa7j-AWxDwdLpOTQcN8
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeBackgroundService();
@@ -57,7 +53,7 @@ void main() async {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
         ],
-        child: const ConsumerApp(),
+        child: const HaravaraApp(),
       ),
     );
   });
@@ -103,68 +99,4 @@ void onStart(ServiceInstance service) async {
   service.on('stopService').listen((event) {
     service.stopSelf();
   });
-}
-
-class ConsumerApp extends ConsumerStatefulWidget {
-  const ConsumerApp({super.key});
-
-  @override
-  ConsumerState<ConsumerApp> createState() => _ConsumerAppState();
-}
-
-class _ConsumerAppState extends ConsumerState<ConsumerApp> {
-  late Future _initFuture;
-  bool _isInitCalled = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initFuture = Future.value();
-    AwesomeNotifications().setListeners(
-        onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-        onNotificationCreatedMethod:
-            NotificationController.onNotificationCreatedMethod,
-        onNotificationDisplayedMethod:
-            NotificationController.onNotificationDisplayedMethod,
-        onDismissActionReceivedMethod:
-            NotificationController.onDismissActionReceivedMethod);
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (!_isInitCalled) {
-      _initFuture = Init.initialize(ref);
-      _isInitCalled = true;
-    }
-    precacheImage(const AssetImage('assets/places-map.jpg'), context);
-    precacheImage(const AssetImage('assets/background_menu.png'), context);
-
-    super.didChangeDependencies();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(255, 516),
-      minTextAdapt: true,
-      builder: (_, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Haravara',
-          home: FutureBuilder(
-            future: _initFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return ref.watch(loginNotifierProvider).isLoggedIn
-                    ? const NewsScreen()
-                    : const AuthScreen();
-              } else {
-                return const SplashScreen();
-              }
-            },
-          ),
-        );
-      },
-    );
-  }
 }
