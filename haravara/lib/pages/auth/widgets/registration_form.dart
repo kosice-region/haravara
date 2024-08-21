@@ -6,9 +6,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/core/providers/auth_provider.dart';
 import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
+import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/router/router.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:haravara/router/screen_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationForm extends ConsumerStatefulWidget {
   const RegistrationForm({
@@ -184,11 +186,29 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
         .setEnteredUsername(_enteredUsername);
     ref.read(authNotifierProvider.notifier).setEnteredEmail(_enteredEmail);
     ref.read(authNotifierProvider.notifier).toggleLoginState(false);
+
+    //UPDATING REGISTRATION DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
+    //MANAGING 
+    await _updateProfileTypeInSharedPreferences();
+  
+    log('Handler of registration');     
+    String userProfileType = ref.watch(userInfoProvider).isFamily ? 'family' : 'individual';
+    //THIS WILL HAVE VALUE $userProfileType DEPANDING ON isFamily set in userInfoProvider, 
+    //its not set from here where isFamily is seting true value of registration form
+    log('User profile type: $userProfileType');   
+    
+
+
     ref.read(authNotifierProvider.notifier).toggleFamilyState(isFamily);
     ref.read(authNotifierProvider.notifier).setEnteredChildren(children ?? -1);
     ref.read(authNotifierProvider.notifier).setLocation(selectedLocation);
     onSendCode();
     isButtonDisabled = false;
+  }
+
+  _updateProfileTypeInSharedPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('profileType', isFamily ? 'family' : 'individual');
   }
 
   onSendCode() async {

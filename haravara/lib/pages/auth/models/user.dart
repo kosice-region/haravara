@@ -58,7 +58,7 @@ class UserModel {
 
   UserModel(
       {this.isLoggedIn = false,
-      this.isFamily = true,
+      this.isFamily = false,   // changed from true to fasle
       this.username = '',
       this.location = '',
       this.email = '',

@@ -22,7 +22,9 @@ class UserInfo extends _$UserInfo {
     String location = pref.getString("location") ?? '';
     String id = pref.getString("id") ?? '';
     int children = pref.getInt("children") ?? -1;
-    bool isFamily = (pref.getString('profileType') ?? 'family') == 'family';
+    // bool isFamily = (pref.getString('profileType') ?? 'family') == 'family';
+    bool isFamily = (pref.getString('profileType') ?? 'individual') == 'family';
+
 
     state = new UserModel(
         isLoggedIn: isLoggedIn,
@@ -46,6 +48,11 @@ class UserInfo extends _$UserInfo {
     await pref.setString('location', newLocation);
     state = state.copyWith(location: newLocation);
   }
+
+  // Future<void> updateProfileType(bool isFamily) async {
+  //   final SharedPreferences pref = ref.watch(sharedPreferencesProvider);
+  //   await pref.setBool('isFamily', isFamily);
+  // }
 
   Future<void> clear() async {
     final SharedPreferences pref = ref.watch(sharedPreferencesProvider);
