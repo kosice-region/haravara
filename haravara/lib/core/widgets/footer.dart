@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/pages/auth/models/user.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
+import 'package:haravara/pages/profile/providers/user_info_provider.dart'; ///ADDED THIS LINE
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
@@ -27,6 +28,13 @@ class Footer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    //CODE ONLY FOR TESTING
+    log('Handler of registration');     
+    String userProfileType = ref.watch(userInfoProvider).isFamily ? 'family' : 'individual';
+    log('User profile type: $userProfileType');  
+    //END OF CODE ONLY FOR TESTING
+
     imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     return GestureDetector(
       onTap: () {

@@ -133,11 +133,15 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     ref.read(avatarsProvider.notifier).addAvatars(avatars);
     int children = user.userProfile!.children ?? -1;
     String location = user.userProfile!.location ?? '';
+    //UPDATING DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
+    bool isFamily = user.userProfile!.profileType == ProfileType.family;
+    await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
+
     if (user.phones.contains(deviceInfo[0])) {
       ref
           .read(avatarsProvider.notifier)
           .updateAvatar(user.userProfile!.avatar!);
-
+ 
       ref.read(routerProvider.notifier).changeScreen(ScreenType.news);
       ref.read(loginNotifierProvider.notifier).login(
             user.username,
@@ -158,6 +162,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       ref.read(authNotifierProvider.notifier).setUserId(user.id);
       ref.read(authNotifierProvider.notifier).setLocation(location);
       ref.read(authNotifierProvider.notifier).setEnteredChildren(children);
+      ref.read(authNotifierProvider.notifier).toggleFamilyState(isFamily);
       ref.read(authNotifierProvider.notifier).toggleLoginState(true);
       onSendCode();
     }

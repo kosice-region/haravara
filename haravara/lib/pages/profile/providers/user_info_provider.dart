@@ -49,10 +49,11 @@ class UserInfo extends _$UserInfo {
     state = state.copyWith(location: newLocation);
   }
 
-  // Future<void> updateProfileType(bool isFamily) async {
-  //   final SharedPreferences pref = ref.watch(sharedPreferencesProvider);
-  //   await pref.setBool('isFamily', isFamily);
-  // }
+  Future<void> updateProfileType(bool isFamily) async {
+  final SharedPreferences pref = ref.watch(sharedPreferencesProvider);
+  await pref.setString('profileType', isFamily ? 'family' : 'individual');
+  state = state.copyWith(isFamily: isFamily);
+  }
 
   Future<void> clear() async {
     final SharedPreferences pref = ref.watch(sharedPreferencesProvider);
