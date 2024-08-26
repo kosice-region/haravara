@@ -131,12 +131,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     final List<UserAvatar> avatars = await DatabaseService().loadAvatars();
     await authService.getCollectedPlacesByUser(userId);
     ref.read(avatarsProvider.notifier).addAvatars(avatars);
+    bool isFamily = user.userProfile!.profileType == ProfileType.family;
+     //updateProfileType = UPDATING DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
+    await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
     int children = user.userProfile!.children ?? -1;
     String location = user.userProfile!.location ?? '';
-    //UPDATING DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
-    bool isFamily = user.userProfile!.profileType == ProfileType.family;
-    await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
-
+   
     if (user.phones.contains(deviceInfo[0])) {
       ref
           .read(avatarsProvider.notifier)

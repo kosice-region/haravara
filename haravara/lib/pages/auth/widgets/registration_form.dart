@@ -170,6 +170,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     //UPDATING REGISTRATION DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
     //MANAGING 
     await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
+    await ref.read(userInfoProvider.notifier).updateCountOfChildren(int.tryParse(childrenCount) ?? -1);
 
     final userId = await authService.findUserByEmail(_enteredEmail);
     if (userId.isNotEmpty) {
@@ -190,14 +191,6 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
         .setEnteredUsername(_enteredUsername);
     ref.read(authNotifierProvider.notifier).setEnteredEmail(_enteredEmail);
     ref.read(authNotifierProvider.notifier).toggleLoginState(false);
-
-    log('Handler of registration');     
-    String userProfileType = ref.watch(userInfoProvider).isFamily ? 'family' : 'individual';
-    //THIS WILL HAVE VALUE $userProfileType DEPANDING ON isFamily set in userInfoProvider, 
-    //its not set from here where isFamily is seting true value of registration form
-    log('User profile type: $userProfileType');   
-    
-
     ref.read(authNotifierProvider.notifier).toggleFamilyState(isFamily);
     ref.read(authNotifierProvider.notifier).setEnteredChildren(children ?? -1);
     ref.read(authNotifierProvider.notifier).setLocation(selectedLocation);
@@ -221,6 +214,9 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
   void _toggleIsFamily(bool value) {
     setState(() {
       isFamily = value;
+    });
+    setState(() {
+      childrenCount = '1';
     });
   }
 

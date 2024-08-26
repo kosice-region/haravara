@@ -55,6 +55,13 @@ class UserInfo extends _$UserInfo {
   state = state.copyWith(isFamily: isFamily);
   }
 
+  Future<void> updateCountOfChildren(int children) async {
+  final SharedPreferences pref = ref.watch(sharedPreferencesProvider);
+  await pref.setInt('children', children);
+  state = state.copyWith(children: children);
+  }
+
+
   Future<void> clear() async {
     final SharedPreferences pref = ref.watch(sharedPreferencesProvider);
     await pref.remove('isLoggedIn');
