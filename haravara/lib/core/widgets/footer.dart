@@ -32,7 +32,9 @@ class Footer extends ConsumerWidget {
     //CODE ONLY FOR TESTING
     log('Handler of registration');     
     String userProfileType = ref.watch(userInfoProvider).isFamily ? 'family' : 'individual';
-    log('User profile type: $userProfileType');  
+    String children = ref.watch(userInfoProvider).children.toString();
+    log('User profile type: $userProfileType'); 
+    log('Number of children: $children'); 
     //END OF CODE ONLY FOR TESTING
 
     imageAssets.forEach((image) => precacheImage(AssetImage(image), context));

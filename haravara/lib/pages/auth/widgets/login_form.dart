@@ -134,6 +134,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     bool isFamily = user.userProfile!.profileType == ProfileType.family;
      //updateProfileType = UPDATING DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
     await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
+    await ref.read(userInfoProvider.notifier).updateCountOfChildren(user.userProfile!.children ?? -1);
     int children = user.userProfile!.children ?? -1;
     String location = user.userProfile!.location ?? '';
    
