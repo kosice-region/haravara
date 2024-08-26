@@ -7,7 +7,6 @@ import 'package:haravara/core/providers/auth_provider.dart';
 import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:haravara/router/router.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:haravara/router/screen_router.dart';
 
 class RegistrationForm extends ConsumerStatefulWidget {

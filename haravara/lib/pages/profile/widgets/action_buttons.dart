@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -187,7 +188,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                      Color.fromARGB(255, 188, 95, 190), // Button color
+                      Color.fromARGB(255, 188, 95, 190),
                 ),
               ),
             ],
@@ -196,6 +197,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   }
 
   Future<void> handleLogout(WidgetRef ref, BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
     ref.read(loginNotifierProvider.notifier).logout();
     ref.read(collectedPlacesProvider.notifier).deleteAllPlaces();
     await ref.read(userInfoProvider.notifier).clear();

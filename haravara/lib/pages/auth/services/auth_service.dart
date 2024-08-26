@@ -3,8 +3,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:haravara/pages/auth/models/user.dart';
+import 'package:haravara/pages/auth/models/user.dart' as local_user;
 import 'package:haravara/pages/auth/repositories/auth_repository.dart';
 import 'package:haravara/core/repositories/database_repository.dart';
 import 'package:haravara/core/services/database_service.dart';
@@ -21,22 +22,40 @@ final DatabaseRepository databaseRepository = DatabaseRepository();
 const String DEFAULT_AVATAR = '0387c644-249c-4c1e-ac0b-bc6c861d580c';
 
 class AuthService {
-  Future<User> registerUserByEmail(
+  Future<User?> signInAnonymously() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.signInAnonymously();
+      User? user = userCredential.user;
+
+      if (user != null && user.isAnonymous) {
+        log("Signed in anonymously as: ${user.uid}");
+        return user;
+      } else {
+        log("User sign-in failed or user is not anonymous.");
+        return null;
+      }
+    } catch (e) {
+      log("Failed to sign in anonymously: $e");
+      return null;
+    }
+  }
+
+  Future<local_user.User> registerUserByEmail(
       String email,
       String username,
       bool isFamilyType,
       int children,
       String location,
-      bool isNeedToRemeber) async {
+      bool isNeedToRemember) async {
     List<String> phoneDetail = await getDeviceDetails();
     final id = uuid.v4();
     final base64Id = generateBase64(email).toString();
-    final user = User(
+    final local_user.User user = local_user.User(
       username: username,
-      phones: isNeedToRemeber ? [phoneDetail[0]] : [],
-      userProfile: UserProfile(
+      phones: isNeedToRemember ? [phoneDetail[0]] : [],
+      userProfile: local_user.UserProfile(
         avatar: DEFAULT_AVATAR,
-        profileType: isFamilyType ? ProfileType.family : ProfileType.individual,
+        profileType: isFamilyType ? local_user.ProfileType.family : local_user.ProfileType.individual,
         children: children,
         location: location,
       ),
@@ -49,18 +68,25 @@ class AuthService {
   }
 
   Future<String> findUserByEmail(String email) async {
+  User? user = await signInAnonymously();
+  if (user != null) {
     return authRepository.findUserByEmail(generateBase64(email));
+  } else {
+    log("Failed to authenticate anonymously.");
+    return '';
   }
+}
+
 
   Future<void> loginUserByEmail(
       String enteredEmail, bool isNeedToRememberPhone) async {
     List<String> phoneDetails = await getDeviceDetails();
     final userId = await findUserByEmail(enteredEmail);
-    User? user = await getUserById(userId);
+    local_user.User? user = await getUserById(userId);
     if (user == null) {
       return;
     }
-    User updatedUser = isNeedToRememberPhone
+    local_user.User updatedUser = isNeedToRememberPhone
         ? user.copyWith(phones: [...user.phones, phoneDetails[0]])
         : user.copyWith(phones: [...user.phones]);
     await authRepository.updateUser(updatedUser);
@@ -72,7 +98,7 @@ class AuthService {
     await DatabaseService().getCollectedPlacesByUser(id);
   }
 
-  getUserById(String userId) async {
+  Future<local_user.User?> getUserById(String userId) async {
     return authRepository.getUserById(userId);
   }
 
@@ -111,13 +137,13 @@ class AuthService {
       ..from = const Address('users@haravara.sk', 'Haravara')
       ..recipients.add(email)
       ..subject = 'Haravara Code'
-      ..text = 'Hello thanks for using Haravara,\n Your code is $code';
+      ..text = 'Hello, thanks for using Haravara,\n Your code is $code';
 
     try {
       final sendReport = await send(message, smtpServer);
       log('$code Message sent: $sendReport');
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Mail Send Successfully")));
+          const SnackBar(content: Text("Mail Sent Successfully")));
     } on MailerException catch (e) {
       print('Message not sent. $code');
       print(e.message);
@@ -128,7 +154,7 @@ class AuthService {
     return code;
   }
 
-  setLoginPreferences(User user) async {
+  setLoginPreferences(local_user.User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool("isLoggedIn", true);
     prefs.setString('email', user.email!);
@@ -137,7 +163,7 @@ class AuthService {
     prefs.setString('location', user.userProfile!.location!);
     prefs.setString(
         'profileType',
-        user.userProfile!.profileType == ProfileType.family
+        user.userProfile!.profileType == local_user.ProfileType.family
             ? 'family'
             : 'individual');
     prefs.setInt('children', user.userProfile!.children ?? -1);
