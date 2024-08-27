@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "231931394475",
-    "firebase_url": "https://haravara-30826-default-rtdb.europe-west1.firebasedatabase.app",
-    "project_id": "haravara-30826",
-    "storage_bucket": "haravara-30826.appspot.com"
+    "project_number": "831880447542",
+    "firebase_url": "https://haravara-test-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "haravara-test",
+    "storage_bucket": "haravara-test.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:231931394475:android:083f6ce9085e75efcbfaee",
+        "mobilesdk_app_id": "1:831880447542:android:9d56f8843ae16411affa97",
         "android_client_info": {
           "package_name": "com.development.haravara"
         }
@@ -16,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAc_vmIbRP9SWDnQLAe6Ef8BMTCPOSM1Dc"
+          "current_key": "AIzaSyCy6QFIvRSxa1y0pXmT_Qv7Hd3kslWntfg"
         }
       ],
       "services": {
