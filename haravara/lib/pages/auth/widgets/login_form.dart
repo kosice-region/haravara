@@ -124,6 +124,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       isButtonDisabled = false;
       return;
     }
+    //UPDATING USER_ID TO USER INFO PROVIDER AND SHARED PREFERENCES
+    await ref.read(userInfoProvider.notifier).updateUserId(userId);
     this.userId = userId;
     List<String> deviceInfo = await authService.getDeviceDetails();
     User user = await authService.getUserById(userId);
@@ -132,7 +134,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     await authService.getCollectedPlacesByUser(userId);
     ref.read(avatarsProvider.notifier).addAvatars(avatars);
     bool isFamily = user.userProfile!.profileType == ProfileType.family;
-     //updateProfileType = UPDATING DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
+    String updateUsername = user.username;
+    //UPDATING DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
+    await ref.read(userInfoProvider.notifier).updateUsername(updateUsername);
     await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
     await ref.read(userInfoProvider.notifier).updateCountOfChildren(user.userProfile!.children ?? -1);
     int children = user.userProfile!.children ?? -1;

@@ -60,6 +60,11 @@ class UserInfo extends _$UserInfo {
   await pref.setInt('children', children);
   state = state.copyWith(children: children);
   }
+  Future<void> updateUserId (String userId) async {
+    final SharedPreferences pref = ref.watch(sharedPreferencesProvider);
+    await pref.setString('id', userId);
+    state = state.copyWith(id: userId);
+  }
 
 
   Future<void> clear() async {

@@ -29,12 +29,17 @@ class Footer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    //CODE ONLY FOR TESTING
-    log('Handler of registration');     
+    //CODE ONLY FOR TESTING     
     String userProfileType = ref.watch(userInfoProvider).isFamily ? 'family' : 'individual';
     String children = ref.watch(userInfoProvider).children.toString();
+    String username = ref.watch(userInfoProvider).username;
+    String userId = ref.watch(userInfoProvider).id;
+    log('Handler of User Data');   
+    log('UserId: ${userId}');
+    log('Username: ${username}');
     log('User profile type: $userProfileType'); 
     log('Number of children: $children'); 
+    
     //END OF CODE ONLY FOR TESTING
 
     imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
