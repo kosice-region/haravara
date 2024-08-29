@@ -43,14 +43,14 @@ class _AchievementState extends ConsumerState<Achievement> {
           children: [
             if (isClosed)
               Container(
-                width: isSizeTwo ? 99.w : 70.w,
-                height: isSizeTwo ? 90.h : 80.h,
+                width: isSizeTwo ? 90.w : 70.w,
+                height: isSizeTwo ? 90.h : 70.h,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(26)).r,
                   color: const Color.fromARGB(255, 91, 187, 75),
                  border: Border.all(
-      color: Color.fromARGB(255, 73, 155, 58), // Black border color
-      width: 4.0, // Width of the border
+      color: Color.fromARGB(255, 73, 155, 58), 
+      width: 4.0, 
     ),
                 ),
                 child: Center(
@@ -63,7 +63,7 @@ class _AchievementState extends ConsumerState<Achievement> {
               ),
             if (!isClosed)
               SizedBox(
-                width: isSizeTwo ? 140.w : 120.w,
+                width: isSizeTwo ? 140.w : 10.w,
                 height: isSizeTwo ? 100.h : 80.h,
                 child: Image.file(
                   File(widget.place.placeImages!.stamp),
