@@ -54,7 +54,7 @@ class _PodmienkyScreenState extends State<PodmienkyScreen> {
                   clipBehavior: Clip.none,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 20.h),
+                      padding: EdgeInsets.only(top: 22.h),
                       child: ScrollConfiguration(
                         behavior: ScrollBehavior().copyWith(overscroll: false),
                         child: CustomScrollbar(
