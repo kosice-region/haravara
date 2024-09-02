@@ -124,11 +124,17 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       isButtonDisabled = false;
       return;
     }
+
     //UPDATING USER_ID TO USER INFO PROVIDER AND SHARED PREFERENCES
     await ref.read(userInfoProvider.notifier).updateUserId(userId);
     this.userId = userId;
     List<String> deviceInfo = await authService.getDeviceDetails();
-    User user = await authService.getUserById(userId);
+    User? user = await authService.getUserById(userId);
+     if (user == null) {
+      showSnackBar(context, 'User not found.');
+      isButtonDisabled = false;
+      return;
+    }
     await DatabaseService().saveUserAvatarsLocally(userId);
     final List<UserAvatar> avatars = await DatabaseService().loadAvatars();
     await authService.getCollectedPlacesByUser(userId);

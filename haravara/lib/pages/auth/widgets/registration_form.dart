@@ -8,10 +8,7 @@ import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/router/router.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:haravara/router/screen_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 class RegistrationForm extends ConsumerStatefulWidget {
   const RegistrationForm({
     Key? key,
@@ -167,11 +164,6 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
   }
 
   Future<void> _handleRegistration() async {
-    //UPDATING REGISTRATION DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
-    //MANAGING 
-    await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
-    await ref.read(userInfoProvider.notifier).updateCountOfChildren(int.tryParse(childrenCount) ?? -1);
-
     final userId = await authService.findUserByEmail(_enteredEmail);
     if (userId.isNotEmpty) {
       showSnackBar(context, 'Tento e-mail už existuje');
@@ -183,6 +175,11 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       isButtonDisabled = false;
       return;
     }
+    
+    //UPDATING REGISTRATION DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
+    //MANAGING 
+    await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
+    await ref.read(userInfoProvider.notifier).updateCountOfChildren(int.tryParse(childrenCount) ?? -1);
 
     int? children = int.tryParse(childrenCount);
     ref.read(authNotifierProvider.notifier).toggleRememberState(rememberPhone);
