@@ -22,7 +22,6 @@ class UserInfo extends _$UserInfo {
     String location = pref.getString("location") ?? '';
     String id = pref.getString("id") ?? '';
     int children = pref.getInt("children") ?? -1;
-    // bool isFamily = (pref.getString('profileType') ?? 'family') == 'family';
     bool isFamily = (pref.getString('profileType') ?? 'individual') == 'family';
 
 
