@@ -213,7 +213,7 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       required this.username,
       this.email,
       @JsonKey(name: 'phone_number') this.phoneNumber,
-      @JsonKey(name: 'phone_ids') required final List<String> phones,
+      @JsonKey(name: 'phone_ids') final List<String> phones = const [],
       @JsonKey(name: 'profile') this.userProfile,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt})
@@ -323,7 +323,7 @@ abstract class _User implements User {
       required final String username,
       final String? email,
       @JsonKey(name: 'phone_number') final String? phoneNumber,
-      @JsonKey(name: 'phone_ids') required final List<String> phones,
+      @JsonKey(name: 'phone_ids') final List<String> phones,
       @JsonKey(name: 'profile') final UserProfile? userProfile,
       @JsonKey(name: 'created_at') final DateTime? createdAt,
       @JsonKey(name: 'updated_at') final DateTime? updatedAt}) = _$UserImpl;

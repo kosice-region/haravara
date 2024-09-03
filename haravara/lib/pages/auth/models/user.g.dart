@@ -11,8 +11,10 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       username: json['username'] as String,
       email: json['email'] as String?,
       phoneNumber: json['phone_number'] as String?,
-      phones:
-          (json['phone_ids'] as List<dynamic>).map((e) => e as String).toList(),
+      phones: (json['phone_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       userProfile: json['profile'] == null
           ? null
           : UserProfile.fromJson(json['profile'] as Map<String, dynamic>),

@@ -6,9 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/core/providers/auth_provider.dart';
 import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
+import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
-
 class RegistrationForm extends ConsumerStatefulWidget {
   const RegistrationForm({
     Key? key,
@@ -175,6 +175,11 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       isButtonDisabled = false;
       return;
     }
+    
+    //UPDATING REGISTRATION DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
+    //MANAGING 
+    await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
+    await ref.read(userInfoProvider.notifier).updateCountOfChildren(int.tryParse(childrenCount) ?? -1);
 
     int? children = int.tryParse(childrenCount);
     ref.read(authNotifierProvider.notifier).toggleRememberState(rememberPhone);
@@ -206,6 +211,9 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
   void _toggleIsFamily(bool value) {
     setState(() {
       isFamily = value;
+    });
+    setState(() {
+      childrenCount = '1';
     });
   }
 

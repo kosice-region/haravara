@@ -124,6 +124,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       isButtonDisabled = false;
       return;
     }
+
+    //UPDATING USER_ID TO USER INFO PROVIDER AND SHARED PREFERENCES
+    await ref.read(userInfoProvider.notifier).updateUserId(userId);
     this.userId = userId;
     List<String> deviceInfo = await authService.getDeviceDetails();
     User? user = await authService.getUserById(userId);
@@ -136,13 +139,20 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     final List<UserAvatar> avatars = await DatabaseService().loadAvatars();
     await authService.getCollectedPlacesByUser(userId);
     ref.read(avatarsProvider.notifier).addAvatars(avatars);
+    bool isFamily = user.userProfile!.profileType == ProfileType.family;
+    String updateUsername = user.username;
+    //UPDATING DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
+    await ref.read(userInfoProvider.notifier).updateUsername(updateUsername);
+    await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
+    await ref.read(userInfoProvider.notifier).updateCountOfChildren(user.userProfile!.children ?? -1);
     int children = user.userProfile!.children ?? -1;
     String location = user.userProfile!.location ?? '';
+   
     if (user.phones.contains(deviceInfo[0])) {
       ref
           .read(avatarsProvider.notifier)
           .updateAvatar(user.userProfile!.avatar!);
-
+ 
       ref.read(routerProvider.notifier).changeScreen(ScreenType.news);
       ref.read(loginNotifierProvider.notifier).login(
             user.username,
@@ -163,6 +173,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       ref.read(authNotifierProvider.notifier).setUserId(user.id);
       ref.read(authNotifierProvider.notifier).setLocation(location);
       ref.read(authNotifierProvider.notifier).setEnteredChildren(children);
+      ref.read(authNotifierProvider.notifier).toggleFamilyState(isFamily);
       ref.read(authNotifierProvider.notifier).toggleLoginState(true);
       onSendCode();
     }

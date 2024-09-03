@@ -13,7 +13,7 @@ class User with _$User {
     required String username,
     String? email,
     @JsonKey(name: 'phone_number') String? phoneNumber,
-    @JsonKey(name: 'phone_ids') required List<String> phones,
+    @JsonKey(name: 'phone_ids') @Default([]) List<String> phones,
     @JsonKey(name: 'profile') UserProfile? userProfile,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
@@ -58,7 +58,7 @@ class UserModel {
 
   UserModel(
       {this.isLoggedIn = false,
-      this.isFamily = true,
+      this.isFamily = false,   
       this.username = '',
       this.location = '',
       this.email = '',

@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haravara/pages/auth/models/user.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
@@ -27,6 +26,7 @@ class Footer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     return GestureDetector(
       onTap: () {
