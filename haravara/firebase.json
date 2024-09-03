@@ -3,8 +3,8 @@
     "platforms": {
       "android": {
         "default": {
-          "projectId": "haravara-30826",
-          "appId": "1:231931394475:android:083f6ce9085e75efcbfaee",
+          "projectId": "haravara-test",
+          "appId": "1:831880447542:android:9d56f8843ae16411affa97",
           "fileOutput": "android/app/google-services.json"
         }
       },
@@ -20,7 +20,7 @@
         "lib/firebase_options.dart": {
           "projectId": "haravara-test",
           "configurations": {
-            "android": "1:231931394475:android:083f6ce9085e75efcbfaee",
+            "android": "1:831880447542:android:9d56f8843ae16411affa97",
             "ios": "1:831880447542:ios:e0c41ffae8ec0cbdaffa97"
           }
         }
