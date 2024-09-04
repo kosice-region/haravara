@@ -63,8 +63,8 @@ class _AchievementState extends ConsumerState<Achievement> {
               ),
             if (!isClosed)
               SizedBox(
-                width: isSizeTwo ? 140.w : 10.w,
-                height: isSizeTwo ? 100.h : 80.h,
+                width: isSizeTwo ? 140.w : 80.w,
+                height: isSizeTwo ? 90.h : 70.h,
                 child: Image.file(
                   File(widget.place.placeImages!.stamp),
                   fit: BoxFit.contain,

@@ -48,7 +48,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
             child: Column(
               children: [
                 const Header(showMenu: true),
-                14.verticalSpace,
+                10.verticalSpace,
                 Text(
                   'TVOJE PEČIATKY',
                   style: GoogleFonts.titanOne(
@@ -60,7 +60,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                 const SearcherLevel(color: Colors.black),
                 10.verticalSpace,
                 BuildSettings(),
-                10.verticalSpace,
+                5.verticalSpace,
               ],
             ),
           ),
