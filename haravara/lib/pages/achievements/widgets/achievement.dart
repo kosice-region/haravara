@@ -27,7 +27,7 @@ class Achievement extends ConsumerStatefulWidget {
 class _AchievementState extends ConsumerState<Achievement> {
   @override
   Widget build(BuildContext context) {
-    int fontSizeMax = 10;
+    int fontSizeMax = 9;
     int fontSizeMin = 7;
     var deviceHeight = MediaQuery.of(context).size.height;
     if (deviceHeight < 700) {
@@ -73,7 +73,7 @@ class _AchievementState extends ConsumerState<Achievement> {
             5.verticalSpace,
             Container(
               width: isSizeTwo ? 120.w : 80.w,
-              height: isSizeTwo ? 52.h : 40.h,
+              height: isSizeTwo ? 56.h : 45.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15.r),
                 color: const Color.fromARGB(255, 155, 221, 153),
@@ -87,7 +87,7 @@ class _AchievementState extends ConsumerState<Achievement> {
                       color: Colors.black,
                       fontSize: isSizeTwo ? fontSizeMax.sp : fontSizeMin.sp,
                     ),
-                    maxLines: 3,
+                    maxLines: 5,
                     textAlign: TextAlign.center,
                   ),
                 ),
