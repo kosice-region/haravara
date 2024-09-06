@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,7 +27,7 @@ class Achievement extends ConsumerStatefulWidget {
 class _AchievementState extends ConsumerState<Achievement> {
   @override
   Widget build(BuildContext context) {
-    int fontSizeMax = 12;
+    int fontSizeMax = 9;
     int fontSizeMin = 7;
     var deviceHeight = MediaQuery.of(context).size.height;
     if (deviceHeight < 700) {
@@ -37,21 +36,22 @@ class _AchievementState extends ConsumerState<Achievement> {
     }
     final isSizeTwo = (widget.size == ScreenSize.two);
     final isClosed = !widget.place.isReached;
+    
     return Consumer(
       builder: (context, ref, child) {
         return Column(
           children: [
             if (isClosed)
               Container(
-                width: isSizeTwo ? 99.w : 70.w,
-                height: isSizeTwo ? 90.h : 80.h,
+                width: isSizeTwo ? 90.w : 70.w,
+                height: isSizeTwo ? 90.h : 70.h,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(26)).r,
                   color: const Color.fromARGB(255, 91, 187, 75),
-                 border: Border.all(
-      color: Color.fromARGB(255, 73, 155, 58), // Black border color
-      width: 4.0, // Width of the border
-    ),
+                  border: Border.all(
+                    color: const Color.fromARGB(255, 73, 155, 58),
+                    width: 4.0,
+                  ),
                 ),
                 child: Center(
                   child: FractionallySizedBox(
@@ -63,8 +63,8 @@ class _AchievementState extends ConsumerState<Achievement> {
               ),
             if (!isClosed)
               SizedBox(
-                width: isSizeTwo ? 140.w : 120.w,
-                height: isSizeTwo ? 100.h : 80.h,
+                width: isSizeTwo ? 140.w : 80.w,
+                height: isSizeTwo ? 90.h : 70.h,
                 child: Image.file(
                   File(widget.place.placeImages!.stamp),
                   fit: BoxFit.contain,
@@ -72,19 +72,24 @@ class _AchievementState extends ConsumerState<Achievement> {
               ),
             5.verticalSpace,
             Container(
-              width: isSizeTwo ? 109.w : 80.w,
-              height: isSizeTwo ? 36.h : 30.h,
+              width: isSizeTwo ? 120.w : 80.w,
+              height: isSizeTwo ? 56.h : 45.h,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.r),
-                  color: const Color.fromARGB(255, 155, 221, 153)),
+                borderRadius: BorderRadius.circular(15.r),
+                color: const Color.fromARGB(255, 155, 221, 153),
+              ),
               child: Center(
-                child: Text(
-                  widget.place.name,
-                  style: GoogleFonts.titanOne(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  child: Text(
+                    widget.place.name,
+                    style: GoogleFonts.titanOne(
                       color: Colors.black,
-                      fontSize: isSizeTwo ? fontSizeMax.sp : fontSizeMin.sp),
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
+                      fontSize: isSizeTwo ? fontSizeMax.sp : fontSizeMin.sp,
+                    ),
+                    maxLines: 5,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ),
