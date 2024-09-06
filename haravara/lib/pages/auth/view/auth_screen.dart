@@ -103,7 +103,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             ),
           ),
           Positioned(
-            bottom: -30,
+            bottom: -40,
             child: Image.asset(
               'assets/backgrounds/VOZIK_BOK.jpg',
               fit: BoxFit.cover,
