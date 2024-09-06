@@ -46,7 +46,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     var deviceHeight = MediaQuery.of(context).size.height;
     var loginHeight = 120;
     if (deviceHeight < 850) {
-      loginHeight = 117;
+      loginHeight = 140;
     }
 
     return Container(

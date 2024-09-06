@@ -76,7 +76,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if (deviceHeight > 700) 35.verticalSpace,
+                    if (deviceHeight > 700) 30.verticalSpace,
                     if (deviceHeight < 700) 25.verticalSpace,
                     Text(
                       'PRIHLÁSENIE',
@@ -103,7 +103,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             ),
           ),
           Positioned(
-            bottom: -10,
+            bottom: -30,
             child: Image.asset(
               'assets/backgrounds/VOZIK_BOK.jpg',
               fit: BoxFit.cover,

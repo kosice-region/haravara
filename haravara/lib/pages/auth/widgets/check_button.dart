@@ -25,7 +25,7 @@ class _CheckButtonState extends State<CheckButton> {
     bool isFamily = widget.value;
     String text = widget.text;
     return SizedBox(
-      width: 166.w,
+      width: 180.w,
       child: Row(
         children: [
           Checkbox(
