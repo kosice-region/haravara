@@ -114,7 +114,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                   ),
                   FormRow(
                     title:
-                        isFamily ? 'MENO RODINNEHO TIMU' : 'POUŽÍVATEĽSKÉ MENO',
+                        isFamily ? 'MENO RODINNEHO TIMU' : 'MENO POUŽÍVATEĽA',
                     controller: _usernameController,
                     focusNode: _usernameFocusNode,
                     inputType: TextInputType.name,
