@@ -75,7 +75,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     var familyRegistrationHeight = 230;
     if (deviceHeight < 850) {
       registrationHeight = 230;
-      familyRegistrationHeight = 250;
+      familyRegistrationHeight = 255;
     }
     if (deviceHeight < 700) {
       registrationHeight = 225;
