@@ -32,7 +32,7 @@ class FormRow extends StatelessWidget {
           label: focusNode.hasFocus || controller.text.isNotEmpty
               ? null
               : Padding(
-                  padding: EdgeInsets.only(top: 15),
+                  padding: EdgeInsets.only(top: 10),
                   child: Center(
                     child: Text(
                       title,

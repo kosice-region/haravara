@@ -60,7 +60,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       body: Stack(
         children: [
           Positioned(
-            bottom: 190.h,
+            bottom: 180.h,
             left: -20.w,
             child: Image.asset(
               'assets/backgrounds/pozadie_auth.jpg',
@@ -72,14 +72,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           Positioned.fill(
             child: SingleChildScrollView(
               child: Container(
-                padding: const EdgeInsets.only(top: 7),
+                padding: const EdgeInsets.only(top: 2),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if (deviceHeight > 700) 30.verticalSpace,
+                    if (deviceHeight > 700) 25.verticalSpace,
                     if (deviceHeight < 700) 25.verticalSpace,
                     Text(
-                      'PRIHLÁSENIE',
+                      'REGISTRÁCIA',
                       style: GoogleFonts.titanOne(
                         fontSize: 18.sp,
                         color: Color.fromARGB(255, 254, 152, 43),
@@ -103,11 +103,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             ),
           ),
           Positioned(
-            bottom: -40,
+            bottom: -20,
             child: Image.asset(
               'assets/backgrounds/VOZIK_BOK.jpg',
               fit: BoxFit.cover,
-              height: 200.h,
+              height: 190.h,
             ),
           ),
         ],

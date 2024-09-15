@@ -26,6 +26,7 @@ class _CheckButtonState extends State<CheckButton> {
     String text = widget.text;
     return SizedBox(
       width: 190.w,
+      height: 25.h,
       child: Row(
         children: [
           Checkbox(
