@@ -73,12 +73,12 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     var registrationHeight = 200;
     var familyRegistrationHeight = 230;
     if (deviceHeight < 850) {
-      registrationHeight = 190;
-      familyRegistrationHeight = 235;
+      registrationHeight = 230;
+      familyRegistrationHeight = 250;
     }
     if (deviceHeight < 700) {
       registrationHeight = 225;
-      familyRegistrationHeight = 240;
+      familyRegistrationHeight = 265;
     }
 
     return Container(
@@ -113,7 +113,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                   ),
                   FormRow(
                     title:
-                        isFamily ? 'MENO RODINNEHO TIMU' : 'POUŽÍVATEĽSKÉ MENO',
+                        isFamily ? 'MENO RODINNEHO TIMU' : 'MENO POUŽÍVATEĽA',
                     controller: _usernameController,
                     focusNode: _usernameFocusNode,
                     inputType: TextInputType.name,
