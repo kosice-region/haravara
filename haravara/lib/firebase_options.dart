@@ -49,37 +49,37 @@ class DefaultFirebaseOptions {
     }
   }
 
-  /*static const FirebaseOptions android = FirebaseOptions(
+  static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAc_vmIbRP9SWDnQLAe6Ef8BMTCPOSM1Dc',
     appId: '1:231931394475:android:083f6ce9085e75efcbfaee',
     messagingSenderId: '231931394475',
     projectId: 'haravara-30826',
     databaseURL: 'https://haravara-30826-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'haravara-30826.appspot.com',
-  );*/
+  );
   
  //USING HARAVARA-TEST
-  static const FirebaseOptions android = FirebaseOptions(
+  /*static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCy6QFIvRSxa1y0pXmT_Qv7Hd3kslWntfg',
     appId: '1:831880447542:android:9d56f8843ae16411affa97',
     messagingSenderId: '831880447542',
     projectId: 'haravara-test',
     databaseURL: 'https://haravara-test-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'haravara-test.appspot.com',
-  );
+  );*/
 
-  // static const FirebaseOptions ios = FirebaseOptions(
-  //   apiKey: 'AIzaSyDKF-l9GiUZNQJYXa06kh17v0gFA1cJJGg',
-  //   appId: '1:231931394475:ios:84237bb23a0874efcbfaee',
-  //   messagingSenderId: '231931394475',
-  //   projectId: 'haravara-30826',
-  //   databaseURL: 'https://haravara-30826-default-rtdb.europe-west1.firebasedatabase.app',
-  //   storageBucket: 'haravara-30826.appspot.com',
-  //   iosBundleId: 'com.example.haravara',
-  // );
+   static const FirebaseOptions ios = FirebaseOptions(
+     apiKey: 'AIzaSyDKF-l9GiUZNQJYXa06kh17v0gFA1cJJGg',
+     appId: '1:231931394475:ios:84237bb23a0874efcbfaee',
+     messagingSenderId: '231931394475',
+     projectId: 'haravara-30826',
+     databaseURL: 'https://haravara-30826-default-rtdb.europe-west1.firebasedatabase.app',
+     storageBucket: 'haravara-30826.appspot.com',
+     iosBundleId: 'com.example.haravara',
+   );
 
   // USING HARAVARA-TEST
-  static const FirebaseOptions ios = FirebaseOptions(
+ /* static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDvjpdndjk9dApo5B5GDSaBczmyJCAAV7U',
     appId: '1:831880447542:ios:e0c41ffae8ec0cbdaffa97',
     messagingSenderId: '831880447542',
@@ -87,6 +87,6 @@ class DefaultFirebaseOptions {
     databaseURL: 'https://haravara-test-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'haravara-test.appspot.com',
     iosBundleId: 'com.example.haravara',
-  );
+  );*/
 
 }

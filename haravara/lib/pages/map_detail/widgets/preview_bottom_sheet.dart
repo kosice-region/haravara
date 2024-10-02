@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +6,9 @@ import 'package:haravara/core/models/place.dart';
 import 'package:haravara/pages/map_detail/services/map_service.dart';
 import 'package:haravara/pages/map_detail/services/screen_service.dart';
 import 'package:haravara/pages/map_detail/widgets/local_button.dart';
+import 'package:haravara/pages/web_view/view/web_view_container.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:haravara/router/router.dart';
 
 class PreviewBottomSheet extends StatelessWidget {
   final BuildContext context;
@@ -27,12 +29,16 @@ class PreviewBottomSheet extends StatelessWidget {
     double maxWidth = 224.w - padding * 1.4;
     String lengthOfDescription = pickedLocation.detail.description;
     String lengthOfTitle = pickedLocation.name;
+
+    // Calculate the size of the text
     Size textSize = calculateTextSize(
-        chooseBetterStringToCalculate(lengthOfTitle, lengthOfDescription),
-        textStyle,
-        maxWidth);
+      chooseBetterStringToCalculate(lengthOfTitle, lengthOfDescription),
+      textStyle,
+      maxWidth,
+    );
 
     double containerHeight = textSize.height + padding * 7;
+
     return Container(
       height: containerHeight.h * 1.05,
       width: 255.w,
@@ -64,19 +70,38 @@ class PreviewBottomSheet extends StatelessWidget {
                 Text(
                   pickedLocation.name,
                   style: GoogleFonts.titanOne(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w400,
-                      color: const Color.fromARGB(255, 51, 206, 242)),
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w400,
+                    color: const Color.fromARGB(255, 51, 206, 242),
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 8.verticalSpace,
-                Text(
-                  pickedLocation.detail.description,
-                  style: GoogleFonts.titanOne(
+                GestureDetector(
+                  onTap: () {
+                    // Open the web view if the URL is valid
+                    String url = pickedLocation.detail.description; // Assuming this is a URL
+                    if (Uri.tryParse(url)?.hasScheme == true) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => WebViewContainer(url: url),
+                        ),
+                      );
+                    } else {
+                      // Handle invalid URL case here
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Invalid URL')),
+                      );
+                    }
+                  },
+                  child: Text(
+                    'Klikni pre informácie',
+                    style: GoogleFonts.titanOne(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w400,
-                      color: const Color.fromARGB(255, 33, 173, 4)),
-                  textAlign: TextAlign.center,
+                      color: const Color.fromARGB(255, 33, 173, 4),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -102,16 +127,18 @@ class PreviewBottomSheet extends StatelessWidget {
                 Column(
                   children: [
                     LocalButton(
-                        name: 'Navigovať',
-                        onPressed: () {
-                          MapService().launchMap(context, pickedLocation);
-                        }),
+                      name: 'Navigovať',
+                      onPressed: () {
+                        MapService().launchMap(context, pickedLocation);
+                      },
+                    ),
                     14.verticalSpace,
                     LocalButton(
-                        name: 'Už som tu!',
-                        onPressed: () {
-                          routeToCompassScreen();
-                        }),
+                      name: 'Už som tu!',
+                      onPressed: () {
+                        routeToCompassScreen();
+                      },
+                    ),
                   ],
                 )
               ],
