@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyDvjpdndjk9dApo5B5GDSaBczmyJCAAV7U</string>
+	<string>AIzaSyDKF-l9GiUZNQJYXa06kh17v0gFA1cJJGg</string>
 	<key>GCM_SENDER_ID</key>
-	<string>831880447542</string>
+	<string>231931394475</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.haravara</string>
 	<key>PROJECT_ID</key>
-	<string>haravara-test</string>
+	<string>haravara-30826</string>
 	<key>STORAGE_BUCKET</key>
-	<string>haravara-test.appspot.com</string>
+	<string>haravara-30826.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,8 +25,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:831880447542:ios:e0c41ffae8ec0cbdaffa97</string>
+	<string>1:231931394475:ios:84237bb23a0874efcbfaee</string>
 	<key>DATABASE_URL</key>
-	<string>https://haravara-test-default-rtdb.europe-west1.firebasedatabase.app</string>
+	<string>https://haravara-30826-default-rtdb.europe-west1.firebasedatabase.app</string>
 </dict>
 </plist>

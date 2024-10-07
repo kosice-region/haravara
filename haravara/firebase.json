@@ -3,25 +3,25 @@
     "platforms": {
       "android": {
         "default": {
-          "projectId": "haravara-test",
-          "appId": "1:831880447542:android:9d56f8843ae16411affa97",
+          "projectId": "haravara-30826",
+          "appId": "1:231931394475:android:083f6ce9085e75efcbfaee",
           "fileOutput": "android/app/google-services.json"
         }
       },
       "ios": {
         "default": {
-          "projectId": "haravara-test",
-          "appId": "1:831880447542:ios:e0c41ffae8ec0cbdaffa97",
+          "projectId": "haravara-30826",
+          "appId": "1:231931394475:ios:84237bb23a0874efcbfaee",
           "uploadDebugSymbols": false,
           "fileOutput": "ios/Runner/GoogleService-Info.plist"
         }
       },
       "dart": {
         "lib/firebase_options.dart": {
-          "projectId": "haravara-test",
+          "projectId": "haravara-30826",
           "configurations": {
-            "android": "1:831880447542:android:9d56f8843ae16411affa97",
-            "ios": "1:831880447542:ios:e0c41ffae8ec0cbdaffa97"
+            "android": "1:231931394475:android:083f6ce9085e75efcbfaee",
+            "ios": "1:231931394475:ios:84237bb23a0874efcbfaee"
           }
         }
       }
