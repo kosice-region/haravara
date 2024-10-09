@@ -163,7 +163,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                   'Zober svojich rodičov a kamarátov na úžasnú cestu po krajine Haravara a získaj všetky Kaškove pečiatky!\nAktuálna sezóna Haravara Pátračky trvá do konca roka 2024!',
                   style: GoogleFonts.titanOne(
                     color: const Color.fromARGB(255, 191, 0, 159),
-                    fontSize: 8.sp,
+                    fontSize: 9.sp,
                   ),
                   textAlign: TextAlign.center,
                 ),
