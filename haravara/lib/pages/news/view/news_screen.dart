@@ -69,7 +69,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
             child: Column(
               children: [
                 Header(),
-                10.verticalSpace, 
+                40.verticalSpace, 
                 SizedBox(
                   width: double.infinity,
                   child: Column(
@@ -106,11 +106,11 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
 
   Widget buildBox() {
     return Container(
-      width: 200.w,
-      height: 210.h,
+      width: 230.w,
+      height: 160.h,
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(15)),
+        borderRadius: BorderRadius.all(Radius.circular(25)),
         color: const Color.fromARGB(255, 24, 191, 186),
         border: Border.all(color: Colors.white, width: 4),
       ),
@@ -121,7 +121,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
             left: 20.w,
             top: 20,
             child: Opacity(
-              opacity: 0.3,
+              opacity: 0.1,
               child: Image.asset(
                 'assets/avatars/KASO DETEKTIV.png',
                 width: 140.w,
@@ -142,7 +142,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                   textAlign: TextAlign.center,
                   maxLines: 4,
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
                 Text(
                   'Zober svojich rodičov a kamarátov na úžasnú cestu po krajine Haravara a získaj všetky Kaškove pečiatky!\nAktuálna sezóna Haravara Pátračky trvá do konca roka 2024!',
                   style: GoogleFonts.titanOne(
