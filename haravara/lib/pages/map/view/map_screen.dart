@@ -67,7 +67,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 ),
               ),
             ),
-            10.verticalSpace,
+            5.verticalSpace,
             mapFooter(),
           ],
         ),
