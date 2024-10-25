@@ -104,10 +104,27 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     );
   }
 
-  Widget buildBox() {
+    Widget buildBox() {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double containerHeight = 160.h;
+    double imageHeight = 140.h;
+
+    if (deviceHeight < 850) {
+      containerHeight = 220.h;
+      imageHeight = 180.h;
+    }
+    if (deviceHeight < 700) {
+      containerHeight = 190.h;
+      imageHeight = 180.h;
+    }
+    if (deviceHeight < 650) {
+      containerHeight = 190.h;
+      imageHeight = 60.h;
+    }
+
     return Container(
       width: 230.w,
-      height: 160.h,
+      height: containerHeight,
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -125,7 +142,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
               child: Image.asset(
                 'assets/avatars/KASO DETEKTIV.png',
                 width: 140.w,
-                height: 140.h,
+                height: imageHeight, // Adjusted image height
               ),
             ),
           ),
@@ -172,7 +189,9 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                 child: Text(
                   'IDEM PÁTRAŤ',
                   style: GoogleFonts.titanOne(
-                      fontSize: 9.sp, color: const Color.fromARGB(255, 255, 255, 255)),
+                    fontSize: 9.sp, 
+                    color: const Color.fromARGB(255, 255, 255, 255)
+                  ),
                 ),
               ),
             ),
@@ -181,6 +200,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
       ),
     );
   }
+
 
   Widget buildResponsiveButton({
     required String label,
