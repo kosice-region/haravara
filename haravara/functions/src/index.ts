@@ -47,3 +47,27 @@ exports.sendVerificationCode = functions.https.onCall(
     }
   }
 );
+
+exports.formatTimestamps = functions.database.ref('/users/{userId}')
+  .onWrite(async (change, context) => {
+    const afterData = change.after.val() as {
+      created_at?: number;
+      updated_at?: number;
+    };
+
+    if (!afterData) {
+      return null;
+    }
+
+    const updates: { [key: string]: any } = {};
+
+    if (afterData.created_at && typeof afterData.created_at === 'number') {
+      updates['created_at'] = new Date(afterData.created_at).toISOString();
+    }
+
+    if (afterData.updated_at && typeof afterData.updated_at === 'number') {
+      updates['updated_at'] = new Date(afterData.updated_at).toISOString();
+    }
+
+    return change.after.ref.update(updates);
+  });
