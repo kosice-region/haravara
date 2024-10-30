@@ -11,7 +11,6 @@ DatabaseReference usersIdsRef = database.ref('userIds');
 class AuthRepository {
   Future<void> registerUser(User user, String id, String base64) async {
     final userToRegister = database.ref('users/$id');
-    String now = DateTime.now().toUtc().toIso8601String();
     await userToRegister.set(
       {
         'username': user.username,
@@ -26,8 +25,8 @@ class AuthRepository {
           'children': user.userProfile!.children,
           'location': user.userProfile!.location,
         },
-        'created_at': now,
-        'updated_at': now,
+        'created_at': ServerValue.timestamp,
+        'updated_at': ServerValue.timestamp,
       },
     );
     final newUsersIdRef = database.ref('userIds/$base64');
@@ -63,7 +62,7 @@ class AuthRepository {
       'phone_number': user.phoneNumber,
       'phone_ids': user.phones,
       'username': user.username,
-      'updated_at': DateTime.now().toUtc().toIso8601String(),
+      'updated_at': ServerValue.timestamp,
     };
     await usersRef.child(user.id!).update(updatedData);
   }
@@ -71,7 +70,7 @@ class AuthRepository {
   Future<void> updateUserName(String username, String userId) async {
     Map<String, dynamic> updatedData = {
       'username': username,
-      'updated_at': DateTime.now().toUtc().toIso8601String(),
+      'updated_at': ServerValue.timestamp,
     };
     await usersRef.child(userId).update(updatedData);
   }
@@ -85,7 +84,7 @@ class AuthRepository {
         'children': children,
         'location': location
       },
-      'updated_at': DateTime.now().toUtc().toIso8601String(),
+      'updated_at': ServerValue.timestamp,
     };
     await usersRef.child(userId).update(updatedData);
   }
