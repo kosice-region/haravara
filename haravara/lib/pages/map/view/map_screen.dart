@@ -24,7 +24,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     'assets/places-map.jpg',
     'assets/peopleMapScreen.png',
     'assets/backgrounds/background_dark_green.png',
-    'assets/foreground_overlay.png', // Add your foreground image here
   ];
 
   @override
