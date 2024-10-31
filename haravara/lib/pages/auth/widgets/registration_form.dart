@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,10 +8,9 @@ import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
+
 class RegistrationForm extends ConsumerStatefulWidget {
-  const RegistrationForm({
-    Key? key,
-  }) : super(key: key);
+  const RegistrationForm({Key? key}) : super(key: key);
 
   @override
   ConsumerState<RegistrationForm> createState() => _RegistrationFormState();
@@ -137,11 +135,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                         text: 'Patrat\' ako rodina',
                         onChanged: _toggleIsFamily,
                       ),
-                      CheckButton(
-                        value: rememberPhone,
-                        text: 'Remember this phone',
-                        onChanged: _toggleRememberMe,
-                      ),
+                      20.verticalSpace, // Additional space here
                     ],
                   ),
                 ],

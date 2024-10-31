@@ -54,19 +54,34 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
     imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
+
     var deviceHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
+          // Keep the original background (pozadie_auth.jpg) in the same position
           Positioned(
-            bottom: 180.h,
+            bottom: 180.h,  // Same position as it was originally
             left: -20.w,
             child: Image.asset(
               'assets/backgrounds/pozadie_auth.jpg',
               fit: BoxFit.fitHeight,
               width: 320.w,
               height: 350.h,
+            ),
+          ),
+          // The wheelchair image should always stay as a background image
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Image.asset(
+                'assets/backgrounds/VOZIK_BOK.jpg',
+                fit: BoxFit.cover,
+                width: deviceHeight,
+                height: 200.h,
+              ),
             ),
           ),
           Positioned.fill(
@@ -86,7 +101,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    5.verticalSpace,
+                    3.verticalSpace,
                     Opacity(
                       opacity: 0.9,
                       child: _isLogin ? LoginForm() : RegistrationForm(),
@@ -100,14 +115,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ],
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            bottom: -20,
-            child: Image.asset(
-              'assets/backgrounds/VOZIK_BOK.jpg',
-              fit: BoxFit.cover,
-              height: 190.h,
             ),
           ),
         ],

@@ -81,11 +81,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                     inputType: TextInputType.emailAddress,
                   ),
                   5.verticalSpace,
-                  CheckButton(
-                    value: rememberPhone,
-                    text: 'Remember this phone',
-                    onChanged: _toggleRememberMe,
-                  ),
+                  
                 ],
               ),
             ],
