@@ -19,11 +19,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void initState() {
     super.initState();
   }
-//odstranene navyse obrazok
+
   final List<String> imageAssets = [
     'assets/places-map.jpg',
     'assets/peopleMapScreen.png',
     'assets/backgrounds/background_dark_green.png',
+    'assets/peopleMapScreen.png',
   ];
 
   @override
@@ -33,44 +34,66 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 244, 232, 209),
       endDrawer: HeaderMenu(),
-      body: Padding(
-        padding: EdgeInsets.only(top: 12.h),
-        child: Column(
-          children: [
-            const Header(),
-            10.verticalSpace,
-            Center(
-              child: Text(
-                'MAPA PEČIATOK',
-                style: GoogleFonts.titanOne(
-                  fontSize: 17.sp,
-                  color: const Color.fromARGB(255, 86, 162, 73),
-                ),
-              ),
+      body: Stack(
+        children: [
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/backgrounds/background_dark_green.png',
+              fit: BoxFit.cover,
+              height: 200.h,
             ),
-            MapPreview(),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 86, 162, 73),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PlacesListScreen()),
-                );
-              },
-              child: Text(
-                'ZOZNAM PEČIATOK',
-                style: GoogleFonts.titanOne(
-                  fontSize: 14.sp,
-                  color: Color.fromARGB(255, 244, 232, 209),
-                ),
-              ),
+          ),
+          Positioned(
+            bottom: 40.h, 
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/peopleMapScreen.png',
+              fit: BoxFit.contain,
+              height: 130.h, 
             ),
-            5.verticalSpace,
-            mapFooter(),
-          ],
-        ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 12.h),
+            child: Column(
+              children: [
+                const Header(),
+                10.verticalSpace,
+                Center(
+                  child: Text(
+                    'MAPA PEČIATOK',
+                    style: GoogleFonts.titanOne(
+                      fontSize: 17.sp,
+                      color: const Color.fromARGB(255, 86, 162, 73),
+                    ),
+                  ),
+                ),
+                MapPreview(),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 86, 162, 73),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PlacesListScreen()),
+                    );
+                  },
+                  child: Text(
+                    'ZOZNAM PEČIATOK',
+                    style: GoogleFonts.titanOne(
+                      fontSize: 14.sp,
+                      color: Color.fromARGB(255, 244, 232, 209),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       bottomSheet: Footer(height: 175, boxFit: BoxFit.fill),
     );
