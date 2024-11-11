@@ -58,7 +58,7 @@ class HeaderMenu extends ConsumerWidget {
                   webRoute: 'https://www.haravara.sk/pribehy/',
                 ),
                 RedirectButton(
-                  title: 'TYPY NA VÝLETY',
+                  title: 'TIPY NA VÝLETY',
                   imagePath: 'assets/menu-icons/batoh2.png',
                   imageWidth: 61,
                   imageHeight: 52,
@@ -76,7 +76,7 @@ class HeaderMenu extends ConsumerWidget {
                   webRoute: 'https://www.haravara.sk/atrakcie',
                 ),
                 RedirectButton(
-                  title: 'KALENDÁR PODUJATí',
+                  title: 'PODUJATIA',
                   imagePath: 'assets/menu-icons/calendar.png',
                   imageWidth: 40,
                   imageHeight: 38,
@@ -94,7 +94,7 @@ class HeaderMenu extends ConsumerWidget {
                   webRoute: 'https://www.haravara.sk/detske-zony/',
                 ),
                 RedirectButton(
-                  title: 'OTÁZKY A ODPOVEDE',
+                  title: 'OTÁZKY',
                   imagePath: 'assets/menu-icons/questions.png',
                   imageWidth: 50,
                   imageHeight: 50,

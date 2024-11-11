@@ -36,7 +36,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 8.verticalSpace,
                 const Header(),
-                20.verticalSpace,
+                5.verticalSpace,
                 AvatarWidget(),
                 5.verticalSpace,
                 const SearcherLevel(),
