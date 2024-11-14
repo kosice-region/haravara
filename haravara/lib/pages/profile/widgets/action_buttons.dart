@@ -79,7 +79,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
             'ODHLÁSIŤ',
             style: GoogleFonts.titanOne(
               color: Colors.black,
-              fontSize: 12.sp,
+              fontSize: 11.sp,
             ),
           ),
         ),
