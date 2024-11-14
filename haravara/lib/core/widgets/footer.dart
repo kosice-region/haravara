@@ -26,7 +26,6 @@ class Footer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     return GestureDetector(
       onTap: () {
@@ -38,7 +37,22 @@ class Footer extends ConsumerWidget {
       },
       child: Container(
         height: 50.h,
-        color: const Color.fromRGBO(41, 141, 116, 1),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [
+              0.0,
+              0.1,
+              1.0
+            ], // Specify where the color changes should happen
+            colors: [
+              Color(0xFF95FFE4), // Color at position 0%
+              Color(0xFF298D74), // Color at position 10%
+              Color(0xFF298D74), // Keep Color at 100%
+            ],
+          ),
+        ),
         child: Row(
           children: [
             const SizedBox(width: 16),
