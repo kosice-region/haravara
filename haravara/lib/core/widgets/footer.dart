@@ -26,7 +26,6 @@ class Footer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     return GestureDetector(
       onTap: () {
