@@ -135,7 +135,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                         text: 'Patrat\' ako rodina',
                         onChanged: _toggleIsFamily,
                       ),
-                      20.verticalSpace, // Additional space here
+                      20.verticalSpace,
                     ],
                   ),
                 ],

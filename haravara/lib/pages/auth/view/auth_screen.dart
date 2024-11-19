@@ -61,9 +61,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          // Keep the original background (pozadie_auth.jpg) in the same position
           Positioned(
-            bottom: 180.h,  // Same position as it was originally
+            bottom: 180.h,
             left: -20.w,
             child: Image.asset(
               'assets/backgrounds/pozadie_auth.jpg',
@@ -72,7 +71,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               height: 350.h,
             ),
           ),
-          // The wheelchair image should always stay as a background image
           Positioned.fill(
             child: Align(
               alignment: Alignment.bottomCenter,
