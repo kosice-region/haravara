@@ -36,31 +36,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 8.verticalSpace,
                 const Header(),
-                20.verticalSpace,
+                5.verticalSpace,
                 AvatarWidget(),
                 5.verticalSpace,
                 const SearcherLevel(),
-                /*5.verticalSpace,
-                const ProgressBar(),
-                5.verticalSpace,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        ref.read(placesProvider.notifier).incrementCollectedPlaces();
-                      },
-                      child: const Text('Increment'),
-                    ),
-                    SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        ref.read(placesProvider.notifier).resetPlacesForTesting();
-                      },
-                      child: const Text('Reset'),
-                    ),
-                  ],
-                ),*/
                 12.verticalSpace,
                 UsernameWidget(),
                 12.verticalSpace,
