@@ -35,20 +35,20 @@ class RedirectButton extends ConsumerWidget {
     double deviceWidth = MediaQuery.of(context).size.width;
 
     // Adjust button width based on screen size
-    double buttonWidth = deviceWidth * 0.7; // 70% of screen width for large screens
+    double buttonWidth = deviceWidth * 0.4; // 70% of screen width for large screens
     if (deviceWidth < 600) {
-      buttonWidth = deviceWidth * 0.6; // 60% for smaller screens
+      buttonWidth = deviceWidth * 0.4; // 60% for smaller screens
     }
     if (deviceWidth < 400) {
       buttonWidth = deviceWidth * 0.4; // 50% for very small screens
     }
 
     // Adjust image size based on screen size
-    double imgWidth = imageWidth * 0.5; // 50% scale for image width
-    double imgHeight = imageHeight * 0.5; // 50% scale for image height
+    double imgWidth = imageWidth * 0.8; // 50% scale for image width
+    double imgHeight = imageHeight * 0.8; // 50% scale for image height
     if (deviceWidth < 600) {
-      imgWidth = imageWidth * 0.10;
-      imgHeight = imageHeight * 0.10;
+      imgWidth = imageWidth * 0.8;
+      imgHeight = imageHeight * 0.8;
     }
     if (deviceWidth < 400) {
       imgWidth = imageWidth * 0.8;
