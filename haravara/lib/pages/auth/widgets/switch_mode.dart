@@ -6,11 +6,11 @@ class SwitchMode extends StatefulWidget {
   const SwitchMode({
     super.key,
     required this.text,
-    required this.onPressed, // Добавьте этот параметр
+    required this.onPressed, 
   });
 
   final String text;
-  final VoidCallback onPressed; // Определите тип параметра функции
+  final VoidCallback onPressed;
 
   @override
   State<SwitchMode> createState() => _SwitchModeState();
@@ -29,7 +29,7 @@ class _SwitchModeState extends State<SwitchMode> {
           fontWeight: FontWeight.w500,
         ),
       ),
-      onPressed: widget.onPressed, // Используйте переданную функцию здесь
+      onPressed: widget.onPressed, 
     );
   }
 }
