@@ -110,7 +110,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     double imageHeight = 140.h;
 
     if (deviceHeight < 850) {
-      containerHeight = 220.h;
+      containerHeight = 160.h;
       imageHeight = 180.h;
     }
     if (deviceHeight < 700) {
