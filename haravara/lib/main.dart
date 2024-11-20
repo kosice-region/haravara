@@ -25,6 +25,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseAuth.instance.signInAnonymously();
+
   AwesomeNotifications().initialize(
       null,
       [
@@ -44,10 +45,13 @@ void main() async {
         )
       ],
       debug: true);
+
   if (!await AwesomeNotifications().isNotificationAllowed()) {
     await AwesomeNotifications().requestPermissionToSendNotifications();
   }
+
   final prefs = await SharedPreferences.getInstance();
+
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
     runApp(
@@ -55,7 +59,17 @@ void main() async {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
         ],
-        child: const HaravaraApp(),
+        child: Builder(
+          builder: (context) {
+            ScreenUtil.init(context);
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.noScaling,
+              ),
+              child: const HaravaraApp(),
+            );
+          },
+        ),
       ),
     );
   });

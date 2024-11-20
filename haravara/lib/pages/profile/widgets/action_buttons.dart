@@ -79,7 +79,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
             'ODHLÁSIŤ',
             style: GoogleFonts.titanOne(
               color: Colors.black,
-              fontSize: 10.sp,
+              fontSize: 11.sp,
             ),
           ),
         ),
@@ -187,8 +187,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Color.fromARGB(255, 188, 95, 190),
+                  backgroundColor: Color.fromARGB(255, 188, 95, 190),
                 ),
               ),
             ],
