@@ -61,7 +61,6 @@ void main() async {
         ],
         child: Builder(
           builder: (context) {
-            // Initialize ScreenUtil with the current context
             ScreenUtil.init(context);
             return MediaQuery(
               data: MediaQuery.of(context).copyWith(
