@@ -58,6 +58,15 @@ class HeaderMenu extends ConsumerWidget {
                   webRoute: 'https://www.haravara.sk/pribehy/',
                 ),
                 RedirectButton(
+                  title: 'TEST BOARD', //TODO
+                  imagePath: 'assets/menu-icons/questions.png',
+                  imageWidth: 53,
+                  imageHeight: 53,
+                  right: 166,
+                  bottom: 0,
+                  screenToRoute: ScreenType.leaderBoardLevels,
+                ),
+                RedirectButton(
                   title: 'TIPY NA VÝLETY',
                   imagePath: 'assets/menu-icons/batoh2.png',
                   imageWidth: 61,

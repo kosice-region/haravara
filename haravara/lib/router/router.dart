@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/pages/header_menu/header_menu.dart';
+import 'package:haravara/pages/leaderBoard/leaderBoard.dart';
+import 'package:haravara/pages/leaderBoardLevels/leaderBoardLevels.dart';
 import 'package:haravara/pages/map_detail/map_detail.dart';
 import 'package:haravara/pages/news/news.dart';
 import 'package:haravara/pages/summary/summary.dart';
@@ -27,6 +29,8 @@ enum ScreenType {
   prizes,
   profile,
   podmienky,
+  leaderBoard,
+  leaderBoardLevels
 }
 
 Map screenTypeToWidget = <ScreenType, Widget>{
@@ -42,6 +46,8 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.prizes: PrizesScreen(),
   ScreenType.profile: const ProfileScreen(),
   ScreenType.podmienky: const PodmienkyScreen(),
+  ScreenType.leaderBoard: const LeaderBoardScreen(),
+  ScreenType.leaderBoardLevels: const LeaderBoardLevelsScreen(),
 };
 
 class RouterNotifier extends StateNotifier<ScreenType> {
