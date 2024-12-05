@@ -49,7 +49,6 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
       answer: '0',
     ),
   ];
-
   @override
   Widget build(BuildContext context) {
     imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
@@ -57,36 +56,53 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
       endDrawer: HeaderMenu(),
       body: Stack(
         children: [
+          // Background layer
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/backgrounds/background.jpg'),
-                fit: BoxFit.cover, // Ensures the image covers the container
+                fit: BoxFit.cover,
                 alignment: Alignment
                     .centerRight, // Focuses on the right part of the image
               ),
             ),
           ),
-          Column(
-            children: [
-              8.verticalSpace,
-              const Header(),
-              5.verticalSpace,
-              Text(
-                'Leader board',
-                style: GoogleFonts.titanOne(
+          // Foreground scrollable content
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                8.verticalSpace,
+                const Header(),
+                5.verticalSpace,
+                Text(
+                  'Leader board',
+                  style: GoogleFonts.titanOne(
                     fontSize: 30.sp,
                     color: const Color.fromARGB(255, 255, 255, 255),
-                    fontWeight: FontWeight.w500),
-              ),
-              10.verticalSpace,
-              Expanded(
-                child: SingleChildScrollView(
-                  child: _buildFaqList(),
+                    fontWeight: FontWeight.w500,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(2, 2),
+                        blurRadius: 4.0,
+                        color: Colors.black38,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                10.verticalSpace,
+                Padding(
+                  padding:
+                      EdgeInsets.only(left: 16.0, right: 16.0, bottom: 80.h),
+                  child: Column(
+                    children:
+                        _faqItems.map((item) => _buildFaqItem(item)).toList(),
+                  ),
+                ),
+                SizedBox(height: 40.h), // Space for footer
+              ],
+            ),
           ),
+          // Footer positioned at the bottom
           Positioned(
             left: 0,
             right: 0,
