@@ -9,7 +9,6 @@ import 'package:haravara/core/services/event_bus.dart';
 import 'package:haravara/router/screen_router.dart';
 
 import '../map_detail.dart';
-
 class MapDetailScreen extends ConsumerStatefulWidget {
   const MapDetailScreen({Key? key}) : super(key: key);
 
@@ -28,9 +27,13 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
   double targetLat = 0;
   double targetLng = 0;
 
+  late final PickedPlaceNotifier _pickedPlaceNotifier;
+
   @override
   void initState() {
     super.initState();
+    _pickedPlaceNotifier = ref.read(pickedPlaceProvider.notifier);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final selectedPlace = ref.read(pickedPlaceProvider);
 
@@ -61,10 +64,12 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     eventBus.on<String>().listen((tappedMarker) {
       if (tappedMarker != null && mounted) {
         setState(() {
-          pickedLocation = ref.watch(placesProvider).where((place) => place.id == tappedMarker).first;
+          pickedLocation = ref.read(placesProvider).firstWhere((place) => place.id == tappedMarker);
           isMarkerPicked = true;
         });
-        showPreview(context, pickedLocation, routeToCompassScreen);
+        if (mounted) {
+          showPreview(context, pickedLocation, routeToCompassScreen);
+        }
       }
     });
 
@@ -72,29 +77,29 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
       final selectedPlace = ref.read(pickedPlaceProvider);
       if (selectedPlace.placeId != 'null' && selectedPlace.showPreview) {
         setState(() {
-          pickedLocation = ref.watch(placesProvider).where((place) => place.id == selectedPlace.placeId).first;
+          pickedLocation = ref.read(placesProvider).firstWhere((place) => place.id == selectedPlace.placeId);
           isMarkerPicked = true;
         });
-        showPreview(context, pickedLocation, routeToCompassScreen);
-        ref.read(pickedPlaceProvider.notifier).resetPreview();
+        if (mounted) {
+          showPreview(context, pickedLocation, routeToCompassScreen);
+        }
+        _pickedPlaceNotifier.resetPreview();
       }
     });
   }
 
-
   @override
   void dispose() {
-    ref.read(pickedPlaceProvider.notifier).resetPlace();
     super.dispose();
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     precacheImage(const AssetImage('assets/places-map.jpg'), context);
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return PopScope(
       onPopInvoked: (result) {
-        ref.read(pickedPlaceProvider.notifier).resetPlace();
+        _pickedPlaceNotifier.resetPlace();
         return;
       },
       child: Scaffold(
@@ -173,4 +178,3 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     );
   }
 }
-
