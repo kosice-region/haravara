@@ -76,7 +76,7 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
           'assets/avatars/kasko.png',
         ]),
     LevelsItems(
-        levelName: 'Lox',
+        levelName: 'Starter',
         stampsNumber: '5',
         isOpened: true,
         levelColor: 0xFF00A3FF,
@@ -119,9 +119,9 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
                     fontWeight: FontWeight.w500,
                     shadows: [
                       Shadow(
-                        offset: Offset(2, 2),
-                        blurRadius: 4.0,
-                        color: Colors.black38,
+                        offset: Offset(0, 0),
+                        blurRadius: 40.0,
+                        color: Colors.black,
                       ),
                     ],
                   ),
@@ -215,6 +215,13 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
                     style: GoogleFonts.titanOne(
                       fontSize: 20.sp,
                       color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(0, 0),
+                          blurRadius: 4.0,
+                          color: Colors.black,
+                        ),
+                      ],
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -255,9 +262,9 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
                             fontWeight: FontWeight.w500,
                             shadows: [
                               Shadow(
-                                offset: Offset(2, 2),
+                                offset: Offset(0, 0),
                                 blurRadius: 4.0,
-                                color: Colors.black38,
+                                color: Colors.black,
                               ),
                             ],
                           ),
