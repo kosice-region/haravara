@@ -1,93 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:haravara/core/widgets/header.dart';
-import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
-import 'package:haravara/core/widgets/footer.dart';
+import 'package:haravara/core/widgets/header.dart'; // Adjust based on your project structure
+import 'package:haravara/core/widgets/footer.dart'; // Adjust based on your project structure
+import 'package:haravara/pages/header_menu/view/header_menu_screen.dart'; // Adjust path
+import '../leaderBoard.dart'; // The file with providers and repository
 
-class PersonsItem {
-  PersonsItem({
-    required this.personsName,
-    required this.stampsNumber,
-    required this.profileIcon,
-  });
-
-  String personsName;
-  String stampsNumber;
-  String profileIcon;
-}
-
-class LeaderBoardScreen extends StatefulWidget {
+class LeaderBoardScreen extends ConsumerWidget {
   const LeaderBoardScreen({Key? key}) : super(key: key);
 
   @override
-  _LeaderBoardScreenState createState() => _LeaderBoardScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final imageAssets = [
+      'assets/backgrounds/background.jpg',
+      'assets/avatars/kasko.png',
+    ];
 
-class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
-  final List<String> imageAssets = [
-    'assets/backgrounds/background.jpg',
-    'assets/avatars/kasko.png',
-  ];
+    for (var image in imageAssets) {
+      precacheImage(AssetImage(image), context);
+    }
 
-  final List<PersonsItem> _PersonsItem = [
-    PersonsItem(
-      personsName: 'jankozlaty99',
-      stampsNumber: '97',
-      profileIcon: 'assets/avatars/kasko.png',
-    ),
-    PersonsItem(
-      personsName: 'adamsim777',
-      stampsNumber: '92',
-      profileIcon: 'assets/avatars/kasko.png',
-    ),
-    PersonsItem(
-      personsName: 'martinovak123',
-      stampsNumber: '90',
-      profileIcon: 'assets/avatars/kasko.png',
-    ),
-    PersonsItem(
-      personsName: 'kristinalovely',
-      stampsNumber: '88',
-      profileIcon: 'assets/avatars/kasko.png',
-    ),
-    PersonsItem(
-      personsName: 'andrejkovac01',
-      stampsNumber: '86',
-      profileIcon: 'assets/avatars/kasko.png',
-    ),
-    PersonsItem(
-      personsName: 'lucia.hviezda',
-      stampsNumber: '84',
-      profileIcon: 'assets/avatars/kasko.png',
-    ),
-    PersonsItem(
-      personsName: 'michalhero22',
-      stampsNumber: '81',
-      profileIcon: 'assets/avatars/kasko.png',
-    ),
-    PersonsItem(
-      personsName: 'veronikasmile',
-      stampsNumber: '79',
-      profileIcon: 'assets/avatars/kasko.png',
-    ),
-    PersonsItem(
-      personsName: 'peter.dobry',
-      stampsNumber: '77',
-      profileIcon: 'assets/avatars/kasko.png',
-    ),
-    PersonsItem(
-      personsName: 'zuzanaqueeeeen',
-      stampsNumber: '75',
-      profileIcon: 'assets/avatars/kasko.png',
-    ),
-  ];
+    // Watch the provider
+    final usersAsync = ref.watch(usersNotifierProvider);
 
-  @override
-  Widget build(BuildContext context) {
-    imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
+    // Choose which level you want to show
+    int chosenLevel = 1; // for example, level 1 = 'Legendárny'
+
     return Scaffold(
-      endDrawer: HeaderMenu(),
+      endDrawer: HeaderMenu(), // Your custom drawer
       body: Stack(
         children: [
           // Background layer
@@ -96,8 +37,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
               image: DecorationImage(
                 image: AssetImage('assets/backgrounds/background.jpg'),
                 fit: BoxFit.cover,
-                alignment: Alignment
-                    .centerRight, // Focuses on the right part of the image
+                alignment: Alignment.centerRight,
               ),
             ),
           ),
@@ -109,7 +49,8 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                 const Header(),
                 5.verticalSpace,
                 Text(
-                  'Legendárny',
+                  // Display chosen level name
+                  levels[chosenLevel - 1].name,
                   style: GoogleFonts.titanOne(
                     fontSize: 30.sp,
                     color: const Color.fromARGB(255, 255, 255, 255),
@@ -124,7 +65,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                   ),
                 ),
                 10.verticalSpace,
-                _buildPersonsList(),
+                _buildBody(usersAsync, ref, chosenLevel),
                 SizedBox(height: 40.h), // Space for footer
               ],
             ),
@@ -141,19 +82,60 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
     );
   }
 
-  Widget _buildPersonsList() {
+  Widget _buildBody(AsyncValue<List<PersonsItem>> usersAsync, WidgetRef ref,
+      int chosenLevel) {
+    return usersAsync.when(
+      data: (users) {
+        // Once data is loaded, filter for chosen level
+        final filteredUsers = ref
+            .read(usersNotifierProvider.notifier)
+            .getUsersForLevel(chosenLevel);
+
+        if (filteredUsers.isEmpty) {
+          // If no users found for this level, show a message
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              'Nobody is here',
+              style: GoogleFonts.titanOne(
+                fontSize: 24.sp,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    offset: Offset(0, 0),
+                    blurRadius: 7.0,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          );
+        }
+
+        return _buildPersonsList(filteredUsers);
+      },
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) {
+        return Center(child: Text('Error: $error'));
+      },
+    );
+  }
+
+  Widget _buildPersonsList(List<PersonsItem> users) {
     return Container(
       margin: EdgeInsets.all(10.0),
       padding: EdgeInsets.fromLTRB(5, 20, 0, 10),
       decoration: BoxDecoration(
-          color: Color(0xFFA43CD2),
-          border: Border.all(
-            color: Colors.white,
-            width: 4,
-          ),
-          borderRadius: BorderRadius.circular(40.0)),
+        color: Color(0xFFA43CD2),
+        border: Border.all(
+          color: Colors.white,
+          width: 4,
+        ),
+        borderRadius: BorderRadius.circular(40.0),
+      ),
       child: Column(
-        children: _PersonsItem.map((item) => _buildPersonsItem(item)).toList(),
+        children: users.map((item) => _buildPersonsItem(item)).toList(),
       ),
     );
   }
@@ -161,10 +143,10 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   Widget _buildPersonsItem(PersonsItem item) {
     return Container(
       margin: EdgeInsets.only(bottom: 15.0),
-      padding: EdgeInsets.symmetric(horizontal: 8.0), // Outer wrapper padding
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align blocks
-        crossAxisAlignment: CrossAxisAlignment.center, // Center vertically
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             margin: EdgeInsets.only(right: 3),
@@ -174,8 +156,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
               image: DecorationImage(
                 image: AssetImage(item.profileIcon),
                 fit: BoxFit.cover,
-                alignment: Alignment
-                    .centerRight, // Focuses on the right part of the image
+                alignment: Alignment.centerRight,
               ),
               borderRadius: BorderRadius.circular(50.0),
             ),
@@ -203,7 +184,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                item.stampsNumber,
+                item.stampsNumber.toString(),
                 style: GoogleFonts.titanOne(
                   fontSize: 20.sp,
                   color: Colors.white,
@@ -226,8 +207,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                   image: DecorationImage(
                     image: AssetImage('assets/PECIATKA.png'),
                     fit: BoxFit.cover,
-                    alignment: Alignment
-                        .centerRight, // Focuses on the right part of the image
+                    alignment: Alignment.centerRight,
                   ),
                   borderRadius: BorderRadius.circular(50.0),
                 ),
