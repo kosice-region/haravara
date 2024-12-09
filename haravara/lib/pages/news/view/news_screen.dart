@@ -79,15 +79,15 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                       Column(
                         children: [
                           buildResponsiveButton(
-                            label: 'VÝHRY',
-                            color: const Color.fromARGB(255, 42, 177, 255),
+                            label: 'REBRÍČEK',
+                            color: const Color.fromARGB(255, 205, 105, 167),
                             screen: ScreenType.prizes,
                             ref: ref,
                           ),
                           SizedBox(height: 10.h), 
                           buildResponsiveButton(
                             label: 'PODMIENKY SÚŤAŽE',
-                            color: const Color.fromARGB(255, 205, 105, 167),
+                            color: const Color.fromARGB(255, 60, 200, 90),
                             screen: ScreenType.podmienky,
                             ref: ref,
                           ),
