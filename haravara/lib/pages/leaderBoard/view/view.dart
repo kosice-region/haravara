@@ -1,1 +1,1 @@
-export 'summary_screen.dart';
+export 'people_screen.dart';

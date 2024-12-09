@@ -4,20 +4,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/core/widgets/footer.dart';
+import 'package:haravara/pages/leaderBoard/view/people_screen.dart';
 
 class LevelsItems {
-  LevelsItems(
-      {required this.levelName,
-      required this.stampsNumber,
-      required this.isOpened,
-      required this.levelColor,
-      required this.profileIcons});
+  LevelsItems({
+    required this.levelName,
+    required this.stampsNumber,
+    required this.isOpened,
+    required this.levelColor,
+    required this.profileIcons,
+    required this.amountOfPeople,
+  });
 
   String levelName;
   String stampsNumber;
   bool isOpened;
   int levelColor;
   List<String> profileIcons;
+  int amountOfPeople;
 }
 
 class LeaderBoardLevelsScreen extends StatefulWidget {
@@ -36,56 +40,151 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
 
   final List<LevelsItems> _levelsItems = [
     LevelsItems(
-        levelName: 'Pro',
-        stampsNumber: '60',
-        isOpened: false,
-        levelColor: 0xFF000000,
-        profileIcons: [
-          'assets/avatars/kasko.png',
-          'assets/avatars/kasko.png',
-          'assets/avatars/kasko.png',
-        ]),
+      levelName: 'Legendárny', // Najvyššia úroveň
+      stampsNumber: '60',
+      isOpened: false,
+      levelColor: 0xFF4A148C, // Fialová
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 15,
+    ),
     LevelsItems(
-        levelName: 'Pokrocily',
-        stampsNumber: '30',
-        isOpened: true,
-        levelColor: 0xFFD22B35,
-        profileIcons: [
-          'assets/avatars/kasko.png',
-          'assets/avatars/kasko.png',
-          'assets/avatars/kasko.png',
-        ]),
+      levelName: 'Majster', // Vyššia úroveň
+      stampsNumber: '55',
+      isOpened: true,
+      levelColor: 0xFF8E24AA, // Fialová
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 20,
+    ),
     LevelsItems(
-        levelName: 'Middle',
-        stampsNumber: '20',
-        isOpened: true,
-        levelColor: 0xFFFFB800,
-        profileIcons: [
-          'assets/avatars/kasko.png',
-          'assets/avatars/kasko.png',
-          'assets/avatars/kasko.png',
-        ]),
+      levelName: 'Šampión', // Top hráči
+      stampsNumber: '50',
+      isOpened: true,
+      levelColor: 0xFFD81B60, // Ružová
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 30,
+    ),
     LevelsItems(
-        levelName: 'Zaciatocnik',
-        stampsNumber: '10',
-        isOpened: true,
-        levelColor: 0xFF49E500,
-        profileIcons: [
-          'assets/avatars/kasko.png',
-          'assets/avatars/kasko.png',
-          'assets/avatars/kasko.png',
-        ]),
+      levelName: 'Expert', // Skúsení hráči
+      stampsNumber: '45',
+      isOpened: true,
+      levelColor: 0xFFE65100, // Oranžová
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 35,
+    ),
     LevelsItems(
-        levelName: 'Starter',
-        stampsNumber: '5',
-        isOpened: true,
-        levelColor: 0xFF00A3FF,
-        profileIcons: [
-          'assets/avatars/kasko.png',
-          'assets/avatars/kasko.png',
-          'assets/avatars/kasko.png',
-        ]),
+      levelName: 'Pokročilý', // Vyspelí hráči
+      stampsNumber: '40',
+      isOpened: true,
+      levelColor: 0xFFFF6F00, // Oranžová
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 40,
+    ),
+    LevelsItems(
+      levelName: 'Zdatný', // Dobrí hráči
+      stampsNumber: '35',
+      isOpened: true,
+      levelColor: 0xFFF57C00, // Tmavo oranžová
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 45,
+    ),
+    LevelsItems(
+      levelName: 'Skúsený', // Skúsení hráči
+      stampsNumber: '30',
+      isOpened: true,
+      levelColor: 0xFFFFB300, // Žltá
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 50,
+    ),
+    LevelsItems(
+      levelName: 'Taktik', // Šikovní hráči
+      stampsNumber: '25',
+      isOpened: true,
+      levelColor: 0xFFFFD600, // Jasná žltá
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 55,
+    ),
+    LevelsItems(
+      levelName: 'Začiatočník', // Začiatočníci
+      stampsNumber: '20',
+      isOpened: true,
+      levelColor: 0xFF76FF03, // Limetová zelená
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 60,
+    ),
+    LevelsItems(
+      levelName: 'Nováčik', // Nováčikovia
+      stampsNumber: '15',
+      isOpened: true,
+      levelColor: 0xFF00E676, // Zelená
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 70,
+    ),
+    LevelsItems(
+      levelName: 'Začiatok', // Začiatok hry
+      stampsNumber: '10',
+      isOpened: true,
+      levelColor: 0xFF1DE9B6, // Tehlová
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 80,
+    ),
+    LevelsItems(
+      levelName: 'Rookie', // Počiatočná úroveň
+      stampsNumber: '5',
+      isOpened: true,
+      levelColor: 0xFF00B0FF, // Modrá
+      profileIcons: [
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+        'assets/avatars/kasko.png',
+      ],
+      amountOfPeople: 90,
+    ),
   ];
+
   @override
   Widget build(BuildContext context) {
     imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
@@ -152,156 +251,164 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
     );
   }
 
-  Widget _buildLevelsList() {
-    return Column(
-      children: _levelsItems.map((item) => _buildLevelsItems(item)).toList(),
-    );
-  }
-
   Widget _buildLevelsItems(LevelsItems item) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        // Line connecting to the next circle
-        Positioned(
-          top: 0.2.sw, // Start from the middle of the current circle
-          left: 0.80.sw, // Align with the center of the circle
-          child: Container(
-            width: 2.w, // Width of the line
-            height: 200.h, // Length of the line
-            color: const Color.fromARGB(255, 255, 255, 255), // Line color
+    return GestureDetector(
+      onTap: () {
+        // Navigate to the next page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                LeaderBoardScreen(), // Replace with your target screen
           ),
-        ),
-        // Main row for the item
-        Container(
-          margin: EdgeInsets.only(bottom: 15.0),
-          padding:
-              EdgeInsets.symmetric(horizontal: 8.0), // Outer wrapper padding
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align blocks
-            crossAxisAlignment: CrossAxisAlignment.center, // Center vertically
-            children: [
-              // Left block
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                height: 67.h,
-                width: 0.6.sw, // Adjust width as needed
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: <Color>[
-                      Color(0xFFC748FF),
-                      Color(0xFF772B99),
+        );
+      },
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Line connecting to the next circle
+          Positioned(
+            top: 0.2.sw, // Start from the middle of the current circle
+            left: 0.80.sw, // Align with the center of the circle
+            child: Container(
+              width: 2.w, // Width of the line
+              height: 200.h, // Length of the line
+              color: const Color.fromARGB(255, 255, 255, 255), // Line color
+            ),
+          ),
+          // Main row for the item
+          Container(
+            margin: EdgeInsets.only(bottom: 15.0),
+            padding:
+                EdgeInsets.symmetric(horizontal: 8.0), // Outer wrapper padding
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align blocks
+              crossAxisAlignment:
+                  CrossAxisAlignment.center, // Center vertically
+              children: [
+                // Left block
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  height: 67.h,
+                  width: 0.6.sw, // Adjust width as needed
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: <Color>[
+                        Color(0xFFC748FF),
+                        Color(0xFF772B99),
+                      ],
+                      tileMode: TileMode.mirror,
+                    ),
+                    borderRadius: BorderRadius.circular(25.0),
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 3.h,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4.0,
+                        offset: Offset(0, 2),
+                      ),
                     ],
-                    tileMode: TileMode.mirror,
                   ),
-                  borderRadius: BorderRadius.circular(25.0),
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 3.h,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 4.0,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(children: [
-                  Text(
-                    item.levelName,
-                    style: GoogleFonts.titanOne(
-                      fontSize: 20.sp,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          offset: Offset(0, 0),
-                          blurRadius: 4.0,
-                          color: Colors.black,
-                        ),
-                      ],
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Container(
-                    height: 30.h,
-                    width: 0.6.sw,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: item.profileIcons
-                              .map(
-                                (item) => Container(
-                                  margin: EdgeInsets.only(right: 3),
-                                  width: 28.w,
-                                  height: 28.w,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(item),
-                                      fit: BoxFit.cover,
-                                      alignment: Alignment
-                                          .centerRight, // Focuses on the right part of the image
-                                    ),
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    border: Border.all(color: Colors.black),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                        Text(
-                          '+5',
-                          style: GoogleFonts.titanOne(
-                            fontSize: 20.sp,
-                            color: const Color.fromARGB(255, 255, 255, 255),
-                            fontWeight: FontWeight.w500,
-                            shadows: [
-                              Shadow(
-                                offset: Offset(0, 0),
-                                blurRadius: 4.0,
-                                color: Colors.black,
-                              ),
-                            ],
+                  child: Column(children: [
+                    Text(
+                      item.levelName,
+                      style: GoogleFonts.titanOne(
+                        fontSize: 18.sp,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(0, 0),
+                            blurRadius: 4.0,
+                            color: Colors.black,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  )
-                ]),
-              ),
-
-              // Right block
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                width: 0.2.sw,
-                height: 0.2.sw, // Adjust width as needed
-                decoration: BoxDecoration(
-                  color: item.isOpened
-                      ? Color(item.levelColor)
-                      : Color.fromARGB(255, 145, 145, 145),
-                  borderRadius: BorderRadius.circular(50),
+                    Container(
+                      height: 30.h,
+                      width: 0.6.sw,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: item.profileIcons
+                                .map(
+                                  (item) => Container(
+                                    margin: EdgeInsets.only(right: 1),
+                                    width: 28.w,
+                                    height: 28.w,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(item),
+                                        fit: BoxFit.cover,
+                                        alignment: Alignment
+                                            .centerRight, // Focuses on the right part of the image
+                                      ),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                      border: Border.all(color: Colors.black),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                          Text(
+                            '+' + (item.amountOfPeople - 3).toString(),
+                            textAlign: TextAlign.right,
+                            style: GoogleFonts.titanOne(
+                              fontSize: 20.sp,
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              fontWeight: FontWeight.w500,
+                              shadows: [
+                                Shadow(
+                                  offset: Offset(0, 0),
+                                  blurRadius: 4.0,
+                                  color: Colors.black,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ]),
                 ),
-                child: Center(
-                  // Center the number text inside the circle
-                  child: Text(
-                    item.stampsNumber.toString(),
-                    style: GoogleFonts.titanOne(
-                      fontSize: 22.sp,
-                      color: Colors.white,
+
+                // Right block
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  width: 0.2.sw,
+                  height: 0.2.sw, // Adjust width as needed
+                  decoration: BoxDecoration(
+                    color: item.isOpened
+                        ? Color(item.levelColor)
+                        : Color.fromARGB(255, 145, 145, 145),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Center(
+                    // Center the number text inside the circle
+                    child: Text(
+                      item.stampsNumber.toString(),
+                      style: GoogleFonts.titanOne(
+                        fontSize: 22.sp,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
