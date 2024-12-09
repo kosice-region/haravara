@@ -5,35 +5,26 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/core/widgets/header.dart'; // Adjust based on your project structure
 import 'package:haravara/core/widgets/footer.dart'; // Adjust based on your project structure
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart'; // Adjust path
-import '../leaderBoard.dart'; // The file with providers and repository
+import '../leaderBoard.dart'; // The file with providers, PersonsItem, and level definitions
 
 class LeaderBoardScreen extends ConsumerWidget {
-  const LeaderBoardScreen({Key? key}) : super(key: key);
+  final int chosenLevel;
+
+  const LeaderBoardScreen({Key? key, required this.chosenLevel})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final imageAssets = [
-      'assets/backgrounds/background.jpg',
-      'assets/avatars/kasko.png',
-    ];
-
-    for (var image in imageAssets) {
-      precacheImage(AssetImage(image), context);
-    }
-
-    // Watch the provider
+    // Use chosenLevel here to show the correct level's users
     final usersAsync = ref.watch(usersNotifierProvider);
 
-    // Choose which level you want to show
-    int chosenLevel = 1; // for example, level 1 = 'Legendárny'
-
     return Scaffold(
-      endDrawer: HeaderMenu(), // Your custom drawer
+      endDrawer: HeaderMenu(), // Your custom drawer if needed
       body: Stack(
         children: [
           // Background layer
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/backgrounds/background.jpg'),
                 fit: BoxFit.cover,
@@ -41,22 +32,22 @@ class LeaderBoardScreen extends ConsumerWidget {
               ),
             ),
           ),
-          // Foreground scrollable content
+          // Foreground content
           SingleChildScrollView(
             child: Column(
               children: [
                 8.verticalSpace,
                 const Header(),
                 5.verticalSpace,
+                // Display the chosen level name from the levels list
                 Text(
-                  // Display chosen level name
                   levels[chosenLevel - 1].name,
                   style: GoogleFonts.titanOne(
                     fontSize: 30.sp,
                     color: const Color.fromARGB(255, 255, 255, 255),
                     fontWeight: FontWeight.w500,
                     shadows: [
-                      Shadow(
+                      const Shadow(
                         offset: Offset(0, 0),
                         blurRadius: 40.0,
                         color: Colors.black,
@@ -65,7 +56,7 @@ class LeaderBoardScreen extends ConsumerWidget {
                   ),
                 ),
                 10.verticalSpace,
-                _buildBody(usersAsync, ref, chosenLevel),
+                _buildBody(usersAsync, ref),
                 SizedBox(height: 40.h), // Space for footer
               ],
             ),
@@ -82,8 +73,7 @@ class LeaderBoardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(AsyncValue<List<PersonsItem>> usersAsync, WidgetRef ref,
-      int chosenLevel) {
+  Widget _buildBody(AsyncValue<List<PersonsItem>> usersAsync, WidgetRef ref) {
     return usersAsync.when(
       data: (users) {
         // Once data is loaded, filter for chosen level
@@ -92,16 +82,14 @@ class LeaderBoardScreen extends ConsumerWidget {
             .getUsersForLevel(chosenLevel);
 
         if (filteredUsers.isEmpty) {
-          // If no users found for this level, show a message
-          return Padding(
-            padding: const EdgeInsets.all(20.0),
+          return Center(
             child: Text(
               'Nobody is here',
               style: GoogleFonts.titanOne(
                 fontSize: 24.sp,
                 color: Colors.white,
                 shadows: [
-                  Shadow(
+                  const Shadow(
                     offset: Offset(0, 0),
                     blurRadius: 7.0,
                     color: Colors.black,
@@ -115,7 +103,7 @@ class LeaderBoardScreen extends ConsumerWidget {
 
         return _buildPersonsList(filteredUsers);
       },
-      loading: () => Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stackTrace) {
         return Center(child: Text('Error: $error'));
       },
@@ -124,10 +112,10 @@ class LeaderBoardScreen extends ConsumerWidget {
 
   Widget _buildPersonsList(List<PersonsItem> users) {
     return Container(
-      margin: EdgeInsets.all(10.0),
-      padding: EdgeInsets.fromLTRB(5, 20, 0, 10),
+      margin: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.fromLTRB(5, 20, 0, 10),
       decoration: BoxDecoration(
-        color: Color(0xFFA43CD2),
+        color: const Color(0xFFA43CD2),
         border: Border.all(
           color: Colors.white,
           width: 4,
@@ -142,14 +130,14 @@ class LeaderBoardScreen extends ConsumerWidget {
 
   Widget _buildPersonsItem(PersonsItem item) {
     return Container(
-      margin: EdgeInsets.only(bottom: 15.0),
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      margin: const EdgeInsets.only(bottom: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            margin: EdgeInsets.only(right: 3),
+            margin: const EdgeInsets.only(right: 3),
             width: 28.w,
             height: 28.w,
             decoration: BoxDecoration(
@@ -161,7 +149,7 @@ class LeaderBoardScreen extends ConsumerWidget {
               borderRadius: BorderRadius.circular(50.0),
             ),
           ),
-          Container(
+          SizedBox(
             width: 132.w,
             child: Text(
               item.personsName,
@@ -169,7 +157,7 @@ class LeaderBoardScreen extends ConsumerWidget {
                 fontSize: 15.sp,
                 color: Colors.white,
                 shadows: [
-                  Shadow(
+                  const Shadow(
                     offset: Offset(0, 0),
                     blurRadius: 7.0,
                     color: Colors.black,
@@ -189,7 +177,7 @@ class LeaderBoardScreen extends ConsumerWidget {
                   fontSize: 20.sp,
                   color: Colors.white,
                   shadows: [
-                    Shadow(
+                    const Shadow(
                       offset: Offset(0, 0),
                       blurRadius: 10.0,
                       color: Colors.black,
@@ -200,11 +188,11 @@ class LeaderBoardScreen extends ConsumerWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               Container(
-                margin: EdgeInsets.only(right: 3),
+                margin: const EdgeInsets.only(right: 3),
                 height: 28.w,
                 width: 28.w,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
+                  image: const DecorationImage(
                     image: AssetImage('assets/PECIATKA.png'),
                     fit: BoxFit.cover,
                     alignment: Alignment.centerRight,

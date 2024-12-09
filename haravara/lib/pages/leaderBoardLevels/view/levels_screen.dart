@@ -254,12 +254,14 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
   Widget _buildLevelsItems(LevelsItems item) {
     return GestureDetector(
       onTap: () {
+        int chosenLevelIndex = _levelsItems.indexOf(item) + 1;
         // Navigate to the next page
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                LeaderBoardScreen(), // Replace with your target screen
+            builder: (context) => LeaderBoardScreen(
+                chosenLevel:
+                    chosenLevelIndex), // Replace with your target screen
           ),
         );
       },

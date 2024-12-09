@@ -46,7 +46,6 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.prizes: PrizesScreen(),
   ScreenType.profile: const ProfileScreen(),
   ScreenType.podmienky: const PodmienkyScreen(),
-  ScreenType.leaderBoard: const LeaderBoardScreen(),
   ScreenType.leaderBoardLevels: const LeaderBoardLevelsScreen(),
 };
 
