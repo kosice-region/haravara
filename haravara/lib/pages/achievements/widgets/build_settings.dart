@@ -7,7 +7,7 @@ class BuildSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> sortItems = ['Otvorene', 'Zatvorene'];
+    final List<String> sortItems = ['Získané', 'Nezískané'];
     final List<String> viewItems = ['Menej', 'Viac'];
 
     return Row(

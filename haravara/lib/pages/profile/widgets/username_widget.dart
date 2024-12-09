@@ -14,8 +14,12 @@ class UsernameWidget extends ConsumerWidget {
       width: 195.w,
       height: 38.h,
       decoration: BoxDecoration(
-        color: Color.fromARGB(225, 158, 230, 165),
-        borderRadius: BorderRadius.all(Radius.circular(15.dg)),
+        color: const Color.fromARGB(225, 158, 230, 165),
+        borderRadius: BorderRadius.all(Radius.circular(50.r)),
+        border: Border.all( 
+          color: const Color.fromARGB(255, 255, 255, 255),
+          width: 4.0,
+        ),
       ),
       child: Center(
         child: Text(

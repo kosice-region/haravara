@@ -6,12 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/pages/achievements/providers/settings_provider.dart';
 
 class Button extends ConsumerStatefulWidget {
-  const Button(
-      {super.key,
-      required this.text,
-      required this.icon,
-      required this.items,
-      required this.isSort});
+  const Button({
+    super.key,
+    required this.text,
+    required this.icon,
+    required this.items,
+    required this.isSort,
+  });
 
   final String text;
   final IconData icon;
@@ -23,15 +24,7 @@ class Button extends ConsumerStatefulWidget {
 }
 
 class _ButtonState extends ConsumerState<Button> {
-  String? selectedValueSort = '';
-  String? selectedValueView = '';
   String? selectedValue;
-  bool isInit = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +32,14 @@ class _ButtonState extends ConsumerState<Button> {
         ref.watch(settingsProvider.notifier).getCurrentValueSort();
     var selectedValueView =
         ref.watch(settingsProvider.notifier).getCurrentValueView();
-    selectedValue = widget.isSort ? selectedValueSort : selectedValueView;
+
+    selectedValue = widget.isSort
+        ? (widget.items.contains(selectedValueSort)
+            ? selectedValueSort
+            : widget.items.first)
+        : (widget.items.contains(selectedValueView)
+            ? selectedValueView
+            : widget.items.first);
 
     return DropdownButtonHideUnderline(
       child: DropdownButton2<String>(
@@ -92,7 +92,7 @@ class _ButtonState extends ConsumerState<Button> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  '$item',
+                  item,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -120,6 +120,7 @@ class _ButtonState extends ConsumerState<Button> {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: Colors.black26,
+              width: 3.0,
             ),
             color: const Color.fromARGB(255, 86, 162, 73),
           ),
@@ -135,12 +136,16 @@ class _ButtonState extends ConsumerState<Button> {
         ),
         dropdownStyleData: DropdownStyleData(
           maxHeight: 200,
-          width: 200,
+          width: 160,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: Colors.black26,
+              width: 2.0,
+            ),
             color: const Color.fromARGB(255, 86, 162, 73),
           ),
-          offset: const Offset(-20, 0),
+          offset: const Offset(0, 0),
           scrollbarTheme: ScrollbarThemeData(
             radius: const Radius.circular(40),
             thickness: WidgetStateProperty.all(6),

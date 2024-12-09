@@ -72,27 +72,32 @@ class _AchievementState extends ConsumerState<Achievement> {
               ),
             5.verticalSpace,
             Container(
-              width: isSizeTwo ? 120.w : 80.w,
-              height: isSizeTwo ? 56.h : 45.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.r),
-                color: const Color.fromARGB(255, 155, 221, 153),
-              ),
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  child: Text(
-                    widget.place.name,
-                    style: GoogleFonts.titanOne(
-                      color: Colors.black,
-                      fontSize: isSizeTwo ? fontSizeMax.sp : fontSizeMin.sp,
-                    ),
-                    maxLines: 5,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
+  width: isSizeTwo ? 120.w : 80.w,
+  height: isSizeTwo ? 56.h : 45.h,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(15.r),
+    color: const Color.fromARGB(255, 155, 221, 153),
+    border: Border.all(
+      color: const Color.fromARGB(255, 73, 155, 58),
+      width: 3.0,
+    ),
+  ),
+  child: Center(
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      child: Text(
+        widget.place.name,
+        style: GoogleFonts.titanOne(
+          color: Colors.black,
+          fontSize: isSizeTwo ? fontSizeMax.sp : fontSizeMin.sp,
+        ),
+        maxLines: 5,
+        textAlign: TextAlign.center,
+      ),
+    ),
+  ),
+),
+
           ],
         );
       },

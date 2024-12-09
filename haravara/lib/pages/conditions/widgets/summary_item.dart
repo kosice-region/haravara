@@ -16,13 +16,14 @@ class SummaryItem extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10.r)),
-          color: const Color.fromARGB(150, 255, 93, 93),
+          color: const Color.fromARGB(229, 255, 93, 93),
+          border: Border.all(color: Colors.white, width: 4),
           boxShadow: [
             BoxShadow(
-              color: const Color.fromARGB(150, 255, 93, 93).withOpacity(0.7),
+              color: Colors.black.withOpacity(0.7),
               spreadRadius: 4.r,
-              blurRadius: 4.r,
-              offset: Offset(0, 2.h),
+              blurRadius: 8.r,
+              offset: Offset(2, 4.h),
             ),
           ],
         ),

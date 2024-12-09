@@ -65,13 +65,31 @@ class SearcherLevel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     String levelOfSearcher = ref.watch(placesProvider.select(
         (state) => ref.read(placesProvider.notifier).getLevelOfSearcher()));
-    print('Searcher level updated: $levelOfSearcher');
-    return Text(
-      levelOfSearcher,
-      style: GoogleFonts.titanOne(
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w300,
-        color: color,
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 3.h),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(234, 97, 205, 255),
+        borderRadius: BorderRadius.circular(50.r),
+        border: Border.all(
+          color: Colors.white,
+          width: 4,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Text(
+        levelOfSearcher,
+        style: GoogleFonts.titanOne(
+          fontSize: 13.sp,
+          fontWeight: FontWeight.w300,
+          color: color,
+        ),
       ),
     );
   }
