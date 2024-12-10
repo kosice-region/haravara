@@ -84,7 +84,7 @@ class LeaderBoardScreen extends ConsumerWidget {
         if (filteredUsers.isEmpty) {
           return Center(
             child: Text(
-              'Nobody is here',
+              'Nikto tu nie je',
               style: GoogleFonts.titanOne(
                 fontSize: 24.sp,
                 color: Colors.white,

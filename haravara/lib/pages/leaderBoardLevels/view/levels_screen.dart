@@ -249,10 +249,18 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                           Text(
                             item.amountOfPeople == 0
                                 ? 'Nikto tu nie je'
-                                : '+' +
-                                    (item.amountOfPeople -
-                                            item.profileIcons.length)
-                                        .toString(),
+                                : ((item.amountOfPeople -
+                                                item.profileIcons.length) ==
+                                            0
+                                        ? ''
+                                        : '+') +
+                                    ((item.amountOfPeople -
+                                                item.profileIcons.length) ==
+                                            0
+                                        ? ''
+                                        : (item.amountOfPeople -
+                                                item.profileIcons.length)
+                                            .toString()),
                             textAlign: TextAlign.right,
                             style: GoogleFonts.titanOne(
                               fontSize:

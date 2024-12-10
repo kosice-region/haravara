@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:haravara/core/services/database_service.dart';
 
 // Data model representing a user
 class PersonsItem {
@@ -24,7 +25,6 @@ class LevelsData {
   final List<Level> levels;
 }
 
-// Define a Level model
 class Level {
   Level({
     required this.name,
@@ -61,7 +61,7 @@ class Level {
   }
 }
 
-// 12 predefined levels with colors
+// Predefined levels
 final List<Level> levels = [
   Level(name: 'Legendárny', min: 60, max: 1000, levelColor: 0xFF4A148C),
   Level(name: 'Majster', min: 55, max: 59, levelColor: 0xFF8E24AA),
@@ -77,7 +77,6 @@ final List<Level> levels = [
   Level(name: 'Rookie', min: 5, max: 9, levelColor: 0xFF00B0FF),
 ];
 
-// Repository for fetching data from Firebase
 class UsersRepository {
   final _db = FirebaseDatabase.instance;
 
@@ -91,12 +90,10 @@ class UsersRepository {
     }
 
     final data = Map<String, dynamic>.from(snapshot.value as Map);
-    final mapped = data.map((userId, userData) {
+    return data.map((userId, userData) {
       final username = (userData as Map)['username'] as String? ?? 'Unknown';
       return MapEntry(userId, username);
     });
-    log('Usernames fetched: $mapped');
-    return mapped;
   }
 
   Future<Map<String, int>> getCollectedLocationCounts() async {
@@ -109,18 +106,33 @@ class UsersRepository {
     }
 
     final data = Map<String, dynamic>.from(snapshot.value as Map);
-    final mapped = data.map((userId, locations) {
+    return data.map((userId, locations) {
       final list = (locations as List?) ?? [];
       return MapEntry(userId, list.length);
     });
-    log('Location counts fetched: $mapped');
-    return mapped;
+  }
+
+  Future<Map<String, String>> getAvatars() async {
+    log('Fetching avatars...');
+    final avatarsRef = _db.ref('avatars');
+    final snapshot = await avatarsRef.get();
+    if (!snapshot.exists) {
+      log('No avatars found in DB.');
+      return {};
+    }
+
+    final data = Map<String, dynamic>.from(snapshot.value as Map);
+    return data.map((avatarId, avatarData) {
+      final location = (avatarData as Map)['location'] as String? ?? '';
+      return MapEntry(avatarId, location);
+    });
   }
 
   Future<LevelsData> fetchLevelsData() async {
     log('Fetching data...');
     final usernames = await getUsernames();
     final stampsByUserID = await getCollectedLocationCounts();
+    final avatars = await getAvatars();
 
     // Build the full users list
     final users = stampsByUserID.entries.map((entry) {
@@ -128,28 +140,39 @@ class UsersRepository {
       final stampCount = entry.value;
       final username = usernames[userId] ?? 'Unknown User';
 
+      // Fetch avatar from 'users' table
+      final userAvatarId =
+          _db.ref('users/$userId/profile/avatar').get().then((snapshot) {
+        return snapshot.value as String? ?? '';
+      });
+
       return PersonsItem(
         personsName: username,
         stampsNumber: stampCount,
-        profileIcon: 'assets/avatars/kasko.png',
+        profileIcon: avatars[userAvatarId] ?? 'assets/avatars/kasko.png',
       );
     }).toList();
 
     users.sort((a, b) => b.stampsNumber.compareTo(a.stampsNumber));
     log('Final sorted user list: $users');
 
-    // Now update levels based on these users
+    // Update levels based on users
     final updatedLevels = levels.map((lvl) {
-      // Count how many users fall into this level
-      final count = users.where((user) {
+      final levelUsers = users.where((user) {
         return user.stampsNumber >= lvl.min && user.stampsNumber <= lvl.max;
-      }).length;
+      }).toList();
 
-      // If count > 0, isOpened = true else false
+      final topIcons = levelUsers
+          .take(3)
+          .map((user) => user.profileIcon)
+          .toList(); // Top 3 profile icons
+
+      final isOpenedVar = users.isNotEmpty && users[0].stampsNumber >= lvl.min;
+
       return lvl.copyWith(
-        amountOfPeople: count,
-        isOpened: count > 0,
-        profileIcons: null, // leave empty as requested
+        amountOfPeople: levelUsers.length,
+        isOpened: isOpenedVar,
+        profileIcons: topIcons,
       );
     }).toList();
 
