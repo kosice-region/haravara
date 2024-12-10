@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/pages/leaderBoard/view/people_screen.dart';
+
+// Import the file where LevelsData, Level, PersonsItem, usersNotifierProvider are defined
+import '../leaderBoardLevels.dart';
 
 class LevelsItems {
   LevelsItems({
@@ -24,170 +28,23 @@ class LevelsItems {
   int amountOfPeople;
 }
 
-class LeaderBoardLevelsScreen extends StatefulWidget {
+class LeaderBoardLevelsScreen extends ConsumerWidget {
   const LeaderBoardLevelsScreen({Key? key}) : super(key: key);
 
   @override
-  _LeaderBoardLevelsScreenState createState() =>
-      _LeaderBoardLevelsScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final imageAssets = [
+      'assets/backgrounds/background.jpg',
+      'assets/avatars/kasko.png',
+    ];
 
-class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
-  final List<String> imageAssets = [
-    'assets/backgrounds/background.jpg',
-    'assets/avatars/kasko.png',
-  ];
+    for (var image in imageAssets) {
+      precacheImage(AssetImage(image), context);
+    }
 
-  final List<LevelsItems> _levelsItems = [
-    LevelsItems(
-      levelName: 'Legendárny', // Najvyššia úroveň
-      stampsNumber: '60',
-      isOpened: false,
-      levelColor: 0xFF4A148C, // Fialová
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 15,
-    ),
-    LevelsItems(
-      levelName: 'Majster', // Vyššia úroveň
-      stampsNumber: '55',
-      isOpened: true,
-      levelColor: 0xFF8E24AA, // Fialová
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 20,
-    ),
-    LevelsItems(
-      levelName: 'Šampión', // Top hráči
-      stampsNumber: '50',
-      isOpened: true,
-      levelColor: 0xFFD81B60, // Ružová
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 30,
-    ),
-    LevelsItems(
-      levelName: 'Expert', // Skúsení hráči
-      stampsNumber: '45',
-      isOpened: true,
-      levelColor: 0xFFE65100, // Oranžová
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 35,
-    ),
-    LevelsItems(
-      levelName: 'Pokročilý', // Vyspelí hráči
-      stampsNumber: '40',
-      isOpened: true,
-      levelColor: 0xFFFF6F00, // Oranžová
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 40,
-    ),
-    LevelsItems(
-      levelName: 'Zdatný', // Dobrí hráči
-      stampsNumber: '35',
-      isOpened: true,
-      levelColor: 0xFFF57C00, // Tmavo oranžová
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 45,
-    ),
-    LevelsItems(
-      levelName: 'Skúsený', // Skúsení hráči
-      stampsNumber: '30',
-      isOpened: true,
-      levelColor: 0xFFFFB300, // Žltá
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 50,
-    ),
-    LevelsItems(
-      levelName: 'Taktik', // Šikovní hráči
-      stampsNumber: '25',
-      isOpened: true,
-      levelColor: 0xFFFFD600, // Jasná žltá
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 55,
-    ),
-    LevelsItems(
-      levelName: 'Začiatočník', // Začiatočníci
-      stampsNumber: '20',
-      isOpened: true,
-      levelColor: 0xFF76FF03, // Limetová zelená
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 60,
-    ),
-    LevelsItems(
-      levelName: 'Nováčik', // Nováčikovia
-      stampsNumber: '15',
-      isOpened: true,
-      levelColor: 0xFF00E676, // Zelená
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 70,
-    ),
-    LevelsItems(
-      levelName: 'Začiatok', // Začiatok hry
-      stampsNumber: '10',
-      isOpened: true,
-      levelColor: 0xFF1DE9B6, // Tehlová
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 80,
-    ),
-    LevelsItems(
-      levelName: 'Rookie', // Počiatočná úroveň
-      stampsNumber: '5',
-      isOpened: true,
-      levelColor: 0xFF00B0FF, // Modrá
-      profileIcons: [
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-        'assets/avatars/kasko.png',
-      ],
-      amountOfPeople: 90,
-    ),
-  ];
+    // Watch the levels data from the provider
+    final levelsDataAsync = ref.watch(usersNotifierProvider);
 
-  @override
-  Widget build(BuildContext context) {
-    imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     return Scaffold(
       endDrawer: HeaderMenu(),
       body: Stack(
@@ -198,8 +55,7 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
               image: DecorationImage(
                 image: AssetImage('assets/backgrounds/background.jpg'),
                 fit: BoxFit.cover,
-                alignment: Alignment
-                    .centerRight, // Focuses on the right part of the image
+                alignment: Alignment.centerRight,
               ),
             ),
           ),
@@ -226,13 +82,47 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
                   ),
                 ),
                 10.verticalSpace,
-                Padding(
-                  padding:
-                      EdgeInsets.only(left: 16.0, right: 16.0, bottom: 20.h),
-                  child: Column(
-                    children: _levelsItems
-                        .map((item) => _buildLevelsItems(item))
-                        .toList(),
+                // Build UI based on LevelsData state
+                levelsDataAsync.when(
+                  data: (levelsData) {
+                    // Convert the Level objects to LevelsItems objects
+                    // stampsNumber was originally the minimum stamp count as a string
+                    // You can decide how to show stampsNumber. Let's show the minimum stamps required
+                    // or the range min-max. Here we'll just show the min for simplicity.
+                    final levelsItems = levelsData.levels.map((lvl) {
+                      return LevelsItems(
+                        levelName: lvl.name,
+                        stampsNumber: lvl.min.toString(),
+                        isOpened: lvl.isOpened ?? false,
+                        levelColor: lvl.levelColor,
+                        profileIcons: lvl.profileIcons ?? [],
+                        amountOfPeople: lvl.amountOfPeople ?? 0,
+                      );
+                    }).toList();
+
+                    return Padding(
+                      padding: EdgeInsets.only(
+                          left: 16.0, right: 16.0, bottom: 20.h),
+                      child: Column(
+                        children: levelsItems
+                            .map((item) =>
+                                _buildLevelsItems(context, levelsItems, item))
+                            .toList(),
+                      ),
+                    );
+                  },
+                  loading: () => Padding(
+                    padding: EdgeInsets.only(top: 20.h),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (error, stackTrace) => Padding(
+                    padding: EdgeInsets.only(top: 20.h),
+                    child: Center(
+                      child: Text(
+                        'Error: $error',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(height: 40.h), // Space for footer
@@ -251,48 +141,46 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
     );
   }
 
-  Widget _buildLevelsItems(LevelsItems item) {
+  Widget _buildLevelsItems(
+      BuildContext context, List<LevelsItems> items, LevelsItems item) {
     return GestureDetector(
       onTap: () {
-        int chosenLevelIndex = _levelsItems.indexOf(item) + 1;
+        int chosenLevelIndex = items.indexOf(item) + 1;
         // Navigate to the next page
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => LeaderBoardScreen(
-                chosenLevel:
-                    chosenLevelIndex), // Replace with your target screen
+            builder: (context) =>
+                LeaderBoardScreen(chosenLevel: chosenLevelIndex),
           ),
         );
       },
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // Line connecting to the next circle
+          // Line connecting to the next circle (optional, adjust as needed)
           Positioned(
-            top: 0.2.sw, // Start from the middle of the current circle
-            left: 0.80.sw, // Align with the center of the circle
+            top: 0.2.sw,
+            left: 0.80.sw,
             child: Container(
-              width: 2.w, // Width of the line
-              height: 200.h, // Length of the line
-              color: const Color.fromARGB(255, 255, 255, 255), // Line color
+              width: 2.w,
+              height: 200.h,
+              color: const Color.fromARGB(255, 255, 255, 255),
             ),
           ),
           // Main row for the item
           Container(
             margin: EdgeInsets.only(bottom: 15.0),
-            padding:
-                EdgeInsets.symmetric(horizontal: 8.0), // Outer wrapper padding
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align blocks
-              crossAxisAlignment:
-                  CrossAxisAlignment.center, // Center vertically
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Left block
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
                   height: 67.h,
-                  width: 0.6.sw, // Adjust width as needed
+                  width: 0.6.sw,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -341,32 +229,37 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: item.profileIcons
-                                .map(
-                                  (item) => Container(
-                                    margin: EdgeInsets.only(right: 1),
-                                    width: 28.w,
-                                    height: 28.w,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(item),
-                                        fit: BoxFit.cover,
-                                        alignment: Alignment
-                                            .centerRight, // Focuses on the right part of the image
-                                      ),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                      border: Border.all(color: Colors.black),
-                                    ),
+                            children: item.profileIcons.map((icon) {
+                              return Container(
+                                margin: EdgeInsets.only(right: 1),
+                                width: 28.w,
+                                height: 28.w,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(icon),
+                                    fit: BoxFit.cover,
+                                    alignment: Alignment.centerRight,
                                   ),
-                                )
-                                .toList(),
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  border: Border.all(color: Colors.black),
+                                ),
+                              );
+                            }).toList(),
                           ),
                           Text(
-                            '+' + (item.amountOfPeople - 3).toString(),
+                            item.amountOfPeople == 0
+                                ? 'Nikto tu nie je'
+                                : '+' +
+                                    (item.amountOfPeople -
+                                            item.profileIcons.length)
+                                        .toString(),
                             textAlign: TextAlign.right,
                             style: GoogleFonts.titanOne(
-                              fontSize: 20.sp,
-                              color: const Color.fromARGB(255, 255, 255, 255),
+                              fontSize:
+                                  item.amountOfPeople == 0 ? 16.sp : 20.sp,
+                              color: item.amountOfPeople == 0
+                                  ? const Color.fromARGB(255, 226, 152, 255)
+                                  : const Color.fromARGB(255, 255, 255, 255),
                               fontWeight: FontWeight.w500,
                               shadows: [
                                 Shadow(
@@ -387,7 +280,7 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
                   width: 0.2.sw,
-                  height: 0.2.sw, // Adjust width as needed
+                  height: 0.2.sw,
                   decoration: BoxDecoration(
                     color: item.isOpened
                         ? Color(item.levelColor)
@@ -395,7 +288,6 @@ class _LeaderBoardLevelsScreenState extends State<LeaderBoardLevelsScreen> {
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: Center(
-                    // Center the number text inside the circle
                     child: Text(
                       item.stampsNumber.toString(),
                       style: GoogleFonts.titanOne(

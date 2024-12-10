@@ -18,28 +18,63 @@ class PersonsItem {
   String toString() => '$personsName ($stampsNumber)';
 }
 
+class LevelsData {
+  LevelsData({required this.users, required this.levels});
+  final List<PersonsItem> users;
+  final List<Level> levels;
+}
+
 // Define a Level model
 class Level {
-  Level({required this.name, required this.min, required this.max});
+  Level({
+    required this.name,
+    required this.min,
+    required this.max,
+    required this.levelColor,
+    this.profileIcons,
+    this.isOpened,
+    this.amountOfPeople,
+  });
+
   final String name;
   final int min;
   final int max;
+  final int levelColor;
+  List<String>? profileIcons;
+  bool? isOpened;
+  int? amountOfPeople;
+
+  Level copyWith({
+    List<String>? profileIcons,
+    bool? isOpened,
+    int? amountOfPeople,
+  }) {
+    return Level(
+      name: name,
+      min: min,
+      max: max,
+      levelColor: levelColor,
+      profileIcons: profileIcons ?? this.profileIcons,
+      isOpened: isOpened ?? this.isOpened,
+      amountOfPeople: amountOfPeople ?? this.amountOfPeople,
+    );
+  }
 }
 
-// 12 predefined levels
+// 12 predefined levels with colors
 final List<Level> levels = [
-  Level(name: 'Legendárny', min: 60, max: 1000),
-  Level(name: 'Majster', min: 55, max: 59),
-  Level(name: 'Šampión', min: 50, max: 54),
-  Level(name: 'Expert', min: 45, max: 49),
-  Level(name: 'Pokročilý', min: 40, max: 44),
-  Level(name: 'Zdatný', min: 35, max: 39),
-  Level(name: 'Skúsený', min: 30, max: 34),
-  Level(name: 'Taktik', min: 25, max: 29),
-  Level(name: 'Začiatočník', min: 20, max: 24),
-  Level(name: 'Nováčik', min: 15, max: 19),
-  Level(name: 'Začiatok', min: 10, max: 14),
-  Level(name: 'Rookie', min: 5, max: 9),
+  Level(name: 'Legendárny', min: 60, max: 1000, levelColor: 0xFF4A148C),
+  Level(name: 'Majster', min: 55, max: 59, levelColor: 0xFF8E24AA),
+  Level(name: 'Šampión', min: 50, max: 54, levelColor: 0xFFD81B60),
+  Level(name: 'Expert', min: 45, max: 49, levelColor: 0xFFE65100),
+  Level(name: 'Pokročilý', min: 40, max: 44, levelColor: 0xFFFF6F00),
+  Level(name: 'Zdatný', min: 35, max: 39, levelColor: 0xFFF57C00),
+  Level(name: 'Skúsený', min: 30, max: 34, levelColor: 0xFFFFB300),
+  Level(name: 'Taktik', min: 25, max: 29, levelColor: 0xFFFFD600),
+  Level(name: 'Začiatočník', min: 20, max: 24, levelColor: 0xFF76FF03),
+  Level(name: 'Nováčik', min: 15, max: 19, levelColor: 0xFF00E676),
+  Level(name: 'Začiatok', min: 10, max: 14, levelColor: 0xFF1DE9B6),
+  Level(name: 'Rookie', min: 5, max: 9, levelColor: 0xFF00B0FF),
 ];
 
 // Repository for fetching data from Firebase
@@ -82,11 +117,12 @@ class UsersRepository {
     return mapped;
   }
 
-  Future<List<PersonsItem>> fetchFullUserList() async {
-    log('Fetching full user list...');
+  Future<LevelsData> fetchLevelsData() async {
+    log('Fetching data...');
     final usernames = await getUsernames();
     final stampsByUserID = await getCollectedLocationCounts();
 
+    // Build the full users list
     final users = stampsByUserID.entries.map((entry) {
       final userId = entry.key;
       final stampCount = entry.value;
@@ -101,24 +137,40 @@ class UsersRepository {
 
     users.sort((a, b) => b.stampsNumber.compareTo(a.stampsNumber));
     log('Final sorted user list: $users');
-    return users;
+
+    // Now update levels based on these users
+    final updatedLevels = levels.map((lvl) {
+      // Count how many users fall into this level
+      final count = users.where((user) {
+        return user.stampsNumber >= lvl.min && user.stampsNumber <= lvl.max;
+      }).length;
+
+      // If count > 0, isOpened = true else false
+      return lvl.copyWith(
+        amountOfPeople: count,
+        isOpened: count > 0,
+        profileIcons: null, // leave empty as requested
+      );
+    }).toList();
+
+    return LevelsData(users: users, levels: updatedLevels);
   }
 }
 
-// A StateNotifier that holds and manages the state of the user list
-class UsersNotifier extends StateNotifier<AsyncValue<List<PersonsItem>>> {
+// A StateNotifier that holds and manages the state of the LevelsData (users + updated levels)
+class UsersNotifier extends StateNotifier<AsyncValue<LevelsData>> {
   UsersNotifier(this._repo) : super(const AsyncValue.loading()) {
-    _loadUsers();
+    _loadData();
   }
 
   final UsersRepository _repo;
 
-  Future<void> _loadUsers() async {
-    log('UsersNotifier: _loadUsers called');
+  Future<void> _loadData() async {
+    log('UsersNotifier: _loadData called');
     try {
-      final users = await _repo.fetchFullUserList();
-      log('UsersNotifier: Data loaded successfully, got ${users.length} users.');
-      state = AsyncValue.data(users);
+      final data = await _repo.fetchLevelsData();
+      log('UsersNotifier: Data loaded successfully, got ${data.users.length} users.');
+      state = AsyncValue.data(data);
     } catch (e, st) {
       log('UsersNotifier: Error loading data: $e');
       state = AsyncValue.error(e, st);
@@ -128,26 +180,7 @@ class UsersNotifier extends StateNotifier<AsyncValue<List<PersonsItem>>> {
   Future<void> refresh() async {
     log('UsersNotifier: refresh called');
     state = const AsyncValue.loading();
-    await _loadUsers();
-  }
-
-  // Filter users by a given level index (1 to 12)
-  List<PersonsItem> getUsersForLevel(int levelIndex) {
-    if (levelIndex < 1 || levelIndex > levels.length) {
-      throw ArgumentError(
-          'Invalid level index: $levelIndex. Must be between 1 and ${levels.length}.');
-    }
-
-    final currentState = state.asData?.value;
-    if (currentState == null) {
-      // If data isn't loaded yet, return empty
-      return [];
-    }
-
-    final level = levels[levelIndex - 1];
-    return currentState.where((user) {
-      return user.stampsNumber >= level.min && user.stampsNumber <= level.max;
-    }).toList();
+    await _loadData();
   }
 }
 
@@ -159,7 +192,7 @@ final usersRepositoryProvider = Provider<UsersRepository>((ref) {
 
 // Provide the UsersNotifier instance and let Riverpod manage its lifecycle
 final usersNotifierProvider =
-    StateNotifierProvider<UsersNotifier, AsyncValue<List<PersonsItem>>>((ref) {
+    StateNotifierProvider<UsersNotifier, AsyncValue<LevelsData>>((ref) {
   log('usersNotifierProvider initialized');
   final repo = ref.watch(usersRepositoryProvider);
   return UsersNotifier(repo);
