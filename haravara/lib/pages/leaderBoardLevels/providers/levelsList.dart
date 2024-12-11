@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:haravara/core/services/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Data model representing a user

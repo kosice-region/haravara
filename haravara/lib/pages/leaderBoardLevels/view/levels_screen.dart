@@ -178,7 +178,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
               children: [
                 // Left block
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: EdgeInsets.fromLTRB(16, 5, 16, 5),
                   width: 0.6.sw,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
