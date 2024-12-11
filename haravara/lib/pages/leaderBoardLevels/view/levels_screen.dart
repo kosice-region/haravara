@@ -70,7 +70,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                 const Header(),
                 5.verticalSpace,
                 Text(
-                  'Leader board',
+                  'REBRÍČEK',
                   style: GoogleFonts.titanOne(
                     fontSize: 30.sp,
                     color: const Color.fromARGB(255, 255, 255, 255),
@@ -181,7 +181,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
               children: [
                 // Left block
                 Container(
-                  padding: EdgeInsets.fromLTRB(16, 5, 16, 5),
+                  padding: EdgeInsets.fromLTRB(16, 5, 16, 10),
                   width: 0.6.sw,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -211,7 +211,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                       item.levelName,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.titanOne(
-                        fontSize: 15.sp,
+                        fontSize: 17.sp,
                         color: Colors.white,
                         shadows: [
                           Shadow(
@@ -265,7 +265,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                           ),
                           Text(
                             item.amountOfPeople == 0
-                                ? 'Nikto tu nie je'
+                                ? 'Nikto tu ešte nie je'
                                 : ((item.amountOfPeople -
                                                 item.profileIcons.length) ==
                                             0
@@ -281,7 +281,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                             textAlign: TextAlign.right,
                             style: GoogleFonts.titanOne(
                               fontSize:
-                                  item.amountOfPeople == 0 ? 16.sp : 20.sp,
+                                  item.amountOfPeople == 0 ? 12.sp : 20.sp,
                               color: item.amountOfPeople == 0
                                   ? const Color.fromARGB(255, 226, 152, 255)
                                   : const Color.fromARGB(255, 255, 255, 255),

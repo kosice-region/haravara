@@ -28,18 +28,18 @@ class Level {
 
 // 12 predefined levels
 final List<Level> levels = [
-  Level(name: 'Legendárny', min: 60, max: 1000),
-  Level(name: 'Majster', min: 55, max: 59),
-  Level(name: 'Šampión', min: 50, max: 54),
-  Level(name: 'Expert', min: 45, max: 49),
-  Level(name: 'Pokročilý', min: 40, max: 44),
-  Level(name: 'Zdatný', min: 35, max: 39),
-  Level(name: 'Skúsený', min: 30, max: 34),
-  Level(name: 'Taktik', min: 25, max: 29),
-  Level(name: 'Začiatočník', min: 20, max: 24),
-  Level(name: 'Nováčik', min: 15, max: 19),
-  Level(name: 'Začiatok', min: 10, max: 14),
-  Level(name: 'Rookie', min: 5, max: 9),
+  Level(name: 'Dúhový jednorožec', min: 60, max: 1000),
+  Level(name: 'Pyšný páv', min: 55, max: 59),
+  Level(name: 'Tajomný panter', min: 50, max: 54),
+  Level(name: 'Šikovná veverička', min: 45, max: 49),
+  Level(name: 'Splašená čivava', min: 40, max: 44),
+  Level(name: 'Zvedavá surikata', min: 35, max: 39),
+  Level(name: 'Vyhúkaná sova', min: 30, max: 34),
+  Level(name: 'Vytrvalý bobor', min: 25, max: 29),
+  Level(name: 'Popletená chobotnička', min: 20, max: 24),
+  Level(name: 'Turbo leňochod', min: 15, max: 19),
+  Level(name: 'Vytrvalý slimáčik', min: 10, max: 14),
+  Level(name: 'Ospalý pavúčik', min: 5, max: 9),
 ];
 
 // Repository for fetching data from Firebase

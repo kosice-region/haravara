@@ -42,6 +42,7 @@ class LeaderBoardScreen extends ConsumerWidget {
                 // Display the chosen level name from the levels list
                 Text(
                   levels[chosenLevel - 1].name,
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.titanOne(
                     fontSize: 30.sp,
                     color: const Color.fromARGB(255, 255, 255, 255),
