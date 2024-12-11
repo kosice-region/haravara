@@ -63,19 +63,23 @@ class Level {
 }
 
 final List<Level> levels = [
-  Level(name: 'Dúhový jednorožec', min: 60, max: 1000, levelColor: 0xFF4A148C),
-  Level(name: 'Pyšný \npáv', min: 55, max: 59, levelColor: 0xFF8E24AA),
-  Level(name: 'Tajomný panter', min: 50, max: 54, levelColor: 0xFFD81B60),
-  Level(name: 'Šikovná veverička', min: 45, max: 49, levelColor: 0xFFE65100),
-  Level(name: 'Splašená čivava', min: 40, max: 44, levelColor: 0xFFFF6F00),
-  Level(name: 'Zvedavá surikata', min: 35, max: 39, levelColor: 0xFFF57C00),
-  Level(name: 'Vyhúkaná sova', min: 30, max: 34, levelColor: 0xFFFFB300),
-  Level(name: 'Vytrvalý bobor', min: 25, max: 29, levelColor: 0xFFFFD600),
   Level(
-      name: 'Popletená chobotnička', min: 20, max: 24, levelColor: 0xFF76FF03),
-  Level(name: 'Turbo leňochod', min: 15, max: 19, levelColor: 0xFF00E676),
-  Level(name: 'Vytrvalý slimáčik', min: 10, max: 14, levelColor: 0xFF1DE9B6),
-  Level(name: 'Ospalý pavúčik', min: 5, max: 9, levelColor: 0xFF00B0FF),
+      name: 'Dúhový \njednorožec', min: 60, max: 1000, levelColor: 0xFF4A148C),
+  Level(name: 'Pyšný \npáv', min: 55, max: 59, levelColor: 0xFF8E24AA),
+  Level(name: 'Tajomný \npanter', min: 50, max: 54, levelColor: 0xFFD81B60),
+  Level(name: 'Šikovná \nveverička', min: 45, max: 49, levelColor: 0xFFE65100),
+  Level(name: 'Splašená \nčivava', min: 40, max: 44, levelColor: 0xFFFF6F00),
+  Level(name: 'Zvedavá \nsurikata', min: 35, max: 39, levelColor: 0xFFF57C00),
+  Level(name: 'Vyhúkaná \nsova', min: 30, max: 34, levelColor: 0xFFFFB300),
+  Level(name: 'Vytrvalý \nbobor', min: 25, max: 29, levelColor: 0xFFFFD600),
+  Level(
+      name: 'Popletená \nchobotnička',
+      min: 20,
+      max: 24,
+      levelColor: 0xFF76FF03),
+  Level(name: 'Turbo \nleňochod', min: 15, max: 19, levelColor: 0xFF00E676),
+  Level(name: 'Vytrvalý \nslimáčik', min: 10, max: 14, levelColor: 0xFF1DE9B6),
+  Level(name: 'Ospalý \npavúčik', min: 5, max: 9, levelColor: 0xFF00B0FF),
 ];
 
 class UsersRepository {
