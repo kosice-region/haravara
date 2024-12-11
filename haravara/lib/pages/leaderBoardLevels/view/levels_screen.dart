@@ -179,7 +179,6 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                 // Left block
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  height: 67.h,
                   width: 0.6.sw,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -207,8 +206,9 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                   child: Column(children: [
                     Text(
                       item.levelName,
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.titanOne(
-                        fontSize: 18.sp,
+                        fontSize: 15.sp,
                         color: Colors.white,
                         shadows: [
                           Shadow(

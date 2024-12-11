@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:haravara/core/services/database_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Data model representing a user
 class PersonsItem {
@@ -61,20 +62,20 @@ class Level {
   }
 }
 
-// Predefined levels
 final List<Level> levels = [
-  Level(name: 'Legendárny', min: 60, max: 1000, levelColor: 0xFF4A148C),
-  Level(name: 'Majster', min: 55, max: 59, levelColor: 0xFF8E24AA),
-  Level(name: 'Šampión', min: 50, max: 54, levelColor: 0xFFD81B60),
-  Level(name: 'Expert', min: 45, max: 49, levelColor: 0xFFE65100),
-  Level(name: 'Pokročilý', min: 40, max: 44, levelColor: 0xFFFF6F00),
-  Level(name: 'Zdatný', min: 35, max: 39, levelColor: 0xFFF57C00),
-  Level(name: 'Skúsený', min: 30, max: 34, levelColor: 0xFFFFB300),
-  Level(name: 'Taktik', min: 25, max: 29, levelColor: 0xFFFFD600),
-  Level(name: 'Začiatočník', min: 20, max: 24, levelColor: 0xFF76FF03),
-  Level(name: 'Nováčik', min: 15, max: 19, levelColor: 0xFF00E676),
-  Level(name: 'Začiatok', min: 10, max: 14, levelColor: 0xFF1DE9B6),
-  Level(name: 'Rookie', min: 5, max: 9, levelColor: 0xFF00B0FF),
+  Level(name: 'Dúhový jednorožec', min: 60, max: 1000, levelColor: 0xFF4A148C),
+  Level(name: 'Pyšný \npáv', min: 55, max: 59, levelColor: 0xFF8E24AA),
+  Level(name: 'Tajomný panter', min: 50, max: 54, levelColor: 0xFFD81B60),
+  Level(name: 'Šikovná veverička', min: 45, max: 49, levelColor: 0xFFE65100),
+  Level(name: 'Splašená čivava', min: 40, max: 44, levelColor: 0xFFFF6F00),
+  Level(name: 'Zvedavá surikata', min: 35, max: 39, levelColor: 0xFFF57C00),
+  Level(name: 'Vyhúkaná sova', min: 30, max: 34, levelColor: 0xFFFFB300),
+  Level(name: 'Vytrvalý bobor', min: 25, max: 29, levelColor: 0xFFFFD600),
+  Level(
+      name: 'Popletená chobotnička', min: 20, max: 24, levelColor: 0xFF76FF03),
+  Level(name: 'Turbo leňochod', min: 15, max: 19, levelColor: 0xFF00E676),
+  Level(name: 'Vytrvalý slimáčik', min: 10, max: 14, levelColor: 0xFF1DE9B6),
+  Level(name: 'Ospalý pavúčik', min: 5, max: 9, levelColor: 0xFF00B0FF),
 ];
 
 class UsersRepository {
@@ -134,6 +135,17 @@ class UsersRepository {
     final stampsByUserID = await getCollectedLocationCounts();
     final avatars = await getAvatars();
 
+    // Get current user's ID from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    final currentUserId = prefs.getString('id');
+    if (currentUserId == null) {
+      throw Exception('Current user ID not found in SharedPreferences.');
+    }
+
+    // Get current user's collected location count
+    final currentUserStamps = stampsByUserID[currentUserId] ?? 0;
+    log('Current user stamps: $currentUserStamps');
+
     // Build the full users list
     final users = stampsByUserID.entries.map((entry) {
       final userId = entry.key;
@@ -167,7 +179,8 @@ class UsersRepository {
           .map((user) => user.profileIcon)
           .toList(); // Top 3 profile icons
 
-      final isOpenedVar = users.isNotEmpty && users[0].stampsNumber >= lvl.min;
+      // Check if the current user has enough stamps to open this level
+      final isOpenedVar = currentUserStamps >= lvl.min;
 
       return lvl.copyWith(
         amountOfPeople: levelUsers.length,
