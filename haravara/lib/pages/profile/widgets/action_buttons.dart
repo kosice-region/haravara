@@ -64,10 +64,20 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
       Container(
         width: 91.w,
         height: 30.h,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: Offset(4, 4),
+            ),
+          ],
+          border: Border.all(color: Colors.white, width: 4),
+          borderRadius: BorderRadius.circular(50.r),
+        ),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: const Color.fromARGB(255, 255, 111, 122),
+            backgroundColor: const Color.fromARGB(255, 239, 72, 77),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(15.r)),
             ),
@@ -78,8 +88,8 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           child: Text(
             'ODHLÁSIŤ',
             style: GoogleFonts.titanOne(
-              color: Colors.black,
-              fontSize: 11.sp,
+              color: const Color.fromARGB(255, 255, 255, 255),
+              fontSize: 10.sp,
             ),
           ),
         ),
@@ -87,10 +97,20 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
       Container(
         width: 91.w,
         height: 30.h,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: Offset(4, 4),
+            ),
+          ],
+          border: Border.all(color: Colors.white, width: 4),
+          borderRadius: BorderRadius.circular(50.r),
+        ),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: const Color.fromARGB(229, 158, 230, 165),
+            backgroundColor: const Color.fromARGB(255, 42, 177, 255),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(15.r)),
             ),
@@ -98,7 +118,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           onPressed: () => _showUsernameDialog(context),
           child: Text(
             'UPRAVIŤ',
-            style: GoogleFonts.titanOne(color: Colors.black, fontSize: 12.sp),
+            style: GoogleFonts.titanOne(color: const Color.fromARGB(255, 255, 255, 255), fontSize: 10.sp),
           ),
         ),
       ),
@@ -110,6 +130,9 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.r),
+            ),
             title: Text(
               'Upraviť udaje',
               style: GoogleFonts.titanOne(),
@@ -188,6 +211,9 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color.fromARGB(255, 188, 95, 190),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.r),
+                  ),
                 ),
               ),
             ],

@@ -20,8 +20,20 @@ class LocalButton extends StatelessWidget {
       width: 90.w,
       height: 27.h,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 7, 22, 121),
-        borderRadius: BorderRadius.all(Radius.circular(15.r)),
+        color: const Color.fromARGB(255, 7, 22, 121), 
+        borderRadius: BorderRadius.all(Radius.circular(15.r)), 
+        border: Border.all(
+          color: Colors.white, 
+          width: 2, 
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            spreadRadius: 1, 
+            blurRadius: 5, 
+            offset: Offset(2, 2),
+          ),
+        ],
       ),
       child: GestureDetector(
         onTap: onPressed,

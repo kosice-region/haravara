@@ -337,14 +337,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.6"
-  device_imei:
-    dependency: "direct main"
-    description:
-      name: device_imei
-      sha256: "44a1ed0027a41a232c6cdc9995d23603432bfbcc5b78bea130bbfb83e376bd19"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.4+2"
   device_info_plus:
     dependency: "direct main"
     description:
@@ -549,39 +541,31 @@ packages:
     dependency: transitive
     description:
       name: fl_location
-      sha256: "4d19ccfb73e7d15dd9199c4f0e24dc1b058891eb43427507886871889427c62b"
+      sha256: "7df9fd8cb5fce173457b39035d1cd5c7f9c351e428d730a784b040c5585c072d"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "4.4.2"
   fl_location_platform_interface:
     dependency: transitive
     description:
       name: fl_location_platform_interface
-      sha256: ffb84044f1791ec719477bf43a26b6d347af697dacf624a25f5c28721d3a0ce1
+      sha256: bd730e65248dec7d4fb37d18ea36c6ffe54f8dda6f9d0308c4ddc0d24e8f8c3f
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "5.1.0"
   fl_location_web:
     dependency: transitive
     description:
       name: fl_location_web
-      sha256: db4cecc6e120dff002339e350be6a9e59e311925802bfd8c648c8789ed2c1003
+      sha256: b5c0472fcaaa66e482311cd3f19751f41aeeb8cfcfd854afa1348ba20c1025ee
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "4.2.0"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_activity_recognition:
-    dependency: transitive
-    description:
-      name: flutter_activity_recognition
-      sha256: "8480bdae146a3f0a1f205ecdc223dfc22e7a0b9a4ac25a5da0469d6a5af46a27"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   flutter_background_service:
     dependency: "direct main"
     description:
@@ -626,18 +610,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_compass
-      sha256: be642484f9f6975c1c6edff568281b001f2f1e604de27ecea18d97eebbdef22f
+      sha256: "1b4d7e6c95a675ec8482b5c9c9ccf1ebf0ced3dbec59dce28ad609da953de850"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.0"
-  flutter_foreground_task:
-    dependency: transitive
-    description:
-      name: flutter_foreground_task
-      sha256: d40a1ddd5f275450d2e32055e7f884796c028a02ac26c751c20916576f79e132
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.2.0"
+    version: "0.8.1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -720,14 +696,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
-  geofence_service:
+  geofencing_api:
     dependency: "direct main"
     description:
-      name: geofence_service
-      sha256: "44126fab9f072b08b7ff03774b570f34828b2d4ae5f500a4734337c5e9fc2d89"
+      name: geofencing_api
+      sha256: "223f0f4f4bc9a9964f02e67a21b07670d17d67a7e93b12e2fa0d3524f0128fa6"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.0"
+    version: "1.4.2"
   geolocator:
     dependency: "direct main"
     description:

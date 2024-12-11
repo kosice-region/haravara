@@ -3,10 +3,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/core/models/place.dart';
 import 'package:haravara/pages/auth/models/user.dart';
-import 'package:haravara/core/providers/preferences_provider.dart';
 import 'package:haravara/core/repositories/database_repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart' as syspaths;
@@ -112,7 +110,7 @@ class DatabaseService {
 
   Future<void> _downloadAvatarDataFromStorage(
       List<UserAvatar> avatars, String dirPath) async {
-    for (final avatar in avatars) {
+    List<Future<void>> downloadTasks = avatars.map((avatar) async {
       String fileToDownloadLocationImage = avatar.location!;
       try {
         final locationUrl = await firebase_storage.FirebaseStorage.instance
@@ -122,7 +120,9 @@ class DatabaseService {
       } catch (e) {
         print('Download error: $e');
       }
-    }
+    }).toList();
+
+    await Future.wait(downloadTasks);
   }
 
   Future<List<UserAvatar>> loadAvatars() async {
@@ -165,11 +165,14 @@ class DatabaseService {
     }
   }
 
-  Future<void> savePlacesLocally() async {
+  Future<void> savePlacesLocally(
+      {void Function(double progress)? onProgress}) async {
+    if (onProgress != null) onProgress(0.0);
     final List<Place> places = await databaseRepository.getAllPlaces();
     Directory appDocDir = await _getDirectory();
     String dirPath = appDocDir.path;
-    await _downloadLocationDataFromStorage(places, dirPath);
+    await _downloadLocationDataFromStorage(places, dirPath,
+        onProgress: onProgress);
     final db = await _getDatabase();
     for (final place in places) {
       await db.insert(
@@ -192,29 +195,82 @@ class DatabaseService {
         },
       );
     }
+    if (onProgress != null) onProgress(1.0);
   }
 
   Future<void> _downloadLocationDataFromStorage(
-      List<Place> places, String dirPath) async {
+      List<Place> places, String dirPath,
+      {void Function(double progress)? onProgress}) async {
     List<PlaceImageFromDB> images = places
         .where((place) => place.placeImages != null)
         .map((place) => place.placeImages!)
         .toList();
 
-    for (final image in images) {
-      String fileToDownloadLocationImage = image.location;
-      String fileToDownloadStampImage = image.stamp;
+    final stopwatch = Stopwatch();
+    stopwatch.start();
+
+    int totalImages = images.length * 2;
+    int imagesDownloaded = 0;
+
+    List<Future<void>> downloadTasks = images.map((image) {
+      return _downloadImage(image, dirPath, onImageDownloaded: () {
+        imagesDownloaded++;
+        if (onProgress != null) {
+          onProgress(imagesDownloaded / totalImages);
+        }
+      });
+    }).toList();
+
+    await Future.wait(downloadTasks);
+
+    stopwatch.stop();
+    log('Total download time: ${stopwatch.elapsedMilliseconds} ms');
+  }
+
+  Future<void> _downloadImage(PlaceImageFromDB image, String dirPath,
+      {void Function()? onImageDownloaded}) async {
+    String fileToDownloadLocationImage = image.location;
+    String fileToDownloadStampImage = image.stamp;
+    const int maxRetries = 10;
+    for (int attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         final locationUrl = await firebase_storage.FirebaseStorage.instance
             .ref(fileToDownloadLocationImage)
             .getDownloadURL();
+
         final stampUrl = await firebase_storage.FirebaseStorage.instance
             .ref(fileToDownloadStampImage)
             .getDownloadURL();
-        await Dio().download(locationUrl, '${dirPath}/${image.location}');
-        await Dio().download(stampUrl, '${dirPath}/${image.stamp}');
+
+        final locationStopwatch = Stopwatch()..start();
+        File locationFile = File('$dirPath/${image.location}');
+        await Dio().download(locationUrl, locationFile.path);
+        locationStopwatch.stop();
+        if (onImageDownloaded != null) onImageDownloaded();
+
+        final locationSize = locationFile.lengthSync() / (1024 * 1024);
+        log('Downloaded location image: ${image.location} | '
+            'Size: ${locationSize.toStringAsFixed(2)} MB | '
+            'Time: ${locationStopwatch.elapsedMilliseconds} ms');
+
+        final stampStopwatch = Stopwatch()..start();
+        File stampFile = File('$dirPath/${image.stamp}');
+        await Dio().download(stampUrl, stampFile.path);
+        stampStopwatch.stop();
+        if (onImageDownloaded != null) onImageDownloaded();
+
+        final stampSize = stampFile.lengthSync() / (1024 * 1024);
+        log('Downloaded stamp image: ${image.stamp} | '
+            'Size: ${stampSize.toStringAsFixed(2)} MB | '
+            'Time: ${stampStopwatch.elapsedMilliseconds} ms');
+        break;
       } catch (e) {
-        print('Download error: $e');
+        if (attempt == maxRetries) {
+          log('Download error for image: $fileToDownloadLocationImage or '
+              '$fileToDownloadStampImage | Error: $e');
+        } else {
+          await Future.delayed(Duration(seconds: 2 * attempt));
+        }
       }
     }
   }

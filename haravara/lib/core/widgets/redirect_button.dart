@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,21 +30,18 @@ class RedirectButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Get screen width and height using ScreenUtil
     double deviceWidth = MediaQuery.of(context).size.width;
 
-    // Adjust button width based on screen size
-    double buttonWidth = deviceWidth * 0.4; // 70% of screen width for large screens
+    double buttonWidth = deviceWidth * 0.4;
     if (deviceWidth < 600) {
-      buttonWidth = deviceWidth * 0.4; // 60% for smaller screens
+      buttonWidth = deviceWidth * 0.4;
     }
     if (deviceWidth < 400) {
-      buttonWidth = deviceWidth * 0.4; // 50% for very small screens
+      buttonWidth = deviceWidth * 0.4;
     }
 
-    // Adjust image size based on screen size
-    double imgWidth = imageWidth * 0.8; // 50% scale for image width
-    double imgHeight = imageHeight * 0.8; // 50% scale for image height
+    double imgWidth = imageWidth * 0.8;
+    double imgHeight = imageHeight * 0.8;
     if (deviceWidth < 600) {
       imgWidth = imageWidth * 0.8;
       imgHeight = imageHeight * 0.8;
@@ -62,14 +58,28 @@ class RedirectButton extends ConsumerWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                width: buttonWidth.w,  // Use responsive width
+              Container(
+                width: buttonWidth.w,
                 height: 39.h,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.4),
+                      blurRadius: 8,
+                      offset: Offset(4, 4),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.all(Radius.circular(20)).h,
+                ),
                 child: TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 91, 187, 75),
                     shape: RoundedRectangleBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(20)).h,
+                    ),
+                    side: BorderSide(
+                      color: Colors.white,
+                      width: 4.0,
                     ),
                   ),
                   onPressed: () {
@@ -116,7 +126,7 @@ class RedirectButton extends ConsumerWidget {
                         child: Text(
                           title,
                           style: GoogleFonts.titanOne(
-                            color: Colors.black,
+                            color: Colors.white, // Farba textu zmenená na bielu
                             fontSize: 11.sp,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -135,8 +145,8 @@ class RedirectButton extends ConsumerWidget {
           bottom: bottom.h,
           child: Image.asset(
             imagePath,
-            width: imgWidth.w,  // Use responsive image width
-            height: imgHeight.h,  // Use responsive image height
+            width: imgWidth.w,
+            height: imgHeight.h,
             fit: BoxFit.fill,
           ),
         ),

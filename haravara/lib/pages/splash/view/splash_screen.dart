@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io' show Platform;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:haravara/core/providers/initialization_provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -39,6 +41,8 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
+
+    double progress = ref.watch(initializationProgressProvider) * 100;
 
     return AnimatedBuilder(
       animation: _fadeAnimation,
@@ -75,6 +79,49 @@ class _SplashScreenState extends State<SplashScreen>
                       color: Colors.white,
                     ),
                   ),
+            SizedBox(height: 20.h),
+            Container(
+              width: 204.w,
+              height: 29.h,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(
+                  color: Colors.white,
+                  width: 3,
+                ),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Center(
+                child: Container(
+                  width: 200.w,
+                  height: 25.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(12.5.r),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12.5.r),
+                        child: LinearProgressIndicator(
+                          value: progress / 100,
+                          minHeight: 25.h,
+                          backgroundColor: Colors.transparent,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Color.fromARGB(255, 188, 95, 190).withOpacity(1)),
+                        ),
+                      ),
+                      Text(
+                        '${progress.toStringAsFixed(0)}%',
+                        style: GoogleFonts.titanOne(
+                            fontSize: 16.sp, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

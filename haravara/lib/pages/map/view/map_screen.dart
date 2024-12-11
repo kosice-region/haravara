@@ -72,24 +72,46 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   ),
                 ),
                 MapPreview(),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 86, 162, 73),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => PlacesListScreen()),
-                    );
-                  },
-                  child: Text(
-                    'ZOZNAM PEČIATOK',
-                    style: GoogleFonts.titanOne(
-                      fontSize: 14.sp,
-                      color: Color.fromARGB(255, 244, 232, 209),
-                    ),
-                  ),
-                ),
+                Container(
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(50), 
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.5),
+        spreadRadius: 2,
+        blurRadius: 8,
+        offset: Offset(4, 4), 
+      ),
+    ],
+  ),
+  child: ElevatedButton(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color.fromARGB(255, 86, 162, 73),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50),
+        side: const BorderSide( 
+          color: Color.fromARGB(255, 255, 255, 255),
+          width: 4,
+        ),
+      ),
+      minimumSize: Size(100.w, 30.h), 
+    ),
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PlacesListScreen()),
+      );
+    },
+    child: Text(
+      'ZOZNAM PEČIATOK',
+      style: GoogleFonts.titanOne(
+        fontSize: 14.sp,
+        color: const Color.fromARGB(255, 255, 255, 255),
+      ),
+    ),
+  ),
+),
+
               ],
             ),
           ),

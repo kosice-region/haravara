@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/core/models/place.dart';
 import 'package:haravara/core/models/setup_model.dart';
+import 'package:haravara/core/providers/initialization_provider.dart';
 import 'package:haravara/pages/auth/models/user.dart';
 import 'package:haravara/core/providers/preferences_provider.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
@@ -33,7 +34,11 @@ class Init {
   static _firstSetup(WidgetRef ref, SetupModel model) async {
     await _requestLocationPermission();
     await databaseService.saveAvatarsLocally();
-    await databaseService.savePlacesLocally();
+    await databaseService.savePlacesLocally(onProgress: (progress) {
+      ref
+          .read(initializationProgressProvider.notifier)
+          .updateProgress(progress);
+    });
     model.isFirstSetup = false;
     ref.read(setupNotifierProvider.notifier).updateSetup(
         model.isFirstSetup, model.isLoggedIn, model.versionOfDatabase);
