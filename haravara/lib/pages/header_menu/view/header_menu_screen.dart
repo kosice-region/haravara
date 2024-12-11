@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:haravara/pages/map_detail/map_detail.dart';
 import 'package:haravara/router/router.dart';
+import 'package:haravara/core/providers/preferences_provider.dart';
+import 'package:haravara/core/services/database_service.dart';
+import 'package:haravara/router/screen_router.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/core/widgets/redirect_button.dart';
 
@@ -30,33 +34,11 @@ class HeaderMenu extends ConsumerWidget {
             width: double.infinity,
             alignment: Alignment.center,
           ),
-          Positioned(
-            top: 30.h,
-            right: 30.w,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Container(
-                width: 36.w,
-                height: 36.h,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(50)).r,
-                  color: Colors.transparent,
-                ),
-                child: Image.asset(
-                  'assets/menu-icons/backbutton.png',
-                  width: 36.w,
-                  height: 36.h,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding:
-                EdgeInsets.only(top: 70.h, bottom: 50.h), // Adjusted padding
-            child: ListView(
-              children: [
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                70.verticalSpace,
                 RedirectButton(
                   title: 'PÁTRAČKA',
                   imagePath: 'assets/menu-icons/loop.png',
@@ -74,15 +56,6 @@ class HeaderMenu extends ConsumerWidget {
                   right: 166,
                   bottom: 8,
                   webRoute: 'https://www.haravara.sk/pribehy/',
-                ),
-                RedirectButton(
-                  title: 'LEADER BOARD',
-                  imagePath: 'assets/menu-icons/questions.png',
-                  imageWidth: 53,
-                  imageHeight: 53,
-                  right: 166,
-                  bottom: 0,
-                  screenToRoute: ScreenType.leaderBoardLevels,
                 ),
                 RedirectButton(
                   title: 'TIPY NA VÝLETY',
@@ -132,6 +105,28 @@ class HeaderMenu extends ConsumerWidget {
               ],
             ),
           ),
+          Positioned(
+            top: 30.h,
+            right: 30.w,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                width: 36.w,
+                height: 36.h,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(50)).r,
+                  color: Colors.transparent,
+                ),
+                child: Image.asset(
+                  'assets/menu-icons/backbutton.png',
+                  width: 36.w,
+                  height: 36.h,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       bottomSheet: Footer(
@@ -140,5 +135,14 @@ class HeaderMenu extends ConsumerWidget {
         showMenu: false,
       ),
     );
+  }
+
+  handleLogout(WidgetRef ref, context) async {
+    ref.read(loginNotifierProvider.notifier).logout();
+    ref.read(collectedPlacesProvider.notifier).deleteAllPlaces();
+    await DatabaseService().clearRichedPlaces();
+    await DatabaseService().clearUserAllAvatarsFromDatabase();
+    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+        context, ScreenRouter().getScreenWidget(ScreenType.auth));
   }
 }

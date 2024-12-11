@@ -69,22 +69,22 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
             child: Column(
               children: [
                 Header(),
-                40.verticalSpace, 
+                40.verticalSpace,
                 SizedBox(
                   width: double.infinity,
                   child: Column(
                     children: [
                       buildBox(),
-                      SizedBox(height: 10.h), 
+                      SizedBox(height: 10.h),
                       Column(
                         children: [
                           buildResponsiveButton(
                             label: 'REBRÍČEK',
                             color: const Color.fromARGB(255, 205, 105, 167),
-                            screen: ScreenType.prizes,
+                            screen: ScreenType.leaderBoardLevels,
                             ref: ref,
                           ),
-                          SizedBox(height: 10.h), 
+                          SizedBox(height: 10.h),
                           buildResponsiveButton(
                             label: 'PODMIENKY SÚŤAŽE',
                             color: const Color.fromARGB(255, 60, 200, 90),
@@ -104,7 +104,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     );
   }
 
-    Widget buildBox() {
+  Widget buildBox() {
     double deviceHeight = MediaQuery.of(context).size.height;
     double containerHeight = 160.h;
     double imageHeight = 140.h;
@@ -189,9 +189,8 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                 child: Text(
                   'IDEM PÁTRAŤ',
                   style: GoogleFonts.titanOne(
-                    fontSize: 9.sp, 
-                    color: const Color.fromARGB(255, 255, 255, 255)
-                  ),
+                      fontSize: 9.sp,
+                      color: const Color.fromARGB(255, 255, 255, 255)),
                 ),
               ),
             ),
@@ -200,7 +199,6 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
       ),
     );
   }
-
 
   Widget buildResponsiveButton({
     required String label,
