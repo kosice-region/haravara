@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -230,20 +233,34 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: item.profileIcons.map((icon) {
-                              return Container(
-                                margin: EdgeInsets.only(right: 1),
-                                width: 28.w,
-                                height: 28.w,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage(icon),
-                                    fit: BoxFit.cover,
-                                    alignment: Alignment.centerRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(50.0),
-                                  border: Border.all(color: Colors.black),
-                                ),
+                              log(icon);
+                              return ClipOval(
+                                child: File(icon).existsSync()
+                                    ? Image.file(
+                                        File(icon),
+                                        width: 28.w,
+                                        height: 28.w,
+                                        fit: BoxFit.fill,
+                                      )
+                                    : Image.asset(
+                                        'assets/avatars/kasko.png',
+                                        fit: BoxFit.fill,
+                                      ),
                               );
+                              // return Container(
+                              //   margin: EdgeInsets.only(right: 1),
+                              //   width: 28.w,
+                              //   height: 28.w,
+                              //   decoration: BoxDecoration(
+                              //     image: DecorationImage(
+                              //       image: AssetImage(icon),
+                              //       fit: BoxFit.cover,
+                              //       alignment: Alignment.centerRight,
+                              //     ),
+                              //     borderRadius: BorderRadius.circular(50.0),
+                              //     border: Border.all(color: Colors.black),
+                              //   ),
+                              // );
                             }).toList(),
                           ),
                           Text(

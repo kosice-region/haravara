@@ -150,23 +150,25 @@ class UsersRepository {
     log('Current user stamps: $currentUserStamps');
 
     // Build the full users list
-    final users = stampsByUserID.entries.map((entry) {
-      final userId = entry.key;
-      final stampCount = entry.value;
-      final username = usernames[userId] ?? 'Unknown User';
+    final users = await Future.wait(
+      stampsByUserID.entries.map((entry) async {
+        final userId = entry.key;
+        final stampCount = entry.value;
+        final username = usernames[userId] ?? 'Unknown User';
 
-      // Fetch avatar from 'users' table
-      final userAvatarId =
-          _db.ref('users/$userId/profile/avatar').get().then((snapshot) {
-        return snapshot.value as String? ?? '';
-      });
+        // Fetch avatar from 'users' table
+        final snapshot = await _db.ref('users/$userId/profile/avatar').get();
+        final userAvatarId = snapshot.value as String? ?? '';
 
-      return PersonsItem(
-        personsName: username,
-        stampsNumber: stampCount,
-        profileIcon: avatars[userAvatarId] ?? 'assets/avatars/kasko.png',
-      );
-    }).toList();
+        log("User ID: $userId, Avatar ID: $userAvatarId");
+
+        return PersonsItem(
+          personsName: username,
+          stampsNumber: stampCount,
+          profileIcon: avatars[userAvatarId] ?? 'assets/avatars/kasko.png',
+        );
+      }).toList(),
+    );
 
     users.sort((a, b) => b.stampsNumber.compareTo(a.stampsNumber));
     log('Final sorted user list: $users');
