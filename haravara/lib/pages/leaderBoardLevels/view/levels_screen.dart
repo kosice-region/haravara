@@ -316,7 +316,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                     child: Text(
                       item.stampsNumber.toString(),
                       style: GoogleFonts.titanOne(
-                        fontSize: 22.sp,
+                        fontSize: 20.sp,
                         color: Colors.white,
                       ),
                       textAlign: TextAlign.center,
