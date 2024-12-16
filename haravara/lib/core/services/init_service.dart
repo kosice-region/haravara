@@ -24,7 +24,7 @@ class Init {
     if (model.isFirstSetup) {
       log('first setup');
       await _firstSetup(ref, model);
-    } else if (!model.isFirstSetup) {
+    } else {
       log('isnt first');
       await _defaultSetup(ref);
     }
@@ -55,19 +55,37 @@ class Init {
     ref.read(loginNotifierProvider.notifier);
   }
 
-  static _requestLocationPermission() async {
-    await Permission.location.request();
-    var status = await Permission.locationAlways.status;
-    if (status.isDenied || status.isPermanentlyDenied) {
-      await Permission.locationAlways.request();
-    }
-    status = await Permission.locationAlways.status;
+  static Future<void> _requestLocationPermission() async {
+    var status = await Permission.location.status;
+
     if (status.isGranted) {
-      print("Location Always permission granted.");
+      var alwaysStatus = await Permission.locationAlways.status;
+      if (!alwaysStatus.isGranted) {
+        var newAlwaysStatus = await Permission.locationAlways.request();
+        if (newAlwaysStatus.isGranted) {
+          print("Location Always permission granted.");
+        } else {
+          print("User chose not to grant Location Always permission.");
+        }
+      } else {
+        print("Already have Location Always permission.");
+      }
+    } else if (status.isDenied) {
+      var newStatus = await Permission.location.request();
+      if (newStatus.isGranted) {
+        var alwaysStatus = await Permission.locationAlways.request();
+        if (alwaysStatus.isGranted) {
+          print("Location Always permission granted.");
+        } else {
+          print("User chose not to grant Location Always permission.");
+        }
+      } else {
+        print("Location When In Use permission denied.");
+      }
     } else if (status.isPermanentlyDenied) {
-      openAppSettings();
+      await openAppSettings();
     } else {
-      print("Location Always permission denied.");
+      print("Location permission is in a restricted/limited state.");
     }
   }
 }
