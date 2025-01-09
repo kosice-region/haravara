@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/core/widgets/header.dart'; // Adjust based on your project structure
 import 'package:haravara/core/widgets/footer.dart'; // Adjust based on your project structure
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart'; // Adjust path
+import 'package:haravara/pages/leaderBoardLevels/view/levels_screen.dart';
 import '../leaderBoard.dart'; // The file with providers, PersonsItem, and level definitions
 
 class LeaderBoardScreen extends ConsumerWidget {
@@ -29,6 +30,34 @@ class LeaderBoardScreen extends ConsumerWidget {
                 image: AssetImage('assets/backgrounds/background.jpg'),
                 fit: BoxFit.cover,
                 alignment: Alignment.centerRight,
+              ),
+            ),
+          ),
+          // Back button positioned at the top-right corner
+          Positioned(
+            top: 40.h,
+            right: 30.w,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LeaderBoardLevelsScreen(),
+                  ),
+                );
+              },
+              child: Container(
+                width: 36.w,
+                height: 36.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50.0),
+                  color: Colors.transparent,
+                ),
+                child: Image.asset(
+                  'assets/menu-icons/backbutton.png',
+                  width: 36.w,
+                  height: 36.h,
+                ),
               ),
             ),
           ),

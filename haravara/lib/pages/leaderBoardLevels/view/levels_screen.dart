@@ -9,6 +9,7 @@ import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/pages/leaderBoard/view/people_screen.dart';
+import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 
 // Import the file where LevelsData, Level, PersonsItem, usersNotifierProvider are defined
 import '../leaderBoardLevels.dart';
@@ -45,8 +46,11 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
       precacheImage(AssetImage(image), context);
     }
 
-    // Watch the levels data from the provider
-    final levelsDataAsync = ref.watch(usersNotifierProvider);
+    // Watch the avatars from avatarsProvider
+    final usersAvatars =
+        ref.watch(avatarsProvider).getAllUserIdsAndAvatarLocations();
+
+    final levelsDataAsync = ref.watch(usersNotifierProvider(usersAvatars));
 
     return Scaffold(
       endDrawer: HeaderMenu(),
