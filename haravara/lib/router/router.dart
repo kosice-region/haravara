@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:haravara/pages/admin/view/screens/admin_screen.dart';
+import 'package:haravara/pages/reward_menu/view/reward_menu_screen.dart';
 import 'package:haravara/pages/header_menu/header_menu.dart';
 import 'package:haravara/pages/map_detail/map_detail.dart';
 import 'package:haravara/pages/news/news.dart';
@@ -27,6 +29,9 @@ enum ScreenType {
   prizes,
   profile,
   podmienky,
+  rewardMenu,
+  rewardDetails, 
+  admin,
 }
 
 Map screenTypeToWidget = <ScreenType, Widget>{
@@ -42,6 +47,8 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.prizes: PrizesScreen(),
   ScreenType.profile: const ProfileScreen(),
   ScreenType.podmienky: const PodmienkyScreen(),
+  ScreenType.rewardMenu: RewardScreen(),
+  ScreenType.admin: AdminScreen(),
 };
 
 class RouterNotifier extends StateNotifier<ScreenType> {

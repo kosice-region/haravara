@@ -41,31 +41,34 @@ class AuthService {
   }
 
   Future<local_user.User> registerUserByEmail(
-      String email,
-      String username,
-      bool isFamilyType,
-      int children,
-      String location,
-      bool isNeedToRemember) async {
-    List<String> phoneDetail = await getDeviceDetails();
-    final id = uuid.v4();
-    final base64Id = generateBase64(email).toString();
-    final local_user.User user = local_user.User(
-      username: username,
-      phones: isNeedToRemember ? [phoneDetail[0]] : [],
-      userProfile: local_user.UserProfile(
-        avatar: DEFAULT_AVATAR,
-        profileType: isFamilyType ? local_user.ProfileType.family : local_user.ProfileType.individual,
-        children: children,
-        location: location,
-      ),
-      email: email,
-      id: id,
-    );
-    await authRepository.registerUser(user, id, base64Id);
-    setLoginPreferences(user);
-    return user;
-  }
+  String email,
+  String username,
+  bool isFamilyType,
+  int children,
+  String location,
+  bool isNeedToRemember,
+) async {
+  List<String> phoneDetail = await getDeviceDetails();
+  final id = uuid.v4();
+  final base64Id = generateBase64(email);
+  final local_user.User user = local_user.User(
+    username: username,
+    phones: isNeedToRemember ? [phoneDetail[0]] : [],
+    userProfile: local_user.UserProfile(
+      avatar: DEFAULT_AVATAR,
+      profileType: isFamilyType
+          ? local_user.ProfileType.family
+          : local_user.ProfileType.individual,
+      children: children,
+      location: location,
+    ),
+    email: email,
+    id: id,
+  );
+  await authRepository.registerUser(user, id, base64Id);
+  await setLoginPreferences(user);
+  return user;
+}
 
   Future<String> findUserByEmail(String email) async {
   User? user = await signInAnonymously();
@@ -77,22 +80,27 @@ class AuthService {
   }
 }
 
-
-  Future<void> loginUserByEmail(
-      String enteredEmail, bool isNeedToRememberPhone) async {
-    List<String> phoneDetails = await getDeviceDetails();
-    final userId = await findUserByEmail(enteredEmail);
-    local_user.User? user = await getUserById(userId);
-    if (user == null) {
-      return;
-    }
-    local_user.User updatedUser = isNeedToRememberPhone
-        ? user.copyWith(phones: [...user.phones, phoneDetails[0]])
-        : user.copyWith(phones: [...user.phones]);
-    await authRepository.updateUser(updatedUser);
-    await setLoginPreferences(updatedUser);
-    await getCollectedPlacesByUser(updatedUser.id!);
+Future<local_user.User?> loginUserByEmail(
+  String enteredEmail,
+  bool isNeedToRememberPhone,
+) async {
+  List<String> phoneDetails = await getDeviceDetails();
+  final userId = await findUserByEmail(enteredEmail);
+  if (userId.isEmpty) {
+    return null;
   }
+  local_user.User? user = await getUserById(userId);
+  if (user == null) {
+    return null;
+  }
+  final updatedUser = isNeedToRememberPhone
+      ? user.copyWith(phones: [...user.phones, phoneDetails[0]])
+      : user.copyWith(phones: [...user.phones]);
+  await authRepository.updateUser(updatedUser);
+  await setLoginPreferences(updatedUser);
+  await getCollectedPlacesByUser(updatedUser.id!);
+  return updatedUser;
+}
 
   Future<void> getCollectedPlacesByUser(String id) async {
     await DatabaseService().getCollectedPlacesByUser(id);
