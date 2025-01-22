@@ -46,7 +46,7 @@ class MapMarker extends ConsumerWidget {
         ),
         child: Center(
           child: Text(
-            (index + 1).toString(),
+            (index).toString(),
             textAlign: TextAlign.center,
             style: GoogleFonts.oswald(
               color: Colors.white,

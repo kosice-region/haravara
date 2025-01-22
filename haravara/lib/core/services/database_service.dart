@@ -46,6 +46,7 @@ Future<Database> _getDatabase() async {
            xCoordinate REAL,
            yCoordinate REAL,
            location_path TEXT,
+           orderColumn INTEGER,
            stamp_path TEXT)''');
 
       await db.execute('''CREATE TABLE if not exists avatars(
@@ -83,11 +84,10 @@ class DatabaseService {
         print("No collected data found for user.");
         return [];
       }
-      
+
       final collectedPlaceIds =
           List<String>.from(event.snapshot.value as List<dynamic>);
-      print(
-          "Collected Place IDs for user $userId: $collectedPlaceIds"); 
+      print("Collected Place IDs for user $userId: $collectedPlaceIds");
       return collectedPlaceIds;
     });
   }
@@ -226,6 +226,7 @@ class DatabaseService {
           'yCoordinate': place.geoData.primary.pixelCoordinates[1],
           'location_path': '${dirPath}/${place.placeImages!.location}',
           'stamp_path': '${dirPath}/${place.placeImages!.stamp}',
+          'orderColumn': place.order,
         },
       );
     }
@@ -398,6 +399,7 @@ class DatabaseService {
         name: row['name'] as String,
         updated: row['updated'] as int,
         placeImages: images,
+        order: row['orderColumn'] as int,
       );
     }).toList();
     return places;

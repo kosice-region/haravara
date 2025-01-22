@@ -34,7 +34,7 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
     final borderStyle = OutlineInputBorder(
       borderRadius: BorderRadius.circular(8.0),
       borderSide: BorderSide(
-        color: Colors.white, // Biela farba rámika
+        color: Colors.white,
         width: 3.0,
       ),
     );
@@ -94,18 +94,16 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
                   error: (err, stack) => Center(
                     child: Text(
                       'Error: $err',
-                      style: TextStyle(color: Colors.white), // Biela farba textu
+                      style: TextStyle(color: Colors.white), 
                     ),
                   ),
                   data: (places) {
-                    final indexedPlaces = places.asMap().entries.map((entry) {
-                      return MapEntry(entry.key + 1, entry.value);
-                    }).toList();
+                    places.sort((a, b) => a.order.compareTo(b.order));
 
                     final normalizedSearchQuery = normalize(searchQuery);
 
-                    final filteredPlaces = indexedPlaces.where((entry) {
-                      return normalize(entry.value.name)
+                    final filteredPlaces = places.where((place) {
+                      return normalize(place.name)
                           .contains(normalizedSearchQuery);
                     }).toList();
 
@@ -114,13 +112,12 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
                       child: ListView.builder(
                         itemCount: filteredPlaces.length,
                         itemBuilder: (context, index) {
-                          final entry = filteredPlaces[index];
-                          final placeIndex = entry.key;
-                          final place = entry.value;
+                          final place = filteredPlaces[index];
+                          final placeOrder = place.order;
 
                           return ListTile(
                             title: Text(
-                              '$placeIndex. ${place.name}',
+                              '$placeOrder. ${place.name}',
                               style: GoogleFonts.titanOne(
                                 color: Colors.white, 
                                 fontSize: 16.0,

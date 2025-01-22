@@ -27,6 +27,7 @@ mixin _$Place {
   GeoData get geoData => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   int get updated => throw _privateConstructorUsedError;
+  int get order => throw _privateConstructorUsedError;
   dynamic get isReached => throw _privateConstructorUsedError;
   PlaceImageFromDB? get placeImages => throw _privateConstructorUsedError;
 
@@ -48,6 +49,7 @@ abstract class $PlaceCopyWith<$Res> {
       GeoData geoData,
       String name,
       int updated,
+      int order,
       dynamic isReached,
       PlaceImageFromDB? placeImages});
 
@@ -76,6 +78,7 @@ class _$PlaceCopyWithImpl<$Res, $Val extends Place>
     Object? geoData = null,
     Object? name = null,
     Object? updated = null,
+    Object? order = null,
     Object? isReached = freezed,
     Object? placeImages = freezed,
   }) {
@@ -107,6 +110,10 @@ class _$PlaceCopyWithImpl<$Res, $Val extends Place>
       updated: null == updated
           ? _value.updated
           : updated // ignore: cast_nullable_to_non_nullable
+              as int,
+      order: null == order
+          ? _value.order
+          : order // ignore: cast_nullable_to_non_nullable
               as int,
       isReached: freezed == isReached
           ? _value.isReached
@@ -163,6 +170,7 @@ abstract class _$$PlaceImplCopyWith<$Res> implements $PlaceCopyWith<$Res> {
       GeoData geoData,
       String name,
       int updated,
+      int order,
       dynamic isReached,
       PlaceImageFromDB? placeImages});
 
@@ -192,6 +200,7 @@ class __$$PlaceImplCopyWithImpl<$Res>
     Object? geoData = null,
     Object? name = null,
     Object? updated = null,
+    Object? order = null,
     Object? isReached = freezed,
     Object? placeImages = freezed,
   }) {
@@ -224,6 +233,10 @@ class __$$PlaceImplCopyWithImpl<$Res>
           ? _value.updated
           : updated // ignore: cast_nullable_to_non_nullable
               as int,
+      order: null == order
+          ? _value.order
+          : order // ignore: cast_nullable_to_non_nullable
+              as int,
       isReached: freezed == isReached ? _value.isReached! : isReached,
       placeImages: freezed == placeImages
           ? _value.placeImages
@@ -244,6 +257,7 @@ class _$PlaceImpl with DiagnosticableTreeMixin implements _Place {
       required this.geoData,
       required this.name,
       required this.updated,
+      required this.order,
       this.isReached = false,
       this.placeImages});
 
@@ -265,6 +279,8 @@ class _$PlaceImpl with DiagnosticableTreeMixin implements _Place {
   @override
   final int updated;
   @override
+  final int order;
+  @override
   @JsonKey()
   final dynamic isReached;
   @override
@@ -272,7 +288,7 @@ class _$PlaceImpl with DiagnosticableTreeMixin implements _Place {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Place(id: $id, active: $active, created: $created, detail: $detail, geoData: $geoData, name: $name, updated: $updated, isReached: $isReached, placeImages: $placeImages)';
+    return 'Place(id: $id, active: $active, created: $created, detail: $detail, geoData: $geoData, name: $name, updated: $updated, order: $order, isReached: $isReached, placeImages: $placeImages)';
   }
 
   @override
@@ -287,6 +303,7 @@ class _$PlaceImpl with DiagnosticableTreeMixin implements _Place {
       ..add(DiagnosticsProperty('geoData', geoData))
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('updated', updated))
+      ..add(DiagnosticsProperty('order', order))
       ..add(DiagnosticsProperty('isReached', isReached))
       ..add(DiagnosticsProperty('placeImages', placeImages));
   }
@@ -303,6 +320,7 @@ class _$PlaceImpl with DiagnosticableTreeMixin implements _Place {
             (identical(other.geoData, geoData) || other.geoData == geoData) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.updated, updated) || other.updated == updated) &&
+            (identical(other.order, order) || other.order == order) &&
             const DeepCollectionEquality().equals(other.isReached, isReached) &&
             (identical(other.placeImages, placeImages) ||
                 other.placeImages == placeImages));
@@ -319,6 +337,7 @@ class _$PlaceImpl with DiagnosticableTreeMixin implements _Place {
       geoData,
       name,
       updated,
+      order,
       const DeepCollectionEquality().hash(isReached),
       placeImages);
 
@@ -345,6 +364,7 @@ abstract class _Place implements Place {
       required final GeoData geoData,
       required final String name,
       required final int updated,
+      required final int order,
       final dynamic isReached,
       final PlaceImageFromDB? placeImages}) = _$PlaceImpl;
 
@@ -364,6 +384,8 @@ abstract class _Place implements Place {
   String get name;
   @override
   int get updated;
+  @override
+  int get order;
   @override
   dynamic get isReached;
   @override
