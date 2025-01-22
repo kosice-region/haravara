@@ -963,8 +963,6 @@ PODS:
     - Firebase/Functions (= 10.25.0)
     - firebase_core
     - Flutter
-  - device_imei (0.0.3):
-    - Flutter
   - device_info_plus (0.0.1):
     - Flutter
   - Firebase/Auth (10.25.0):
@@ -1062,15 +1060,11 @@ PODS:
   - fl_location (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_activity_recognition (0.0.1):
-    - Flutter
   - flutter_background_service_ios (0.0.3):
     - Flutter
   - flutter_compass (0.0.1):
     - Flutter
-  - flutter_foreground_task (0.0.1):
-    - Flutter
-  - geofence_service (0.0.1):
+  - geofencing_api (0.0.1):
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
@@ -1217,7 +1211,6 @@ DEPENDENCIES:
   - awesome_notifications (from `.symlinks/plugins/awesome_notifications/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - cloud_functions (from `.symlinks/plugins/cloud_functions/ios`)
-  - device_imei (from `.symlinks/plugins/device_imei/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -1225,11 +1218,9 @@ DEPENDENCIES:
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - fl_location (from `.symlinks/plugins/fl_location/ios`)
   - Flutter (from `Flutter`)
-  - flutter_activity_recognition (from `.symlinks/plugins/flutter_activity_recognition/ios`)
   - flutter_background_service_ios (from `.symlinks/plugins/flutter_background_service_ios/ios`)
   - flutter_compass (from `.symlinks/plugins/flutter_compass/ios`)
-  - flutter_foreground_task (from `.symlinks/plugins/flutter_foreground_task/ios`)
-  - geofence_service (from `.symlinks/plugins/geofence_service/ios`)
+  - geofencing_api (from `.symlinks/plugins/geofencing_api/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -1276,8 +1267,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   cloud_functions:
     :path: ".symlinks/plugins/cloud_functions/ios"
-  device_imei:
-    :path: ".symlinks/plugins/device_imei/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   firebase_auth:
@@ -1292,16 +1281,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/fl_location/ios"
   Flutter:
     :path: Flutter
-  flutter_activity_recognition:
-    :path: ".symlinks/plugins/flutter_activity_recognition/ios"
   flutter_background_service_ios:
     :path: ".symlinks/plugins/flutter_background_service_ios/ios"
   flutter_compass:
     :path: ".symlinks/plugins/flutter_compass/ios"
-  flutter_foreground_task:
-    :path: ".symlinks/plugins/flutter_foreground_task/ios"
-  geofence_service:
-    :path: ".symlinks/plugins/geofence_service/ios"
+  geofencing_api:
+    :path: ".symlinks/plugins/geofencing_api/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   google_maps_flutter_ios:
@@ -1327,7 +1312,6 @@ SPEC CHECKSUMS:
   BoringSSL-GRPC: 1e2348957acdbcad360b80a264a90799984b2ba6
   cloud_firestore: 003d53b6b8b392600b7769acf9421cc4f23e5911
   cloud_functions: 1a28a0b6ec4caf864692e54e1f5c1934431510c8
-  device_imei: 06bea5160991fbb7aba7f2e7267a37f6b616c514
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Firebase: 0312a2352584f782ea56f66d91606891d4607f06
   firebase_auth: 5719ddc9f654b813405899480e84971bd8e61235
@@ -1349,11 +1333,9 @@ SPEC CHECKSUMS:
   FirebaseStorage: 44f4e25073f6fa0d4d8c09f5bec299ee9e4eb985
   fl_location: 68b4a6c4aad2a453493ff66f196e0748280cf43e
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_activity_recognition: 5c3b026997742b01e82424ef257db9640822ad77
   flutter_background_service_ios: e30e0d3ee69e4cee66272d0c78eacd48c2e94aac
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
-  flutter_foreground_task: 21ef182ab0a29a3005cc72cd70e5f45cb7f7f817
-  geofence_service: e007ddec3cf8b85531e8f7b202c1ceabca669d64
+  geofencing_api: a187066009ca33669c1e8b47913dc27c2a9505ea
   geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
   google_maps_flutter_ios: c454f18e0e22df6ac0e9f2a4df340858f5a3680c
   GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
