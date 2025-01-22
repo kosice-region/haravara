@@ -1,8 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-//import 'package:haravara/pages/profile/widgets/progress_bar.dart';
 import 'package:haravara/pages/profile/widgets/widgets.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
@@ -28,25 +28,40 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       endDrawer: HeaderMenu(),
       body: Stack(
         children: [
+          // Background Image
           BackgroundImage(
             imagePath: 'assets/backgrounds/HARAVARA_profil.jpg',
           ),
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                8.verticalSpace,
-                const Header(),
-                5.verticalSpace,
-                AvatarWidget(),
-                5.verticalSpace,
-                const SearcherLevel(),
-                12.verticalSpace,
-                UsernameWidget(),
-                12.verticalSpace,
-                RedirectButtons(),
-                10.verticalSpace,
-                ActionButtons(),
-              ],
+
+          // Scrollable Content
+          Positioned.fill(
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  bottom: 65.h, 
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 8.h),
+                    const Header(),
+                    SizedBox(height: 5.h),
+                    AvatarWidget(),
+                    SizedBox(height: 5.h),
+                    const SearcherLevel(),
+                    SizedBox(height: 12.h),
+                    UsernameWidget(),
+                    SizedBox(height: 12.h),
+                    RedirectButtons(),
+                    SizedBox(height: 10.h),
+                    ActionButtons(),
+                    SizedBox(height: 10.h),
+                    ActionButtons2(),
+                    // Uncomment if you want to include the ReportIcon
+                    // ReportIcon(),
+                  ],
+                ),
+              ),
             ),
           ),
         ],

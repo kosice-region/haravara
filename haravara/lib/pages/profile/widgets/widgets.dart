@@ -5,3 +5,5 @@ export './redirect_buttons.dart';
 export './location_field.dart';
 export './searcher_level.dart';
 export './background_image.dart';
+export 'report_widget.dart';
+export 'action_buttons_2.dart';
