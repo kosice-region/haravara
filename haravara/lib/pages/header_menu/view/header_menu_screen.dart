@@ -34,9 +34,8 @@ class HeaderMenu extends ConsumerWidget {
             width: double.infinity,
             alignment: Alignment.center,
           ),
-          Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
+
+             ListView(
               children: <Widget>[
                 70.verticalSpace,
                 RedirectButton(
@@ -102,9 +101,19 @@ class HeaderMenu extends ConsumerWidget {
                   bottom: 8,
                   screenToRoute: ScreenType.summary,
                 ),
+                RedirectButton(
+                  title: 'O APLIKÁCII',
+                  imagePath: 'assets/menu-icons/questions.png',
+                  imageWidth: 50,
+                  imageHeight: 50,
+                  right: 166,
+                  bottom: 8,
+                  screenToRoute: ScreenType.info,
+                ),
+                60.verticalSpace
               ],
             ),
-          ),
+
           Positioned(
             top: 30.h,
             right: 30.w,
