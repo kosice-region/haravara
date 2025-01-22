@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:haravara/core/models/place.dart';
 import 'package:haravara/pages/auth/models/user.dart';
@@ -58,6 +59,39 @@ Future<Database> _getDatabase() async {
 }
 
 class DatabaseService {
+  final DatabaseReference _db = FirebaseDatabase.instance.ref();
+
+  Future<bool> isAdmin(String email) async {
+    try {
+      String sanitizedEmail = email.replaceAll('.', ',');
+      final snapshot = await _db.child('admins').child(sanitizedEmail).get();
+      return snapshot.exists && snapshot.value == true;
+    } catch (error) {
+      log('Error checking admin status: $error');
+      return false;
+    }
+  }
+
+  Stream<List<String>> loadCollectedPlaceIdsStream(String userId) {
+    final DatabaseReference collectedRef = FirebaseDatabase.instance
+        .ref()
+        .child('collectedLocationsByUsers')
+        .child(userId);
+
+    return collectedRef.onValue.map((event) {
+      if (event.snapshot.value == null) {
+        print("No collected data found for user.");
+        return [];
+      }
+      
+      final collectedPlaceIds =
+          List<String>.from(event.snapshot.value as List<dynamic>);
+      print(
+          "Collected Place IDs for user $userId: $collectedPlaceIds"); 
+      return collectedPlaceIds;
+    });
+  }
+
   Future<void> saveAvatarsLocally() async {
     final List<UserAvatar> avatars = await databaseRepository.getAllAvatars();
     Directory appDocDir = await _getDirectory();

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/core/providers/auth_provider.dart';
 import 'package:haravara/pages/auth/services/auth_screen_service.dart';
+import 'package:haravara/pages/auth/view/auth_screen.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/router/router.dart';
@@ -194,12 +195,6 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     ref.read(routerProvider.notifier).changeScreen(ScreenType.code);
     ref.read(authNotifierProvider.notifier).updateCode(sentCode);
     routeToCodeScreen(context);
-  }
-
-  void routeToNewsScreen() async {
-    if (!mounted) return;
-    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
-        context, ScreenRouter().getScreenWidget(ScreenType.news));
   }
 
   void _toggleIsFamily(bool value) {

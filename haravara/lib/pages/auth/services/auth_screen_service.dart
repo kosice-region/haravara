@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:haravara/pages/admin/view/screens/admin_screen.dart';
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
+import 'package:haravara/core/services/database_service.dart';
 
 void showSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context)
@@ -19,8 +21,32 @@ void routeToCodeScreen(BuildContext context) {
 void routeToNewsScreen(BuildContext context) async {
   if (!Navigator.of(context).mounted) return;
   ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
-      context, ScreenRouter().getScreenWidget(ScreenType.news));
+    context, ScreenRouter().getScreenWidget(ScreenType.news));
 }
+
+void routeToAdminScreen(BuildContext context) {
+  if (!Navigator.of(context).mounted) return;
+  ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+    context,
+    AdminScreen(),
+  );
+}
+
+Future<void> routeToAppropriateScreen(
+  BuildContext context,
+  String email,
+) async {
+  if (!Navigator.of(context).mounted) return;
+
+  final adminStatus = await DatabaseService().isAdmin(email);
+  if (adminStatus) {
+    routeToAdminScreen(context);
+  } else {
+    routeToNewsScreen(context);
+  }
+}
+
+
 
 int extractChildrenCount(String value) {
   final RegExp regex = RegExp(r'\d+');

@@ -91,3 +91,8 @@ final placesProvider =
 final placesFutureProvider = FutureProvider<List<Place>>((ref) async {
   return await DatabaseService().loadPlaces();
 });
+
+final collectedPlacesProvider = StreamProvider.family<List<String>, String>((ref, userId) {
+  return DatabaseService().loadCollectedPlaceIdsStream(userId);
+});
+

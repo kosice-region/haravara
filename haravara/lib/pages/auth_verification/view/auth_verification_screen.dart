@@ -1,23 +1,24 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/core/providers/preferences_provider.dart';
+import 'package:haravara/core/services/database_service.dart';
+import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/auth/models/user.dart';
 import 'package:haravara/pages/auth/services/auth_service.dart';
+import 'package:haravara/pages/auth/view/auth_screen.dart';
+import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/router/router.dart';
-import 'package:haravara/core/providers/preferences_provider.dart';
-import 'package:haravara/pages/auth/view/auth_screen.dart';
 import 'package:haravara/router/screen_router.dart';
-import 'package:haravara/core/widgets/header.dart';
 
 import '../widgets/widgets.dart';
 
 class AuthVerificationScreen extends ConsumerStatefulWidget {
-  const AuthVerificationScreen({super.key});
+  const AuthVerificationScreen({Key? key}) : super(key: key);
 
   @override
   ConsumerState<AuthVerificationScreen> createState() =>
@@ -27,13 +28,9 @@ class AuthVerificationScreen extends ConsumerStatefulWidget {
 class _AuthVerificationScreenState
     extends ConsumerState<AuthVerificationScreen> {
   final _formKey = GlobalKey<FormState>();
-  @override
-  void initState() {
-    super.initState();
-  }
-
   String _code = '';
   bool _onEditing = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +69,7 @@ class _AuthVerificationScreenState
                           color: const Color.fromARGB(255, 255, 200, 67),
                           boxShadow: [
                             BoxShadow(
-                              color: Color.fromARGB(255, 248, 184, 36)
+                              color: const Color.fromARGB(255, 248, 184, 36)
                                   .withOpacity(1),
                               spreadRadius: 8,
                               blurRadius: 8,
@@ -138,15 +135,26 @@ class _AuthVerificationScreenState
   }
 
   void _validateCode() async {
-    var authState = ref.watch(authNotifierProvider);
+    final authState = ref.watch(authNotifierProvider);
     if (authState.code != _code) {
       _showSnackBar('incorrect');
       return;
     }
     if (authState.isLogin) {
-      await authService.loginUserByEmail(
-          authState.enteredEmail!, authState.isNeedToRemeber);
-      routeToNewsScreen();
+      final user = await authService.loginUserByEmail(
+        authState.enteredEmail!,
+        authState.isNeedToRemeber,
+      );
+      if (user == null) {
+        _showSnackBar('User not found.');
+        return;
+      }
+      final isAdmin = await DatabaseService().isAdmin(user.email!);
+      if (isAdmin) {
+        routeToAdminScreen(context);
+      } else {
+        routeToNewsScreen();
+      }
     } else {
       final user = await authService.registerUserByEmail(
         authState.enteredEmail!,
@@ -167,7 +175,12 @@ class _AuthVerificationScreenState
       ref
           .read(userInfoProvider.notifier)
           .updateUsername(authState.enteredUsername!);
-      routeToNewsScreen();
+      final isAdmin = await DatabaseService().isAdmin(user.email!);
+      if (isAdmin) {
+        routeToAdminScreen(context);
+      } else {
+        routeToNewsScreen();
+      }
     }
     _showSnackBar('Success');
   }
@@ -176,7 +189,18 @@ class _AuthVerificationScreenState
     if (!mounted) return;
     ref.read(routerProvider.notifier).changeScreen(ScreenType.news);
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
-        context, ScreenRouter().getScreenWidget(ScreenType.news));
+      context,
+      ScreenRouter().getScreenWidget(ScreenType.news),
+    );
+  }
+
+  void routeToAdminScreen(BuildContext context) {
+    if (!mounted) return;
+    ref.read(routerProvider.notifier).changeScreen(ScreenType.admin);
+    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+      context,
+      ScreenRouter().getScreenWidget(ScreenType.admin),
+    );
   }
 
   void _showSnackBar(String message) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:haravara/pages/admin/view/screens/admin_screen.dart';
+import 'package:haravara/pages/reward_menu/view/reward_menu_screen.dart';
 import 'package:haravara/pages/header_menu/header_menu.dart';
 import 'package:haravara/pages/leaderBoard/leaderBoard.dart';
 import 'package:haravara/pages/leaderBoardLevels/leaderBoardLevels.dart';
@@ -29,6 +31,9 @@ enum ScreenType {
   prizes,
   profile,
   podmienky,
+  rewardMenu,
+  rewardDetails,
+  admin,
   leaderBoard,
   leaderBoardLevels
 }
@@ -46,6 +51,8 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.prizes: PrizesScreen(),
   ScreenType.profile: const ProfileScreen(),
   ScreenType.podmienky: const PodmienkyScreen(),
+  ScreenType.rewardMenu: RewardScreen(),
+  ScreenType.admin: AdminScreen(),
   ScreenType.leaderBoardLevels: const LeaderBoardLevelsScreen(),
 };
 
