@@ -128,7 +128,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                               buildResponsiveButton(
                                 label: 'REBRÍČEK',
                                 color: const Color.fromARGB(255, 205, 105, 167),
-                                screen: ScreenType.prizes,
+                                screen: ScreenType.leaderBoardLevels,
                                 ref: ref,
                               ),
                               SizedBox(height: 10.h),
