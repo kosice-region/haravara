@@ -34,8 +34,8 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
     final borderStyle = OutlineInputBorder(
       borderRadius: BorderRadius.circular(8.0),
       borderSide: BorderSide(
-        color: Colors.black, 
-        width: 3.0, 
+        color: Colors.white, // Biela farba rámika
+        width: 3.0,
       ),
     );
 
@@ -43,14 +43,19 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
       appBar: AppBar(
         title: Text(
           'Zoznam pečiatok',
-          style: GoogleFonts.titanOne(),
+          style: GoogleFonts.titanOne(
+      color: Colors.white, 
+    ),
         ),
         backgroundColor: Colors.green,
+        iconTheme: IconThemeData(
+    color: Colors.white,
+  ),
       ),
       body: Stack(
         children: [
           Opacity(
-            opacity: 0.7,
+            opacity: 0.8,
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -59,6 +64,9 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
                 ),
               ),
             ),
+          ),
+          Container(
+            color: Colors.black.withOpacity(0.6),
           ),
           Column(
             children: [
@@ -70,18 +78,25 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
                   },
                   decoration: InputDecoration(
                     labelText: 'Vyhľadať',
-                    labelStyle: GoogleFonts.titanOne(),
-                    prefixIcon: Icon(Icons.search),
+                    labelStyle: GoogleFonts.titanOne(color: Colors.white),
+                    prefixIcon: Icon(Icons.search, color: Colors.white),
                     enabledBorder: borderStyle,
                     focusedBorder: borderStyle,
                   ),
-                  style: GoogleFonts.titanOne(), 
+                  style: GoogleFonts.titanOne(
+                    color: Colors.white, 
+                  ),
                 ),
               ),
               Expanded(
                 child: placesAsyncValue.when(
                   loading: () => Center(child: CircularProgressIndicator()),
-                  error: (err, stack) => Center(child: Text('Error: $err')),
+                  error: (err, stack) => Center(
+                    child: Text(
+                      'Error: $err',
+                      style: TextStyle(color: Colors.white), // Biela farba textu
+                    ),
+                  ),
                   data: (places) {
                     final indexedPlaces = places.asMap().entries.map((entry) {
                       return MapEntry(entry.key + 1, entry.value);
@@ -107,9 +122,8 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
                             title: Text(
                               '$placeIndex. ${place.name}',
                               style: GoogleFonts.titanOne(
-                                color: Colors.black, 
-                                fontSize:
-                                    16.0, 
+                                color: Colors.white, 
+                                fontSize: 16.0,
                               ),
                             ),
                             onTap: () {
