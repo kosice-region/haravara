@@ -119,22 +119,6 @@ class UsersRepository {
     });
   }
 
-  Future<Map<String, String>> getAvatars() async {
-    log('Fetching avatars...');
-    final avatarsRef = _db.ref('avatars');
-    final snapshot = await avatarsRef.get();
-    if (!snapshot.exists) {
-      log('No avatars found in DB.');
-      return {};
-    }
-
-    final data = Map<String, dynamic>.from(snapshot.value as Map);
-    return data.map((avatarId, avatarData) {
-      final location = (avatarData as Map)['location'] as String? ?? '';
-      return MapEntry(avatarId, location);
-    });
-  }
-
   Future<LevelsData> fetchLevelsData() async {
     log('Fetching data...');
     final usernames = await getUsernames();
@@ -165,8 +149,6 @@ class UsersRepository {
         // for (var entry in usersAvatars.entries) {
         //   print("User ID: ${entry.key}, Avatar Location: ${entry.value}");
         // }
-
-        log("User ID: $userId, Avatar ID: $userAvatarId");
 
         return PersonsItem(
           personsName: username,

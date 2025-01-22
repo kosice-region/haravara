@@ -44,6 +44,8 @@ final List<Level> levels = [
 
 // Repository for fetching data from Firebase
 class UsersRepository {
+  final Map<String, String> usersAvatars;
+  UsersRepository({required this.usersAvatars});
   final _db = FirebaseDatabase.instance;
 
   Future<Map<String, String>> getUsernames() async {
@@ -87,17 +89,21 @@ class UsersRepository {
     final usernames = await getUsernames();
     final stampsByUserID = await getCollectedLocationCounts();
 
-    final users = stampsByUserID.entries.map((entry) {
+    final futures = stampsByUserID.entries.map((entry) async {
       final userId = entry.key;
       final stampCount = entry.value;
       final username = usernames[userId] ?? 'Unknown User';
+      final snapshot = await _db.ref('users/$userId/profile/avatar').get();
+      final userAvatarId = snapshot.value as String? ?? '';
 
       return PersonsItem(
         personsName: username,
         stampsNumber: stampCount,
-        profileIcon: 'assets/avatars/kasko.png',
+        profileIcon: usersAvatars[userAvatarId] ?? 'assets/avatars/kasko.png',
       );
     }).toList();
+    // Use Future.wait to resolve the list of futures
+    final users = await Future.wait(futures);
 
     users.sort((a, b) => b.stampsNumber.compareTo(a.stampsNumber));
     log('Final sorted user list: $users');
@@ -151,16 +157,17 @@ class UsersNotifier extends StateNotifier<AsyncValue<List<PersonsItem>>> {
   }
 }
 
-// Provide the UsersRepository so it can be read by Notifier
-final usersRepositoryProvider = Provider<UsersRepository>((ref) {
-  log('usersRepositoryProvider created');
-  return UsersRepository();
+final usersRepositoryProvider =
+    Provider.family<UsersRepository, Map<String, String>>((ref, usersAvatars) {
+  log('usersRepositoryProvider created with avatars');
+  return UsersRepository(usersAvatars: usersAvatars);
 });
 
-// Provide the UsersNotifier instance and let Riverpod manage its lifecycle
-final usersNotifierProvider =
-    StateNotifierProvider<UsersNotifier, AsyncValue<List<PersonsItem>>>((ref) {
-  log('usersNotifierProvider initialized');
-  final repo = ref.watch(usersRepositoryProvider);
-  return UsersNotifier(repo);
-});
+// Provider for UsersNotifier with dynamic usersAvatars dependency
+final usersNotifierProvider = StateNotifierProvider.family<UsersNotifier,
+    AsyncValue<List<PersonsItem>>, Map<String, String>>(
+  (ref, usersAvatars) {
+    final repository = UsersRepository(usersAvatars: usersAvatars);
+    return UsersNotifier(repository);
+  },
+);

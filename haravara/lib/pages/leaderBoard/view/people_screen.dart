@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +9,7 @@ import 'package:haravara/core/widgets/footer.dart'; // Adjust based on your proj
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart'; // Adjust path
 import 'package:haravara/pages/leaderBoardLevels/view/levels_screen.dart';
 import '../leaderBoard.dart'; // The file with providers, PersonsItem, and level definitions
+import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 
 class LeaderBoardScreen extends ConsumerWidget {
   final int chosenLevel;
@@ -17,7 +20,9 @@ class LeaderBoardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Use chosenLevel here to show the correct level's users
-    final usersAsync = ref.watch(usersNotifierProvider);
+    final usersAvatars =
+        ref.watch(avatarsProvider).getAllUserIdsAndAvatarLocations();
+    final usersAsync = ref.watch(usersNotifierProvider(usersAvatars));
 
     return Scaffold(
       endDrawer: HeaderMenu(), // Your custom drawer if needed
@@ -107,8 +112,10 @@ class LeaderBoardScreen extends ConsumerWidget {
     return usersAsync.when(
       data: (users) {
         // Once data is loaded, filter for chosen level
+        final usersAvatars =
+            ref.watch(avatarsProvider).getAllUserIdsAndAvatarLocations();
         final filteredUsers = ref
-            .read(usersNotifierProvider.notifier)
+            .read(usersNotifierProvider(usersAvatars).notifier)
             .getUsersForLevel(chosenLevel);
 
         if (filteredUsers.isEmpty) {
@@ -170,13 +177,18 @@ class LeaderBoardScreen extends ConsumerWidget {
             margin: const EdgeInsets.only(right: 3),
             width: 28.w,
             height: 28.w,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(item.profileIcon),
-                fit: BoxFit.cover,
-                alignment: Alignment.centerRight,
-              ),
-              borderRadius: BorderRadius.circular(50.0),
+            child: ClipOval(
+              child: File(item.profileIcon).existsSync()
+                  ? Image.file(
+                      File(item.profileIcon),
+                      width: 28.w,
+                      height: 28.w,
+                      fit: BoxFit.fill,
+                    )
+                  : Image.asset(
+                      'assets/avatars/kasko.png',
+                      fit: BoxFit.fill,
+                    ),
             ),
           ),
           SizedBox(
