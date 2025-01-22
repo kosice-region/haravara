@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -38,34 +39,6 @@ class LeaderBoardScreen extends ConsumerWidget {
               ),
             ),
           ),
-          // Back button positioned at the top-right corner
-          Positioned(
-            top: 40.h,
-            right: 30.w,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LeaderBoardLevelsScreen(),
-                  ),
-                );
-              },
-              child: Container(
-                width: 36.w,
-                height: 36.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50.0),
-                  color: Colors.transparent,
-                ),
-                child: Image.asset(
-                  'assets/menu-icons/backbutton.png',
-                  width: 36.w,
-                  height: 36.h,
-                ),
-              ),
-            ),
-          ),
           // Foreground content
           SingleChildScrollView(
             child: Column(
@@ -102,6 +75,30 @@ class LeaderBoardScreen extends ConsumerWidget {
             right: 0,
             bottom: 0,
             child: Footer(height: 40),
+          ),
+          // Back button positioned at the top-right corner
+          Positioned(
+            top: 40.h,
+            right: 30.w,
+            child: GestureDetector(
+              onTap: () {
+                log("Button pushed");
+                Navigator.pop(context);
+              },
+              child: Container(
+                width: 36.w,
+                height: 36.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50.0),
+                  color: Colors.transparent,
+                ),
+                child: Image.asset(
+                  'assets/menu-icons/backbutton.png',
+                  width: 36.w,
+                  height: 36.h,
+                ),
+              ),
+            ),
           ),
         ],
       ),
