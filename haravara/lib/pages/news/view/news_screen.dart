@@ -46,111 +46,114 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     ref.read(placesProvider.notifier).addPlaces(places);
   }
 
-@override
-Widget build(BuildContext context) {
-  imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
-  ScreenUtil.init(context, designSize: const Size(255, 516));
-  final places = ref.watch(placesProvider);
-  final collectedStamps = places.where((place) => place.isReached).length;
-  final user = ref.read(userInfoProvider);
+  @override
+  Widget build(BuildContext context) {
+    imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
+    ScreenUtil.init(context, designSize: const Size(255, 516));
+    final places = ref.watch(placesProvider);
+    final collectedStamps = places.where((place) => place.isReached).length;
+    final user = ref.read(userInfoProvider);
 
-  return FutureBuilder<List<Reward>>(
-    future: rewardService.generateUserRewards(user, collectedStamps),
-    builder: (context, snapshot) {
-      final rewards = snapshot.data ?? [];
-      bool anyRewardAvailable = rewards.any((reward) => reward.isUnlocked && !reward.isClaimed);
+    return FutureBuilder<List<Reward>>(
+      future: rewardService.generateUserRewards(user, collectedStamps),
+      builder: (context, snapshot) {
+        final rewards = snapshot.data ?? [];
+        bool anyRewardAvailable =
+            rewards.any((reward) => reward.isUnlocked && !reward.isClaimed);
 
-      return Scaffold(
-        backgroundColor: Colors.black,
-        endDrawer: HeaderMenu(),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  child: Image.asset(
-                    'assets/haravara_1.jpg',
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                  ),
-                ),
-                Footer(height: 50),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 8.h),
-              child: Column(
+        return Scaffold(
+          backgroundColor: Colors.black,
+          endDrawer: HeaderMenu(),
+          body: Stack(
+            children: [
+              Column(
                 children: [
-                  Header(),
-                  15.verticalSpace,
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 10.h),
-                    child: anyRewardAvailable
-                        ? ElevatedButton(
-                            onPressed: () {
-                              final rewardMenuWidget =
-                                  ScreenRouter().getScreenWidget(ScreenType.rewardMenu);
-                              ScreenRouter().routeToNextScreen(context, rewardMenuWidget);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: Size(145.w, 35.h),
-                              backgroundColor: const Color(0xFFF24811),
-                              side: const BorderSide(color: Colors.white, width: 4),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: Text(
-                              'Vyzdvihni si cenu !',
-                              style: GoogleFonts.titanOne(
-                                fontSize: 11.sp,
-                                color: Colors.white,
-                              ),
-                            ),
-                          )
-                        : SizedBox(
-                            height: 35.h,
-                            width: 145.w,
-                          ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      children: [
-                        buildBox(),
-                        SizedBox(height: 10.h),
-                        Column(
-                          children: [
-                            buildResponsiveButton(
-                              label: 'REBRÍČEK',
-                              color: const Color.fromARGB(255, 205, 105, 167),
-                              screen: ScreenType.prizes,
-                              ref: ref,
-                            ),
-                            SizedBox(height: 10.h),
-                            buildResponsiveButton(
-                              label: 'PODMIENKY SÚŤAŽE',
-                              color: const Color.fromARGB(255, 60, 200, 90),
-                              screen: ScreenType.podmienky,
-                              ref: ref,
-                            ),
-                          ],
-                        ),
-                      ],
+                  Expanded(
+                    child: Image.asset(
+                      'assets/haravara_1.jpg',
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      alignment: Alignment.center,
                     ),
                   ),
+                  Footer(height: 50),
                 ],
               ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+              Padding(
+                padding: EdgeInsets.only(top: 8.h),
+                child: Column(
+                  children: [
+                    Header(),
+                    15.verticalSpace,
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.h),
+                      child: anyRewardAvailable
+                          ? ElevatedButton(
+                              onPressed: () {
+                                final rewardMenuWidget = ScreenRouter()
+                                    .getScreenWidget(ScreenType.rewardMenu);
+                                ScreenRouter().routeToNextScreen(
+                                    context, rewardMenuWidget);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                fixedSize: Size(145.w, 35.h),
+                                backgroundColor: const Color(0xFFF24811),
+                                side: const BorderSide(
+                                    color: Colors.white, width: 4),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text(
+                                'Vyzdvihni si cenu !',
+                                style: GoogleFonts.titanOne(
+                                  fontSize: 11.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          : SizedBox(
+                              height: 35.h,
+                              width: 145.w,
+                            ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        children: [
+                          buildBox(),
+                          SizedBox(height: 10.h),
+                          Column(
+                            children: [
+                              buildResponsiveButton(
+                                label: 'REBRÍČEK',
+                                color: const Color.fromARGB(255, 205, 105, 167),
+                                screen: ScreenType.leaderBoardLevels,
+                                ref: ref,
+                              ),
+                              SizedBox(height: 10.h),
+                              buildResponsiveButton(
+                                label: 'PODMIENKY SÚŤAŽE',
+                                color: const Color.fromARGB(255, 60, 200, 90),
+                                screen: ScreenType.podmienky,
+                                ref: ref,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-    Widget buildBox() {
+  Widget buildBox() {
     double deviceHeight = MediaQuery.of(context).size.height;
     double containerHeight = 160.h;
     double imageHeight = 140.h;
@@ -167,7 +170,7 @@ Widget build(BuildContext context) {
       containerHeight = 190.h;
       imageHeight = 60.h;
     }
-      
+
     return Container(
       width: 230.w,
       height: containerHeight,
@@ -235,9 +238,8 @@ Widget build(BuildContext context) {
                 child: Text(
                   'IDEM PÁTRAŤ',
                   style: GoogleFonts.titanOne(
-                    fontSize: 9.sp, 
-                    color: const Color.fromARGB(255, 255, 255, 255)
-                  ),
+                      fontSize: 9.sp,
+                      color: const Color.fromARGB(255, 255, 255, 255)),
                 ),
               ),
             ),

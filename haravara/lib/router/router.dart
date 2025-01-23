@@ -5,6 +5,8 @@ import 'package:haravara/pages/admin/view/screens/admin_screen.dart';
 import 'package:haravara/pages/reward_menu/view/reward_menu_screen.dart';
 import 'package:haravara/pages/header_menu/header_menu.dart';
 import 'package:haravara/pages/info/view/info_screen.dart';
+import 'package:haravara/pages/leaderBoard/leaderBoard.dart';
+import 'package:haravara/pages/leaderBoardLevels/leaderBoardLevels.dart';
 import 'package:haravara/pages/map_detail/map_detail.dart';
 import 'package:haravara/pages/news/news.dart';
 import 'package:haravara/pages/summary/summary.dart';
@@ -34,8 +36,10 @@ enum ScreenType {
   bugreport,
   info,
   rewardMenu,
-  rewardDetails, 
+  rewardDetails,
   admin,
+  leaderBoard,
+  leaderBoardLevels
 }
 
 Map screenTypeToWidget = <ScreenType, Widget>{
@@ -52,9 +56,10 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.profile: const ProfileScreen(),
   ScreenType.podmienky: const PodmienkyScreen(),
   ScreenType.bugreport: const BugReportScreen(),
-  ScreenType.info:  InfoScreen(),
+  ScreenType.info: InfoScreen(),
   ScreenType.rewardMenu: RewardScreen(),
   ScreenType.admin: AdminScreen(),
+  ScreenType.leaderBoardLevels: const LeaderBoardLevelsScreen(),
 };
 
 class RouterNotifier extends StateNotifier<ScreenType> {

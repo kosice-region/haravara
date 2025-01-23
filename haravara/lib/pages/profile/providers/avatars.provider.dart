@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/main.dart';
@@ -8,6 +11,8 @@ class AvatarsNotifier extends ChangeNotifier {
   List<UserAvatar> avatars = [];
   static String defaultId = '0387c644-249c-4c1e-ac0b-bc6c861d580c';
   final Ref ref;
+
+  Map<String, String> _cachedData = {};
 
   AvatarsNotifier(this.ref);
 
@@ -48,6 +53,21 @@ class AvatarsNotifier extends ChangeNotifier {
     }
     pref.setString("profile_image", id);
     notifyListeners();
+  }
+
+  /// Function to get all user IDs and their avatar locations.
+  Map<String, String> getAllUserIdsAndAvatarLocations() {
+    Map<String, String> result = {}; // Create an empty map
+    for (var avatar in avatars) {
+      if (avatar.id != null && avatar.location != null) {
+        result[avatar.id!] = avatar.location!; // Add to map
+      }
+    }
+    log("Users Avatars: ${result.toString()}");
+    if (!mapEquals(_cachedData, result)) {
+      _cachedData = result;
+    }
+    return _cachedData; // Return the populated map
   }
 }
 
