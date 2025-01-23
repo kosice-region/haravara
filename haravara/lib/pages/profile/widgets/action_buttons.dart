@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,9 +12,11 @@ import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
+import 'package:haravara/core/repositories/database_repository.dart';
 
+import '../../auth/services/auth_screen_service.dart';
 import 'widgets.dart';
-
+DatabaseRepository DBrep = DatabaseRepository();
 class ActionButtons extends ConsumerStatefulWidget {
   const ActionButtons({super.key});
 
@@ -30,12 +30,19 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   late String userId;
   String selectedCity = '';
 
-  _updateUsername() async {
-    if (newUsername.isEmpty) {
-      return;
+  Future<bool> _updateUsername() async {
+
+    if (newUsername.isEmpty || newUsername == "") {
+      return true;
     }
-    await authRepository.updateUserName(newUsername, userId);
-    await ref.read(userInfoProvider.notifier).updateUsername(newUsername);
+    if(await DBrep.isUserNameUsed(newUsername)){
+      showSnackBar(context,'Toto meno už niekto použiva');
+      return false;
+    }else{
+      await authRepository.updateUserName(newUsername, userId);
+      await ref.read(userInfoProvider.notifier).updateUsername(newUsername);
+      return true;
+    }
   }
 
   _updateUserLocation() async {
@@ -198,10 +205,11 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
-                  _updateUsername();
-                  _updateUserLocation();
-                  Navigator.of(context).pop();
+                onPressed: () async {
+                  if(await _updateUsername()){
+                    _updateUserLocation();
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text(
                   'Uložiť',

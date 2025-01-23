@@ -9,6 +9,7 @@ import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
+import '../../../core/repositories/database_repository.dart';
 
 class RegistrationForm extends ConsumerStatefulWidget {
   const RegistrationForm({Key? key}) : super(key: key);
@@ -29,6 +30,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
   var _enteredUsername = '';
   bool isFamily = false;
   bool rememberPhone = false;
+  DatabaseRepository DBrep = DatabaseRepository();
 
   String childrenCount = '';
   String selectedLocation = '';
@@ -160,8 +162,14 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
 
   Future<void> _handleRegistration() async {
     final userId = await authService.findUserByEmail(_enteredEmail);
+
     if (userId.isNotEmpty) {
-      showSnackBar(context, 'Tento e-mail už existuje');
+      showSnackBar(context,'Tento e-mail už existuje');
+      isButtonDisabled = false;
+      return;
+    }
+    if(await DBrep.isUserNameUsed(_enteredUsername)){
+      showSnackBar(context, 'Toto meno už niekto použiva');
       isButtonDisabled = false;
       return;
     }
@@ -171,8 +179,6 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       return;
     }
     
-    //UPDATING REGISTRATION DATA TO USER INFO PROVIDER AND SHARED PREFERENCES
-    //MANAGING 
     await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
     await ref.read(userInfoProvider.notifier).updateCountOfChildren(int.tryParse(childrenCount) ?? -1);
 

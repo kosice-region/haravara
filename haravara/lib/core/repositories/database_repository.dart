@@ -13,6 +13,8 @@ FirebaseDatabase database = FirebaseDatabase.instance;
 DatabaseReference placesRef = FirebaseDatabase.instance.ref('locations');
 DatabaseReference avatarsRef = FirebaseDatabase.instance.ref('avatars');
 DatabaseReference imagesToPlacesRef = FirebaseDatabase.instance.ref('images');
+DatabaseReference usernameRef = database.ref('usernames');
+
 
 class DatabaseRepository {
   final dio = Dio();
@@ -107,6 +109,19 @@ class DatabaseRepository {
       log('Unexpected data format for user $userId: ${snapshot.value}');
       return [];
     }
+  }
+
+
+
+  Future<bool> isUserNameUsed(String username) async {
+    DataSnapshot snapshot = await usernameRef.orderByChild('username').equalTo(username).get();
+
+    if (snapshot.exists && snapshot.value != null) {
+      return true;
+    }
+    return false;
+
+
   }
 
   static Map<String, dynamic> decodeJsonFromSnapshot(DataSnapshot snapshot) {
