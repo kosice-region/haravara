@@ -21,7 +21,8 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
 
   List<Place> getSortedPlacesForward(bool sortForward) {
     List<Place> collectedPlaces = getCollectedPlaces();
-    List<Place> uncollectedPlaces = state.where((place) => !place.isReached).toList();
+    List<Place> uncollectedPlaces =
+        state.where((place) => !place.isReached).toList();
 
     if (sortForward) {
       return [...collectedPlaces, ...uncollectedPlaces];
@@ -51,35 +52,15 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
   double getProgressToNextMilestone() {
     int collectedPlacesLength = getCollectedPlaces().length;
     const List<int> thresholds = [10, 20, 30, 40];
-    
+
     for (int i = 0; i < thresholds.length; i++) {
       if (collectedPlacesLength < thresholds[i]) {
         int previousThreshold = i == 0 ? 0 : thresholds[i - 1];
-        return (collectedPlacesLength - previousThreshold) / (thresholds[i] - previousThreshold);
+        return (collectedPlacesLength - previousThreshold) /
+            (thresholds[i] - previousThreshold);
       }
     }
     return 1.0;
-  }
-
-  // only for testing
-  void incrementCollectedPlaces() {
-    for (int i = 0; i < state.length; i++) {
-      if (!state[i].isReached) {
-        state = [
-          for (int j = 0; j < state.length; j++)
-            if (i == j) state[j].copyWith(isReached: true) else state[j],
-        ];
-        break;
-      }
-    }
-  }
-
-  // only for testing
-  void resetPlacesForTesting() {
-    state = [
-      for (int i = 0; i < state.length; i++)
-        state[i].copyWith(isReached: i < 0),
-    ];
   }
 }
 
@@ -92,7 +73,7 @@ final placesFutureProvider = FutureProvider<List<Place>>((ref) async {
   return await DatabaseService().loadPlaces();
 });
 
-final collectedPlacesProvider = StreamProvider.family<List<String>, String>((ref, userId) {
+final collectedPlacesProvider =
+    StreamProvider.family<List<String>, String>((ref, userId) {
   return DatabaseService().loadCollectedPlaceIdsStream(userId);
 });
-

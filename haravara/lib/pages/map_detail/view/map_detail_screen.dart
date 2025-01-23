@@ -9,6 +9,7 @@ import 'package:haravara/core/services/event_bus.dart';
 import 'package:haravara/router/screen_router.dart';
 
 import '../map_detail.dart';
+
 class MapDetailScreen extends ConsumerStatefulWidget {
   const MapDetailScreen({Key? key}) : super(key: key);
 
@@ -57,14 +58,17 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
       } else {
         const double initialScale = 0.23;
         const Offset initialPosition = Offset(-2970.0, 10.0);
-        _controller.value = setInitialTransformation(initialScale, initialPosition);
+        _controller.value =
+            setInitialTransformation(initialScale, initialPosition);
       }
     });
 
     eventBus.on<String>().listen((tappedMarker) {
       if (tappedMarker != null && mounted) {
         setState(() {
-          pickedLocation = ref.read(placesProvider).firstWhere((place) => place.id == tappedMarker);
+          pickedLocation = ref
+              .read(placesProvider)
+              .firstWhere((place) => place.id == tappedMarker);
           isMarkerPicked = true;
         });
         if (mounted) {
@@ -77,7 +81,9 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
       final selectedPlace = ref.read(pickedPlaceProvider);
       if (selectedPlace.placeId != 'null' && selectedPlace.showPreview) {
         setState(() {
-          pickedLocation = ref.read(placesProvider).firstWhere((place) => place.id == selectedPlace.placeId);
+          pickedLocation = ref
+              .read(placesProvider)
+              .firstWhere((place) => place.id == selectedPlace.placeId);
           isMarkerPicked = true;
         });
         if (mounted) {
@@ -116,14 +122,17 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
               child: GestureDetector(
                 onTapUp: (details) {
                   setState(() {
-                    print('${details.globalPosition.dx}, ${details.globalPosition.dy}');
-                    tapPositions.add(Offset(details.globalPosition.dx, details.globalPosition.dy));
+                    print(
+                        '${details.globalPosition.dx}, ${details.globalPosition.dy}');
+                    tapPositions.add(Offset(
+                        details.globalPosition.dx, details.globalPosition.dy));
                   });
                 },
                 child: Consumer(
                   builder: (context, ref, child) {
                     List<Place> places = ref.watch(placesProvider);
-                    final selectedPlaceId = ref.watch(pickedPlaceProvider).placeId;
+                    final selectedPlaceId =
+                        ref.watch(pickedPlaceProvider).placeId;
 
                     return Stack(
                       children: [
@@ -132,14 +141,13 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                           fit: BoxFit.cover,
                         ),
                         ...places.asMap().entries.map((entry) {
-                          int index = entry.key;
                           Place place = entry.value;
                           return Positioned(
                             left: place.geoData.primary.pixelCoordinates[0],
                             top: place.geoData.primary.pixelCoordinates[1],
                             child: MapMarker(
                               isCollected: place.isReached,
-                              index: index,
+                              index: place.order,
                               placeId: place.id!,
                               isSelected: place.id == selectedPlaceId,
                             ),
@@ -162,10 +170,12 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     ref.read(routerProvider.notifier).changeScreen(ScreenType.compass);
     String id = pickedLocation.id!;
     ref.read(pickedPlaceProvider.notifier).setNewPlace(id);
-    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(context, ScreenRouter().getScreenWidget(ScreenType.compass));
+    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+        context, ScreenRouter().getScreenWidget(ScreenType.compass));
   }
 
-  Future<dynamic> showPreview(BuildContext context, Place pickedLocation, Function routeToCompassScreen) {
+  Future<dynamic> showPreview(BuildContext context, Place pickedLocation,
+      Function routeToCompassScreen) {
     return showModalBottomSheet(
       context: context,
       builder: (context) {
