@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:haravara/core/widgets/header.dart'; // Adjust based on your project structure
-import 'package:haravara/core/widgets/footer.dart'; // Adjust based on your project structure
-import 'package:haravara/pages/header_menu/view/header_menu_screen.dart'; // Adjust path
-import '../leaderBoard.dart'; // The file with providers, PersonsItem, and level definitions
+import 'package:haravara/core/widgets/header.dart';
+import 'package:haravara/core/widgets/footer.dart';
+import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
+import '../leaderBoard.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 
 class LeaderBoardScreen extends ConsumerWidget {
@@ -25,7 +25,7 @@ class LeaderBoardScreen extends ConsumerWidget {
     final usersAsync = ref.watch(usersNotifierProvider(usersAvatars));
 
     return Scaffold(
-      endDrawer: HeaderMenu(), // Your custom drawer if needed
+      endDrawer: HeaderMenu(),
       body: Stack(
         children: [
           // Background layer

@@ -10,8 +10,6 @@ import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/pages/leaderBoard/view/people_screen.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
-
-// Import the file where LevelsData, Level, PersonsItem, usersNotifierProvider are defined
 import '../leaderBoardLevels.dart';
 
 class LevelsItems {
@@ -93,9 +91,6 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                 levelsDataAsync.when(
                   data: (levelsData) {
                     // Convert the Level objects to LevelsItems objects
-                    // stampsNumber was originally the minimum stamp count as a string
-                    // You can decide how to show stampsNumber. Let's show the minimum stamps required
-                    // or the range min-max. Here we'll just show the min for simplicity.
                     final levelsItems = levelsData.levels.map((lvl) {
                       return LevelsItems(
                         levelName: lvl.name,
@@ -165,7 +160,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // Line connecting to the next circle (optional, adjust as needed)
+          // Line connecting to the next circle
           Positioned(
             top: 0.2.sw,
             left: 0.80.sw,
@@ -251,20 +246,6 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                                         fit: BoxFit.fill,
                                       ),
                               );
-                              // return Container(
-                              //   margin: EdgeInsets.only(right: 1),
-                              //   width: 28.w,
-                              //   height: 28.w,
-                              //   decoration: BoxDecoration(
-                              //     image: DecorationImage(
-                              //       image: AssetImage(icon),
-                              //       fit: BoxFit.cover,
-                              //       alignment: Alignment.centerRight,
-                              //     ),
-                              //     borderRadius: BorderRadius.circular(50.0),
-                              //     border: Border.all(color: Colors.black),
-                              //   ),
-                              // );
                             }).toList(),
                           ),
                           Text(

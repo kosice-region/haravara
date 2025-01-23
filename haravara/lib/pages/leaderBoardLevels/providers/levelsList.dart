@@ -146,10 +146,6 @@ class UsersRepository {
         final snapshot = await _db.ref('users/$userId/profile/avatar').get();
         final userAvatarId = snapshot.value as String? ?? '';
 
-        // for (var entry in usersAvatars.entries) {
-        //   print("User ID: ${entry.key}, Avatar Location: ${entry.value}");
-        // }
-
         return PersonsItem(
           personsName: username,
           stampsNumber: stampCount,
