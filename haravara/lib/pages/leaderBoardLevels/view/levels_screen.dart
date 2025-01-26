@@ -172,7 +172,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
           ),
           // Main row for the item
           Container(
-            margin: EdgeInsets.only(bottom: 15.0),
+            margin: EdgeInsets.only(bottom: 40.0),
             padding: EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -181,7 +181,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                 // Left block
                 Container(
                   padding: EdgeInsets.fromLTRB(16, 5, 16, 10),
-                  width: 0.6.sw,
+                  width: 0.65.sw,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -206,22 +206,28 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                     ],
                   ),
                   child: Column(children: [
-                    Text(
-                      item.levelName,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.titanOne(
-                        fontSize: 17.sp,
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(0, 0),
-                            blurRadius: 4.0,
-                            color: Colors.black,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        15.horizontalSpace,
+                        Text(
+                          item.levelName,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.titanOne(
+                            fontSize: 16.sp,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                offset: Offset(0, 0),
+                                blurRadius: 4.0,
+                                color: Colors.black,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
                     Container(
                       height: 30.h,
@@ -263,7 +269,9 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                                         : (item.amountOfPeople -
                                                 item.profileIcons.length)
                                             .toString()),
-                            textAlign: TextAlign.right,
+                            textAlign: item.amountOfPeople == 0
+                                ? TextAlign.center
+                                : TextAlign.right,
                             style: GoogleFonts.titanOne(
                               fontSize:
                                   item.amountOfPeople == 0 ? 12.sp : 20.sp,
@@ -309,6 +317,27 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                   ),
                 ),
               ],
+            ),
+          ),
+
+          Positioned(
+            top: -25,
+            left: -10,
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(
+                  color: const Color.fromARGB(255, 255, 216, 41),
+                  width: 3.h,
+                ),
+                image: DecorationImage(
+                  image: AssetImage('assets/avatars/kasko.png'),
+                  fit: BoxFit.cover,
+                  alignment: Alignment.centerRight,
+                ),
+              ),
             ),
           ),
         ],
