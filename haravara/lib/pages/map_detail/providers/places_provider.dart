@@ -42,11 +42,11 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
 
     for (var level in levels) {
       if (collectedPlacesLength >= (level['threshold'] as num)) {
-        return 'Si pátrač ${level['level']}';
+        return 'Som pátrač ${level['level']}';
       }
     }
 
-    return 'Si pátrač začiatočník';
+    return 'Som pátrač začiatočník';
   }
 
   double getProgressToNextMilestone() {

@@ -50,7 +50,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
               );
             },
             child: Text(
-              'Nahlasit problem',
+              'Nahlásiť problém',
               style: GoogleFonts.titanOne(
                 color: Colors.white,
                 fontSize: 11.sp,
