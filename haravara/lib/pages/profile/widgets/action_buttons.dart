@@ -76,27 +76,39 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
 
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 3.h),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            side: BorderSide(color: Colors.white, width: 4),
-            backgroundColor: const Color.fromARGB(216, 81, 182, 240),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.r)),
+        child: Stack(clipBehavior: Clip.none, children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              side: BorderSide(color: Colors.white, width: 4),
+              backgroundColor: const Color.fromARGB(216, 81, 182, 240),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.r)),
+              ),
+            ),
+            onPressed: () => _showUsernameDialog(context),
+            child: Column(children: [
+              SizedBox(height: 5.h),
+              UsernameWidget(),
+              Text(levelOfSearcher,
+                  style: GoogleFonts.titanOne(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w300,
+                    color: color,
+                  )),
+              SizedBox(height: 10.h)
+            ]),
+          ),
+          Positioned(
+            right: -5.w,
+            bottom: 35.h,
+            child: Image.asset(
+              'assets/PECIATKA.png',
+              width: 50.w,
+              height: 50.h,
+              fit: BoxFit.fill,
             ),
           ),
-          onPressed: () => _showUsernameDialog(context),
-          child: Column(children: [
-            SizedBox(height: 5.h),
-            UsernameWidget(),
-            Text(levelOfSearcher,
-                style: GoogleFonts.titanOne(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w300,
-                  color: color,
-                )),
-            SizedBox(height: 10.h),
-          ]),
-        ));
+        ]));
   }
 
   void _showUsernameDialog(BuildContext context) {
