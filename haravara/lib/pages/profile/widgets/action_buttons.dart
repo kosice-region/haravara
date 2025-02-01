@@ -8,6 +8,7 @@ import 'package:haravara/core/providers/login_provider.dart';
 import 'package:haravara/core/providers/preferences_provider.dart';
 import 'package:haravara/core/services/database_service.dart';
 import 'package:haravara/pages/map_detail/providers/collected_places_provider.dart';
+import 'package:haravara/pages/map_detail/providers/places_provider.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/router/router.dart';
@@ -16,7 +17,9 @@ import 'package:haravara/core/repositories/database_repository.dart';
 
 import '../../auth/services/auth_screen_service.dart';
 import 'widgets.dart';
+
 DatabaseRepository DBrep = DatabaseRepository();
+
 class ActionButtons extends ConsumerStatefulWidget {
   const ActionButtons({super.key});
 
@@ -31,14 +34,13 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   String selectedCity = '';
 
   Future<bool> _updateUsername() async {
-
     if (newUsername.isEmpty || newUsername == "") {
       return true;
     }
-    if(await DBrep.isUserNameUsed(newUsername)){
-      showSnackBar(context,'Toto meno už niekto použiva');
+    if (await DBrep.isUserNameUsed(newUsername)) {
+      showSnackBar(context, 'Toto meno už niekto použiva');
       return false;
-    }else{
+    } else {
       await authRepository.updateUserName(newUsername, userId);
       await ref.read(userInfoProvider.notifier).updateUsername(newUsername);
       return true;
@@ -67,69 +69,34 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   Widget build(BuildContext context) {
     username = ref.watch(userInfoProvider).username;
     userId = ref.watch(userInfoProvider).id;
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      Container(
-        width: 91.w,
-        height: 30.h,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
-              offset: Offset(4, 4),
-            ),
-          ],
-          border: Border.all(color: Colors.white, width: 4),
-          borderRadius: BorderRadius.circular(50.r),
-        ),
+    final Color color = Colors.white;
+
+    String levelOfSearcher = ref.watch(placesProvider.select(
+        (state) => ref.read(placesProvider.notifier).getLevelOfSearcher()));
+
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 3.h),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 239, 72, 77),
+            side: BorderSide(color: Colors.white, width: 4),
+            backgroundColor: const Color.fromARGB(216, 81, 182, 240),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15.r)),
-            ),
-          ),
-          onPressed: () async {
-            handleLogout(ref, context);
-          },
-          child: Text(
-            'ODHLÁSIŤ',
-            style: GoogleFonts.titanOne(
-              color: const Color.fromARGB(255, 255, 255, 255),
-              fontSize: 10.sp,
-            ),
-          ),
-        ),
-      ),
-      Container(
-        width: 91.w,
-        height: 30.h,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
-              offset: Offset(4, 4),
-            ),
-          ],
-          border: Border.all(color: Colors.white, width: 4),
-          borderRadius: BorderRadius.circular(50.r),
-        ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 42, 177, 255),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15.r)),
+              borderRadius: BorderRadius.all(Radius.circular(20.r)),
             ),
           ),
           onPressed: () => _showUsernameDialog(context),
-          child: Text(
-            'UPRAVIŤ',
-            style: GoogleFonts.titanOne(color: const Color.fromARGB(255, 255, 255, 255), fontSize: 10.sp),
-          ),
-        ),
-      ),
-    ]);
+          child: Column(children: [
+            SizedBox(height: 5.h),
+            UsernameWidget(),
+            Text(levelOfSearcher,
+                style: GoogleFonts.titanOne(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w300,
+                  color: color,
+                )),
+            SizedBox(height: 10.h),
+          ]),
+        ));
   }
 
   void _showUsernameDialog(BuildContext context) {
@@ -206,7 +173,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  if(await _updateUsername()){
+                  if (await _updateUsername()) {
                     _updateUserLocation();
                     Navigator.of(context).pop();
                   }
@@ -227,18 +194,5 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
             ],
           );
         });
-  }
-
-  Future<void> handleLogout(WidgetRef ref, BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    ref.read(loginNotifierProvider.notifier).logout();
-    ref.read(collectedPlacesProvider.notifier).deleteAllPlaces();
-    await ref.read(userInfoProvider.notifier).clear();
-    ref.invalidate(loginNotifierProvider);
-    ref.invalidate(userInfoProvider);
-    await DatabaseService().clearRichedPlaces();
-    await DatabaseService().clearUserAllAvatarsFromDatabase();
-    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
-        context, ScreenRouter().getScreenWidget(ScreenType.auth));
   }
 }
