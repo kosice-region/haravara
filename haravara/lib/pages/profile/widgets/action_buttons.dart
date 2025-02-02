@@ -1,24 +1,16 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/core/providers/login_provider.dart';
 import 'package:haravara/core/providers/preferences_provider.dart';
-import 'package:haravara/core/services/database_service.dart';
-import 'package:haravara/pages/map_detail/providers/collected_places_provider.dart';
-import 'package:haravara/pages/map_detail/providers/places_provider.dart';
-import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
-import 'package:haravara/router/router.dart';
-import 'package:haravara/router/screen_router.dart';
-import 'package:haravara/core/repositories/database_repository.dart';
+import 'package:haravara/pages/map_detail/providers/places_provider.dart';
 
 import '../../auth/services/auth_screen_service.dart';
 import 'widgets.dart';
-
-DatabaseRepository DBrep = DatabaseRepository();
+import 'package:haravara/pages/profile/providers/avatars.provider.dart';
+import 'package:haravara/pages/leaderBoard/providers/userList.dart'; // Adjust based on actual file location
 
 class ActionButtons extends ConsumerStatefulWidget {
   const ActionButtons({super.key});
@@ -33,50 +25,51 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   late String userId;
   String selectedCity = '';
 
-  Future<bool> _updateUsername() async {
-    if (newUsername.isEmpty || newUsername == "") {
-      return true;
-    }
-    if (await DBrep.isUserNameUsed(newUsername)) {
-      showSnackBar(context, 'Toto meno už niekto použiva');
-      return false;
-    } else {
-      await authRepository.updateUserName(newUsername, userId);
-      await ref.read(userInfoProvider.notifier).updateUsername(newUsername);
-      return true;
-    }
-  }
-
-  _updateUserLocation() async {
-    if (selectedCity.isEmpty) {
-      return;
-    }
-    final avatar = ref.read(avatarsProvider.notifier).getCurrentAvatar();
-    String userProfileType =
-        ref.watch(userInfoProvider).isFamily ? 'family' : 'individual';
-    int children = ref.watch(userInfoProvider).children;
-    await authRepository.updateUserProfile(
-        userId, avatar.id!, userProfileType, selectedCity, children);
-    await ref.read(userInfoProvider.notifier).updateLocation(selectedCity);
-  }
-
   @override
   void initState() {
     super.initState();
+  }
+
+  /// Determines the correct badge image based on the user's stamp count
+  String getBadgeImageForUser(int stamps) {
+    for (final level in levels) {
+      if (stamps >= level.min && stamps <= level.max) {
+        return level.badgeImage;
+      }
+    }
+    return 'assets/badges/empty.png'; // Default fallback badge
   }
 
   @override
   Widget build(BuildContext context) {
     username = ref.watch(userInfoProvider).username;
     userId = ref.watch(userInfoProvider).id;
-    final Color color = Colors.white;
 
-    String levelOfSearcher = ref.watch(placesProvider.select(
-        (state) => ref.read(placesProvider.notifier).getLevelOfSearcher()));
+    // Get user data from UsersNotifier
+    final usersAvatars =
+        ref.watch(avatarsProvider).getAllUserIdsAndAvatarLocations();
+    final usersAsync = ref.watch(usersNotifierProvider(usersAvatars));
+
+    // Find current user based on ID
+    final PersonsItem? currentUser = usersAsync.when(
+      data: (users) => users.firstWhere(
+        (user) => user.personsName == username,
+        orElse: () =>
+            PersonsItem(personsName: '', stampsNumber: 0, profileIcon: ''),
+      ),
+      loading: () => null,
+      error: (_, __) => null,
+    );
+
+    final int userStamps = currentUser?.stampsNumber ?? 0;
+    // final int userStamps = 30; //Uncomment it if you test each variant
+    final String badgeImage = getBadgeImageForUser(userStamps);
 
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 3.h),
-        child: Stack(clipBehavior: Clip.none, children: [
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 3.h),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               side: BorderSide(color: Colors.white, width: 4),
@@ -86,29 +79,44 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ),
             ),
             onPressed: () => _showUsernameDialog(context),
-            child: Column(children: [
-              SizedBox(height: 5.h),
-              UsernameWidget(),
-              Text(levelOfSearcher,
+            child: Column(
+              children: [
+                SizedBox(height: 5.h),
+                UsernameWidget(),
+                Text(
+                  ref.watch(placesProvider.select((state) =>
+                      ref.read(placesProvider.notifier).getLevelOfSearcher())),
                   style: GoogleFonts.titanOne(
-                    fontSize: 13.sp,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w300,
-                    color: color,
-                  )),
-              SizedBox(height: 10.h)
-            ]),
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+              ],
+            ),
           ),
+
+          // Positioned Badge Image
           Positioned(
             right: -5.w,
             bottom: 35.h,
-            child: Image.asset(
-              'assets/PECIATKA.png',
-              width: 50.w,
-              height: 50.h,
-              fit: BoxFit.fill,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                boxShadow: [BoxShadow(color: Colors.white, blurRadius: 30)],
+              ),
+              child: Image.asset(
+                badgeImage, // Correct badge image based on user's stamps
+                width: 50.w,
+                height: 50.h,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
-        ]));
+        ],
+      ),
+    );
   }
 
   void _showUsernameDialog(BuildContext context) {
@@ -120,7 +128,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               borderRadius: BorderRadius.circular(15.r),
             ),
             title: Text(
-              'Upraviť udaje',
+              'Upraviť údaje',
               style: GoogleFonts.titanOne(),
             ),
             content: Column(
@@ -185,10 +193,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  if (await _updateUsername()) {
-                    _updateUserLocation();
-                    Navigator.of(context).pop();
-                  }
+                  Navigator.of(context).pop();
                 },
                 child: Text(
                   'Uložiť',

@@ -33,20 +33,29 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
 
   String getLevelOfSearcher() {
     int collectedPlacesLength = getCollectedPlaces().length;
+    // int collectedPlacesLength = 20; //Uncomment it if you test each variant
     const List<Map<String, dynamic>> levels = [
-      {'threshold': 40, 'level': 'expert'},
-      {'threshold': 30, 'level': 'pokročilý'},
-      {'threshold': 20, 'level': 'stredne pokročilý'},
-      {'threshold': 10, 'level': 'mierne pokročilý'},
+      {'threshold': 60, 'level': 'dúhový jednorožec'},
+      {'threshold': 55, 'level': 'pyšný páv'},
+      {'threshold': 50, 'level': 'tajomný panter'},
+      {'threshold': 45, 'level': 'šikovná veverička'},
+      {'threshold': 40, 'level': 'splašená čivava'},
+      {'threshold': 35, 'level': 'zvedavá surikata'},
+      {'threshold': 30, 'level': 'vyhúkaná sova'},
+      {'threshold': 25, 'level': 'vytrvalý bobor'},
+      {'threshold': 20, 'level': 'popletená chobotnička'},
+      {'threshold': 15, 'level': 'turbo leňochod'},
+      {'threshold': 10, 'level': 'vytrvalý slimáčik'},
+      {'threshold': 5, 'level': 'ospalý pavúčik'},
     ];
 
     for (var level in levels) {
       if (collectedPlacesLength >= (level['threshold'] as num)) {
-        return 'Si pátrač ${level['level']}';
+        return 'Som ${level['level']}';
       }
     }
 
-    return 'Si pátrač začiatočník';
+    return 'Som pátrač začiatočník';
   }
 
   double getProgressToNextMilestone() {
