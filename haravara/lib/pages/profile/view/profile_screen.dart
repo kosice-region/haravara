@@ -46,7 +46,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   children: [
                     SizedBox(height: 8.h),
                     const Header(),
-                    SizedBox(height: 5.h),
                     AvatarWidget(),
                     SizedBox(height: 5.h),
                     ActionButtons(),
