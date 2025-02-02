@@ -46,22 +46,61 @@ class LeaderBoardScreen extends ConsumerWidget {
                 const Header(),
                 5.verticalSpace,
                 // Display the chosen level name from the levels list
-                Text(
-                  levels[chosenLevel - 1].name,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.titanOne(
-                    fontSize: 30.sp,
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    fontWeight: FontWeight.w500,
-                    shadows: [
-                      const Shadow(
-                        offset: Offset(0, 0),
-                        blurRadius: 40.0,
-                        color: Colors.black,
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      10.horizontalSpace,
+                      Positioned(
+                        top: -25,
+                        left: -10,
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Original PNG Image
+                              Image.asset(
+                                levels[chosenLevel - 1].badgeImage,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.contain,
+                              ),
+                            ],
+                          ),
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              const BoxShadow(
+                                offset: Offset(0, 0),
+                                blurRadius: 40.0,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                ),
+                      Container(
+                        width: 0.6.sw,
+                        child: Text(
+                          levels[chosenLevel - 1].name,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.titanOne(
+                            fontSize: 22.sp,
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            fontWeight: FontWeight.w500,
+                            shadows: [
+                              const Shadow(
+                                offset: Offset(0, 0),
+                                blurRadius: 40.0,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      15.horizontalSpace,
+                    ]),
                 10.verticalSpace,
                 _buildBody(usersAsync, ref),
                 SizedBox(height: 40.h), // Space for footer

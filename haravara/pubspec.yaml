@@ -184,6 +184,7 @@ flutter:
     - assets/backgrounds/verification_background.png
     - assets/avatars/KASO_CITA (1).png
     - assets/company-logo/
+    - assets/badges/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
