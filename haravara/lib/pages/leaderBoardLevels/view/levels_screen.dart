@@ -329,11 +329,6 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(
-                  color: const Color.fromARGB(255, 255, 216, 41),
-                  width: 3.h,
-                ),
                 image: DecorationImage(
                   image: AssetImage(item.badgeImage),
                   fit: BoxFit.cover,

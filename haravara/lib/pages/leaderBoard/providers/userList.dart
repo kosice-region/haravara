@@ -18,28 +18,130 @@ class PersonsItem {
   String toString() => '$personsName ($stampsNumber)';
 }
 
-// Define a Level model
 class Level {
-  Level({required this.name, required this.min, required this.max});
+  Level({
+    required this.name,
+    required this.min,
+    required this.max,
+    required this.levelColor,
+    required this.badgeImage,
+    this.profileIcons,
+    this.isOpened,
+    this.amountOfPeople,
+  });
+
   final String name;
   final int min;
   final int max;
+  final int levelColor;
+  final String badgeImage;
+  List<String>? profileIcons;
+  bool? isOpened;
+  int? amountOfPeople;
+
+  Level copyWith({
+    List<String>? profileIcons,
+    bool? isOpened,
+    int? amountOfPeople,
+  }) {
+    return Level(
+      name: name,
+      min: min,
+      max: max,
+      levelColor: levelColor,
+      badgeImage: badgeImage,
+      profileIcons: profileIcons ?? this.profileIcons,
+      isOpened: isOpened ?? this.isOpened,
+      amountOfPeople: amountOfPeople ?? this.amountOfPeople,
+    );
+  }
 }
 
-// 12 predefined levels
 final List<Level> levels = [
-  Level(name: 'Dúhový jednorožec', min: 60, max: 1000),
-  Level(name: 'Pyšný páv', min: 55, max: 59),
-  Level(name: 'Tajomný panter', min: 50, max: 54),
-  Level(name: 'Šikovná veverička', min: 45, max: 49),
-  Level(name: 'Splašená čivava', min: 40, max: 44),
-  Level(name: 'Zvedavá surikata', min: 35, max: 39),
-  Level(name: 'Vyhúkaná sova', min: 30, max: 34),
-  Level(name: 'Vytrvalý bobor', min: 25, max: 29),
-  Level(name: 'Popletená chobotnička', min: 20, max: 24),
-  Level(name: 'Turbo leňochod', min: 15, max: 19),
-  Level(name: 'Vytrvalý slimáčik', min: 10, max: 14),
-  Level(name: 'Ospalý pavúčik', min: 5, max: 9),
+  Level(
+    name: 'Dúhový \njednorožec',
+    min: 60,
+    max: 1000,
+    levelColor: 0xFF4A148C,
+    badgeImage: 'assets/badges/60_jednorozec.png',
+  ),
+  Level(
+    name: 'Pyšný \npáv',
+    min: 55,
+    max: 59,
+    levelColor: 0xFF8E24AA,
+    badgeImage: 'assets/badges/55_pav.png',
+  ),
+  Level(
+    name: 'Tajomný \npanter',
+    min: 50,
+    max: 54,
+    levelColor: 0xFFD81B60,
+    badgeImage: 'assets/badges/50_panter.png',
+  ),
+  Level(
+    name: 'Šikovná \nveverička',
+    min: 45,
+    max: 49,
+    levelColor: 0xFFE65100,
+    badgeImage: 'assets/badges/45_vevericka.png',
+  ),
+  Level(
+    name: 'Splašená \nčivava',
+    min: 40,
+    max: 44,
+    levelColor: 0xFFFF6F00,
+    badgeImage: 'assets/badges/40_civava.png',
+  ),
+  Level(
+    name: 'Zvedavá \nsurikata',
+    min: 35,
+    max: 39,
+    levelColor: 0xFFF57C00,
+    badgeImage: 'assets/badges/35_surikata.png',
+  ),
+  Level(
+    name: 'Vyhúkaná \nsova',
+    min: 30,
+    max: 34,
+    levelColor: 0xFFFFB300,
+    badgeImage: 'assets/badges/30_sova.png',
+  ),
+  Level(
+    name: 'Vytrvalý \nbobor',
+    min: 25,
+    max: 29,
+    levelColor: 0xFFFFD600,
+    badgeImage: 'assets/badges/25_bobor.png',
+  ),
+  Level(
+    name: 'Popletená \nchobotnička',
+    min: 20,
+    max: 24,
+    levelColor: 0xFF76FF03,
+    badgeImage: 'assets/badges/20_chobotnica.png',
+  ),
+  Level(
+    name: 'Turbo \nleňochod',
+    min: 15,
+    max: 19,
+    levelColor: 0xFF00E676,
+    badgeImage: 'assets/badges/15_lenochod.png',
+  ),
+  Level(
+    name: 'Vytrvalý \nslimáčik',
+    min: 10,
+    max: 14,
+    levelColor: 0xFF1DE9B6,
+    badgeImage: 'assets/badges/10_slimak.png',
+  ),
+  Level(
+    name: 'Ospalý \npavúčik',
+    min: 5,
+    max: 9,
+    levelColor: 0xFF00B0FF,
+    badgeImage: 'assets/badges/05_pavuk.png',
+  ),
 ];
 
 // Repository for fetching data from Firebase

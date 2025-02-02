@@ -54,20 +54,29 @@ class LeaderBoardScreen extends ConsumerWidget {
                         top: -25,
                         left: -10,
                         child: Container(
-                          margin: EdgeInsets.all(5),
-                          width: 100,
-                          height: 100,
+                          width: 120,
+                          height: 120,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Original PNG Image
+                              Image.asset(
+                                levels[chosenLevel - 1].badgeImage,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.contain,
+                              ),
+                            ],
+                          ),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            border: Border.all(
-                              color: const Color.fromARGB(255, 255, 216, 41),
-                              width: 3.h,
-                            ),
-                            image: DecorationImage(
-                              image: AssetImage('assets/avatars/kasko.png'),
-                              fit: BoxFit.cover,
-                              alignment: Alignment.centerRight,
-                            ),
+                            boxShadow: [
+                              const BoxShadow(
+                                offset: Offset(0, 0),
+                                blurRadius: 40.0,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(100),
                           ),
                         ),
                       ),
