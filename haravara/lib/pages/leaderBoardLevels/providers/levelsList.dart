@@ -31,6 +31,7 @@ class Level {
     required this.min,
     required this.max,
     required this.levelColor,
+    required this.badgeImage,
     this.profileIcons,
     this.isOpened,
     this.amountOfPeople,
@@ -40,6 +41,7 @@ class Level {
   final int min;
   final int max;
   final int levelColor;
+  final String badgeImage;
   List<String>? profileIcons;
   bool? isOpened;
   int? amountOfPeople;
@@ -54,6 +56,7 @@ class Level {
       min: min,
       max: max,
       levelColor: levelColor,
+      badgeImage: badgeImage,
       profileIcons: profileIcons ?? this.profileIcons,
       isOpened: isOpened ?? this.isOpened,
       amountOfPeople: amountOfPeople ?? this.amountOfPeople,
@@ -63,22 +66,89 @@ class Level {
 
 final List<Level> levels = [
   Level(
-      name: 'Dúhový \njednorožec', min: 60, max: 1000, levelColor: 0xFF4A148C),
-  Level(name: 'Pyšný \npáv', min: 55, max: 59, levelColor: 0xFF8E24AA),
-  Level(name: 'Tajomný \npanter', min: 50, max: 54, levelColor: 0xFFD81B60),
-  Level(name: 'Šikovná \nveverička', min: 45, max: 49, levelColor: 0xFFE65100),
-  Level(name: 'Splašená \nčivava', min: 40, max: 44, levelColor: 0xFFFF6F00),
-  Level(name: 'Zvedavá \nsurikata', min: 35, max: 39, levelColor: 0xFFF57C00),
-  Level(name: 'Vyhúkaná \nsova', min: 30, max: 34, levelColor: 0xFFFFB300),
-  Level(name: 'Vytrvalý \nbobor', min: 25, max: 29, levelColor: 0xFFFFD600),
+    name: 'Dúhový \njednorožec',
+    min: 60,
+    max: 1000,
+    levelColor: 0xFF4A148C,
+    badgeImage: 'assets/badges/60_jednorozec.png',
+  ),
   Level(
-      name: 'Popletená \nchobotnička',
-      min: 20,
-      max: 24,
-      levelColor: 0xFF76FF03),
-  Level(name: 'Turbo \nleňochod', min: 15, max: 19, levelColor: 0xFF00E676),
-  Level(name: 'Vytrvalý \nslimáčik', min: 10, max: 14, levelColor: 0xFF1DE9B6),
-  Level(name: 'Ospalý \npavúčik', min: 5, max: 9, levelColor: 0xFF00B0FF),
+    name: 'Pyšný \npáv',
+    min: 55,
+    max: 59,
+    levelColor: 0xFF8E24AA,
+    badgeImage: 'assets/badges/55_pav.png',
+  ),
+  Level(
+    name: 'Tajomný \npanter',
+    min: 50,
+    max: 54,
+    levelColor: 0xFFD81B60,
+    badgeImage: 'assets/badges/50_panter.png',
+  ),
+  Level(
+    name: 'Šikovná \nveverička',
+    min: 45,
+    max: 49,
+    levelColor: 0xFFE65100,
+    badgeImage: 'assets/badges/45_vevericka.png',
+  ),
+  Level(
+    name: 'Splašená \nčivava',
+    min: 40,
+    max: 44,
+    levelColor: 0xFFFF6F00,
+    badgeImage: 'assets/badges/40_civava.png',
+  ),
+  Level(
+    name: 'Zvedavá \nsurikata',
+    min: 35,
+    max: 39,
+    levelColor: 0xFFF57C00,
+    badgeImage: 'assets/badges/35_surikata.png',
+  ),
+  Level(
+    name: 'Vyhúkaná \nsova',
+    min: 30,
+    max: 34,
+    levelColor: 0xFFFFB300,
+    badgeImage: 'assets/badges/30_sova.png',
+  ),
+  Level(
+    name: 'Vytrvalý \nbobor',
+    min: 25,
+    max: 29,
+    levelColor: 0xFFFFD600,
+    badgeImage: 'assets/badges/25_bobor.png',
+  ),
+  Level(
+    name: 'Popletená \nchobotnička',
+    min: 20,
+    max: 24,
+    levelColor: 0xFF76FF03,
+    badgeImage: 'assets/badges/20_chobotnica.png',
+  ),
+  Level(
+    name: 'Turbo \nleňochod',
+    min: 15,
+    max: 19,
+    levelColor: 0xFF00E676,
+    badgeImage: 'assets/badges/15_lenochod.png',
+  ),
+  Level(
+    name: 'Vytrvalý \nslimáčik',
+    min: 10,
+    max: 14,
+    levelColor: 0xFF1DE9B6,
+    badgeImage: 'assets/badges/10_slimak.png',
+  ),
+  Level(
+    name: 'Ospalý \npavúčik',
+    min: 5,
+    max: 9,
+    levelColor: 0xFF00B0FF,
+    badgeImage: 'assets/badges/05_pavuk.png',
+  ),
 ];
 
 class UsersRepository {

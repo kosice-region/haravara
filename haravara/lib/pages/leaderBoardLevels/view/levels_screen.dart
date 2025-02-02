@@ -20,6 +20,7 @@ class LevelsItems {
     required this.levelColor,
     required this.profileIcons,
     required this.amountOfPeople,
+    required this.badgeImage,
   });
 
   String levelName;
@@ -28,6 +29,7 @@ class LevelsItems {
   int levelColor;
   List<String> profileIcons;
   int amountOfPeople;
+  String badgeImage;
 }
 
 class LeaderBoardLevelsScreen extends ConsumerWidget {
@@ -99,9 +101,9 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                         levelColor: lvl.levelColor,
                         profileIcons: lvl.profileIcons ?? [],
                         amountOfPeople: lvl.amountOfPeople ?? 0,
+                        badgeImage: lvl.badgeImage,
                       );
                     }).toList();
-
                     return Padding(
                       padding: EdgeInsets.only(
                           left: 16.0, right: 16.0, bottom: 20.h),
@@ -333,7 +335,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                   width: 3.h,
                 ),
                 image: DecorationImage(
-                  image: AssetImage('assets/avatars/kasko.png'),
+                  image: AssetImage(item.badgeImage),
                   fit: BoxFit.cover,
                   alignment: Alignment.centerRight,
                 ),
