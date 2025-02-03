@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/core/widgets/close_button.dart';
 import 'package:haravara/core/widgets/footer.dart';
+import 'package:haravara/core/widgets/header.dart';
 
 import '../../../router/router.dart';
 
@@ -33,6 +34,7 @@ class InfoScreen extends StatelessWidget {
             children: [
               Column(
                 children: [
+                  const Header(),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Padding(
@@ -100,7 +102,7 @@ class InfoScreen extends StatelessWidget {
               ),
 
               Positioned(
-                top: 43.h,
+                top: 35.h,
                 right: 30.w,
                 child: Close_Button(screenType: ScreenType.news,),
               ),
