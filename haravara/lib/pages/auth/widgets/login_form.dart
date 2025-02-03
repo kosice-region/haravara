@@ -82,7 +82,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                     inputType: TextInputType.emailAddress,
                   ),
                   5.verticalSpace,
-                  
                 ],
               ),
             ],
@@ -120,7 +119,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     isButtonDisabled = false;
     return;
   }
-
+    
   // Updating USER_ID in UserInfoProvider and SharedPreferences
   await ref.read(userInfoProvider.notifier).updateUserId(userId);
   this.userId = userId;
@@ -146,7 +145,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   await ref.read(userInfoProvider.notifier).updateCountOfChildren(user.userProfile!.children ?? -1);
   int children = user.userProfile!.children ?? -1;
   String location = user.userProfile!.location ?? '';
-
+  await ref.read(userInfoProvider.notifier).updateLocation(location);
   final isAdmin = await DatabaseService().isAdmin(user.email!);
 
   if (isAdmin) {
@@ -178,10 +177,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         onSendCode();
       }
     }
-
     isButtonDisabled = false;
   }
-
 
   onSendCode() async {
     final sentCode = await loginauthService.sendEmail(context, _enteredEmail);

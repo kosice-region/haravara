@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:haravara/pages/auth/models/user.dart';
@@ -31,6 +30,11 @@ class AuthRepository {
     );
     final newUsersIdRef = database.ref('userIds/$base64');
     newUsersIdRef.set(id);
+    String username = user.username;
+    final newUserNameRef = database.ref('usernames/$id');
+    newUserNameRef.set(username);
+
+
   }
 
   Future<User> getUserById(String userId) async {
@@ -73,6 +77,8 @@ class AuthRepository {
       'updated_at': ServerValue.timestamp,
     };
     await usersRef.child(userId).update(updatedData);
+    final newUserNameRef = database.ref('usernames/$userId');
+    newUserNameRef.set(updatedData);
   }
 
   Future<void> updateUserProfile(String userId, String avatarId,
