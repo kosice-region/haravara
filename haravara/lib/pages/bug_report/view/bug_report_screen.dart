@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:haravara/core/widgets/close_button.dart';
 import 'package:haravara/pages/bug_report/services/send_report.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/core/widgets/footer.dart';
@@ -117,7 +118,16 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              const Header(),
+              Stack(
+                children: [
+                  const Header(),
+                  Positioned(
+                    top: 43.h,
+                    right: 30.w,
+                    child: Close_Button(screenType: ScreenType.profile,),
+                  ),
+                ],
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(

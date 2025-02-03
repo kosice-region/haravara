@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,7 +38,7 @@ class _LocationFieldState extends ConsumerState<LocationField> {
     final location = prefs.getString('userLocation') ?? '';
     if (location.isNotEmpty) {
       final parts = location.split(',');
-      final city = parts.isNotEmpty ? parts.first.trim() : location;
+      final city = parts.isNotEmpty ? "" : "";
       setState(() {
         _savedLocation = city;
         _controller.text = city;

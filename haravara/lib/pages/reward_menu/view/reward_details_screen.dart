@@ -5,6 +5,8 @@ import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/reward_menu/model/reward_model.dart';
 
+import '../../../core/widgets/close_button.dart';
+
 class RewardDetailsScreen extends StatelessWidget {
   final Reward reward;
   final String username;
@@ -143,26 +145,9 @@ class RewardDetailsScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 50.h,
+            top: 43.h,
             right: 30.w,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Container(
-                width: 36.w,
-                height: 36.h,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(50)).r,
-                  color: Colors.transparent,
-                ),
-                child: Image.asset(
-                  'assets/menu-icons/backbutton.png',
-                  width: 36.w,
-                  height: 36.h,
-                ),
-              ),
-            ),
+            child: Close_Button(),
           ),
         ],
       ),

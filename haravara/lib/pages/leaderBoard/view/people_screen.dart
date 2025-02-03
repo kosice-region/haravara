@@ -1,10 +1,10 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/core/widgets/close_button.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
@@ -19,7 +19,6 @@ class LeaderBoardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Use chosenLevel here to show the correct level's users
     final usersAvatars =
         ref.watch(avatarsProvider).getAllUserIdsAndAvatarLocations();
     final usersAsync = ref.watch(usersNotifierProvider(usersAvatars));
@@ -28,7 +27,6 @@ class LeaderBoardScreen extends ConsumerWidget {
       endDrawer: HeaderMenu(),
       body: Stack(
         children: [
-          // Background layer
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -45,7 +43,6 @@ class LeaderBoardScreen extends ConsumerWidget {
                 8.verticalSpace,
                 const Header(),
                 5.verticalSpace,
-                // Display the chosen level name from the levels list
                 Text(
                   levels[chosenLevel - 1].name,
                   textAlign: TextAlign.center,
@@ -68,36 +65,16 @@ class LeaderBoardScreen extends ConsumerWidget {
               ],
             ),
           ),
-          // Footer positioned at the bottom
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
             child: Footer(height: 40),
           ),
-          // Back button positioned at the top-right corner
           Positioned(
-            top: 40.h,
+            top: 43.h,
             right: 30.w,
-            child: GestureDetector(
-              onTap: () {
-                log("Button pushed");
-                Navigator.pop(context);
-              },
-              child: Container(
-                width: 36.w,
-                height: 36.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50.0),
-                  color: Colors.transparent,
-                ),
-                child: Image.asset(
-                  'assets/menu-icons/backbutton.png',
-                  width: 36.w,
-                  height: 36.h,
-                ),
-              ),
-            ),
+            child: Close_Button(),
           ),
         ],
       ),

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/core/widgets/close_button.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/pages/leaderBoard/view/people_screen.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
+import '../../../router/router.dart';
 import '../leaderBoardLevels.dart';
 
 class LevelsItems {
@@ -65,12 +67,27 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
             ),
           ),
           // Foreground scrollable content
+          const Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Header(),
+          ),
+
+          Positioned(
+            top: 37.h,
+            right: 30.w,
+            child: Close_Button(screenType: ScreenType.news,),
+          ),
+    Positioned(
+    top: 90.h, // Adjust this value to match the header's height
+    left: 0,
+    right: 0,
+    bottom: 60.h, // Adjust for the footer's height
+    child:
           SingleChildScrollView(
             child: Column(
               children: [
-                8.verticalSpace,
-                const Header(),
-                5.verticalSpace,
                 Text(
                   'REBRÍČEK',
                   style: GoogleFonts.titanOne(
@@ -128,9 +145,11 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(height: 40.h), // Space for footer
+
               ],
             ),
           ),
+    ),
           // Footer positioned at the bottom
           Positioned(
             left: 0,
@@ -138,6 +157,7 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
             bottom: 0,
             child: Footer(height: 40),
           ),
+
         ],
       ),
     );
