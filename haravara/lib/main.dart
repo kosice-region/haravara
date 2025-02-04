@@ -16,7 +16,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 final sharedPreferencesProvider =
     Provider<SharedPreferences>((ref) => throw UnimplementedError());
 
-// AIzaSyAxCBF1tTD9zqryMa7j-AWxDwdLpOTQcN8
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeBackgroundService();
@@ -83,8 +82,6 @@ Future<void> initializeBackgroundService() async {
       onStart: onStart,
       autoStart: false,
       isForegroundMode: true,
-      // notificationChannelId: 'my_foreground',
-      // initialNotificationContent: 'running',
       foregroundServiceNotificationId: 888,
     ),
     iosConfiguration: IosConfiguration(
