@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/pages/map_detail/providers/picked_place_provider.dart';
 import 'package:haravara/pages/map_detail/providers/places_provider.dart';
@@ -41,6 +42,17 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 10.0.w), // Add some right padding
+            child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.close,size:15.dg)),
+          ),
+        ],
         title: Text(
           'Zoznam pečiatok',
           style: GoogleFonts.titanOne(
