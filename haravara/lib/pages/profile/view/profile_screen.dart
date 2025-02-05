@@ -7,7 +7,6 @@ import 'package:haravara/pages/profile/widgets/widgets.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/core/widgets/footer.dart';
-import 'package:haravara/pages/map_detail/providers/places_provider.dart';
 import 'package:haravara/router/router.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -29,12 +28,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       endDrawer: HeaderMenu(),
       body: Stack(
         children: [
-          // Background Image
           BackgroundImage(
             imagePath: 'assets/backgrounds/HARAVARA_profil.jpg',
           ),
-
-          // Scrollable Content
           Positioned.fill(
             child: SafeArea(
               child: SingleChildScrollView(
@@ -88,8 +84,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     child: Text(
                                       'Moje\npečiatky',
                                       style: GoogleFonts.titanOne(
-                                        color: Colors
-                                            .white, // Farba textu zmenená na bielu
+                                        color: Colors.white,
                                         fontSize: 13.sp,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -132,8 +127,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   child: Text(
                                     'Moje\nvýhry',
                                     style: GoogleFonts.titanOne(
-                                      color: Colors
-                                          .white, // Farba textu zmenená na bielu
+                                      color: Colors.white,
                                       fontSize: 13.sp,
                                     ),
                                     overflow: TextOverflow.ellipsis,

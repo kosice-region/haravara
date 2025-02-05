@@ -121,7 +121,6 @@ class LeaderBoardScreen extends ConsumerWidget {
             right: 30.w,
             child: GestureDetector(
               onTap: () {
-                log("Button pushed");
                 Navigator.pop(context);
               },
               child: Container(
