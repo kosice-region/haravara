@@ -54,8 +54,8 @@ class LeaderBoardScreen extends ConsumerWidget {
                         top: -25,
                         left: -10,
                         child: Container(
-                          width: 120,
-                          height: 120,
+                          width: 0.35.sw,
+                          height: 0.35.sw,
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
@@ -81,12 +81,13 @@ class LeaderBoardScreen extends ConsumerWidget {
                         ),
                       ),
                       Container(
-                        width: 0.6.sw,
+                        width: 0.55.sw,
+                        padding: EdgeInsets.only(top: 10),
                         child: Text(
                           levels[chosenLevel - 1].name,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.titanOne(
-                            fontSize: 22.sp,
+                            fontSize: 21.sp,
                             color: const Color.fromARGB(255, 255, 255, 255),
                             fontWeight: FontWeight.w500,
                             shadows: [
@@ -156,9 +157,9 @@ class LeaderBoardScreen extends ConsumerWidget {
         if (filteredUsers.isEmpty) {
           return Center(
             child: Text(
-              'Nikto tu nie je',
+              'Nikto tu ešte nie je',
               style: GoogleFonts.titanOne(
-                fontSize: 24.sp,
+                fontSize: 18.sp,
                 color: Colors.white,
                 shadows: [
                   const Shadow(
@@ -251,7 +252,7 @@ class LeaderBoardScreen extends ConsumerWidget {
               Text(
                 item.stampsNumber.toString(),
                 style: GoogleFonts.titanOne(
-                  fontSize: 20.sp,
+                  fontSize: 18.sp,
                   color: Colors.white,
                   shadows: [
                     const Shadow(
