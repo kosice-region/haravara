@@ -49,7 +49,7 @@ class _ButtonState extends ConsumerState<Button> {
             Icon(
               widget.icon,
               size: 16,
-              color: Colors.yellow,
+              color: const Color.fromARGB(255, 255, 255, 255),
             ),
             const SizedBox(width: 4),
             Expanded(
@@ -143,7 +143,7 @@ class _ButtonState extends ConsumerState<Button> {
               color: Colors.black26,
               width: 2.0,
             ),
-            color: const Color.fromARGB(255, 86, 162, 73),
+            color: const Color.fromARGB(255, 73, 150, 162),
           ),
           offset: const Offset(0, 0),
           scrollbarTheme: ScrollbarThemeData(

@@ -7,6 +7,7 @@ import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/pages/profile/widgets/searcher_level.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 import '../../map_detail/map_detail.dart';
 import '../widgets/widgets.dart';
@@ -50,7 +51,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                 const Header(showMenu: true),
                 10.verticalSpace,
                 Text(
-                  'TVOJE PEČIATKY',
+                  'MOJE PEČIATKY',
                   style: GoogleFonts.titanOne(
                     color: const Color.fromARGB(255, 86, 162, 73),
                     fontSize: 15.sp,
@@ -67,7 +68,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
           AchievementsList(),
           Footer(
             height: 40,
-          ),
+          )
         ],
       ),
     );
