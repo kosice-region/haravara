@@ -70,7 +70,7 @@ class Footer extends ConsumerWidget {
             ref,
             'assets/PECIATKA.png',
             ScreenType.achievements,
-            size: 38.w,
+            size: 40.w,
           ),
 
           // Home Icon - Centered
@@ -79,7 +79,7 @@ class Footer extends ConsumerWidget {
             ref,
             'assets/home_button.png',
             ScreenType.news,
-            size: 42.w, // Bigger size
+            size: 36.w, // Bigger size
           ),
 
           // Right icon - Map
@@ -88,7 +88,7 @@ class Footer extends ConsumerWidget {
             ref,
             'assets/menu-icons/map.png',
             ScreenType.map,
-            size: 38.w,
+            size: 40.w,
           ),
 
           // Profile Icon - Same size as Peciatka and Map
