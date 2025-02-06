@@ -2,17 +2,22 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haravara/core/providers/auth_provider.dart';
 import 'package:haravara/pages/auth/services/auth_screen_service.dart';
-import 'package:haravara/pages/auth/view/auth_screen.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
+import 'package:haravara/core/providers/preferences_provider.dart';
+import 'package:haravara/pages/auth/services/auth_service.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/pages/web_view/view/web_view_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/repositories/database_repository.dart';
+import 'package:uuid/uuid.dart';
+
+var uuid = const Uuid();
+final authService = AuthService();
 
 class RegistrationForm extends ConsumerStatefulWidget {
-  const RegistrationForm({Key? key}) : super(key: key);
+  final VoidCallback toggleMode;
+  const RegistrationForm({Key? key, required this.toggleMode})
+      : super(key: key);
 
   @override
   ConsumerState<RegistrationForm> createState() => _RegistrationFormState();
@@ -33,8 +38,6 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
   String _enteredUsername = '';
   String childrenCount = '';
   String selectedLocation = '';
-
-  DatabaseRepository DBrep = DatabaseRepository();
 
   @override
   void initState() {
@@ -192,11 +195,15 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                   },
                 ),
                 SizedBox(height: 10.h),
+                ConfirmButton(
+                  text: 'REGISTRÁCIA',
+                  onPressed: isButtonDisabled ? () {} : _submitAndValidate,
+                ),
+                SwitchMode(
+                  text: "Máte už konto? Prihlás sa.",
+                  onPressed: widget.toggleMode,
+                ),
               ],
-            ),
-            ConfirmButton(
-              text: 'REGISTRÁCIA',
-              onPressed: isButtonDisabled ? () {} : _submitAndValidate,
             ),
           ],
         ),

@@ -23,9 +23,10 @@ class _SwitchModeState extends State<SwitchMode> {
     return TextButton(
       child: Text(
         text,
+        textAlign: TextAlign.center,
         style: GoogleFonts.titanOne(
           fontSize: 10.sp,
-          color: Color.fromARGB(255, 239, 72, 77),
+          color: Color.fromARGB(255, 255, 221, 0),
           fontWeight: FontWeight.w500,
         ),
       ),

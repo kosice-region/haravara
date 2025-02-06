@@ -102,13 +102,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     3.verticalSpace,
                     Opacity(
                       opacity: 0.9,
-                      child: _isLogin ? LoginForm() : RegistrationForm(),
-                    ),
-                    SwitchMode(
-                      text: !_isLogin
-                          ? "Máte už konto? Prihlás sa."
-                          : 'Nie si ešte prihlásený? ZAREGISTRUJ SA!',
-                      onPressed: _toggleLoginMode,
+                      child: _isLogin
+                          ? LoginForm(toggleMode: _toggleLoginMode)
+                          : RegistrationForm(toggleMode: _toggleLoginMode),
                     ),
                   ],
                 ),

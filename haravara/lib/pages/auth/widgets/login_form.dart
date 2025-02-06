@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +13,9 @@ import '../services/auth_service.dart';
 final loginauthService = AuthService();
 
 class LoginForm extends ConsumerStatefulWidget {
-  const LoginForm();
+  final VoidCallback toggleMode;
+  const LoginForm({Key? key, required this.toggleMode}) : super(key: key);
+
   @override
   ConsumerState<LoginForm> createState() => _LoginFormState();
 }
@@ -41,22 +42,20 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
-    final deviceHeight = MediaQuery.of(context).size.height;
-    var loginHeight = 120;
-    if (deviceHeight < 850) {
-      loginHeight = 120;
-    }
 
+    // Removed fixed height to allow the container to size itself.
     return Container(
       key: _formKey,
       width: 220.w,
-      height: loginHeight.h,
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 24, 191, 186),
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: Colors.white, width: 4),
       ),
+      // Adding some vertical padding for spacing.
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -78,6 +77,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           ConfirmButton(
             text: 'PRIHLÁS SA',
             onPressed: isButtonDisabled ? () {} : _submitAndValidate,
+          ),
+          // SwitchMode moved inside the container under the confirm button.
+          SwitchMode(
+            text: 'Nie si ešte prihlásený? ZAREGISTRUJ SA!',
+            onPressed: widget.toggleMode,
           ),
         ],
       ),
@@ -113,7 +117,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       try {
         final userCredential = await FirebaseAuth.instance.signInAnonymously();
         log('Admin signed in anonymously: ${userCredential.user?.uid}');
-
         routeToAdminScreen(context);
       } catch (error) {
         showSnackBar(context, 'Admin login failed: $error');
