@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +11,10 @@ final dio = Dio();
 
 class LocationField extends StatefulWidget {
   final ValueChanged<String> onLocationSelected;
-
   const LocationField({
-    super.key,
+    Key? key,
     required this.onLocationSelected,
-  });
+  }) : super(key: key);
 
   @override
   State<LocationField> createState() => _LocationFieldState();
@@ -28,12 +26,23 @@ class _LocationFieldState extends State<LocationField> {
   OverlayEntry? _overlayEntry;
   List<AutocompletePrediction> preds = [];
 
-  void _showOverlay() {
-    if (_overlayEntry != null) {
-      _overlayEntry!.remove();
-      _overlayEntry = null;
-    }
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        _removeOverlay();
+      }
+    });
+  }
 
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  void _showOverlay() {
+    _removeOverlay();
     _overlayEntry = _createOverlayEntry();
     Overlay.of(context).insert(_overlayEntry!);
   }
@@ -46,18 +55,15 @@ class _LocationFieldState extends State<LocationField> {
       _showOverlay();
       return;
     }
-
-    Response response;
-    response = await dio.get(
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json',
-        queryParameters: {
-          'input': query,
-          'key': 'AIzaSyAxCBF1tTD9zqryMa7j-AWxDwdLpOTQcN8',
-        });
-
+    Response response = await dio.get(
+      'https://maps.googleapis.com/maps/api/place/autocomplete/json',
+      queryParameters: {
+        'input': query,
+        'key': 'AIzaSyAxCBF1tTD9zqryMa7j-AWxDwdLpOTQcN8',
+      },
+    );
     PlaceAutocompleteResponse placeResponse =
         PlaceAutocompleteResponse.parseAutocompleteResult(response.toString());
-
     if (placeResponse.predictions != null) {
       setState(() {
         preds = placeResponse.predictions!
@@ -73,22 +79,19 @@ class _LocationFieldState extends State<LocationField> {
       });
       _showOverlay();
     }
-    preds.forEach(
-      (element) {
-        log(element.structuredFormatting?.mainText.toString() ?? '');
-        log(element.structuredFormatting?.secondaryText.toString() ?? '');
-        log(element.types.toString());
-        log(element.description.toString());
-        log('------------------');
-      },
-    );
+    preds.forEach((element) {
+      log(element.structuredFormatting?.mainText.toString() ?? '');
+      log(element.structuredFormatting?.secondaryText.toString() ?? '');
+      log(element.types.toString());
+      log(element.description.toString());
+      log('------------------');
+    });
   }
 
   OverlayEntry _createOverlayEntry() {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     var size = renderBox.size;
     var offset = renderBox.localToGlobal(Offset.zero);
-
     return OverlayEntry(
       builder: (context) => Positioned(
         left: offset.dx,
@@ -102,36 +105,32 @@ class _LocationFieldState extends State<LocationField> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: Color.fromARGB(255, 188, 95, 190),
+                color: Colors.white,
                 width: 2,
               ),
             ),
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: 150.h,
-              ),
+              constraints: BoxConstraints(maxHeight: 150),
               child: ListView(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
-                children: preds
-                    .map(
-                      (suggestion) => ListTile(
-                        title: Text(
-                          suggestion.description!,
-                          style: GoogleFonts.titanOne(
-                            color: Color.fromARGB(255, 188, 95, 190),
-                          ),
-                        ),
-                        onTap: () {
-                          _controller.text = suggestion.description!;
-                          _focusNode.unfocus();
-                          _overlayEntry?.remove();
-                          _overlayEntry = null;
-                          widget.onLocationSelected(suggestion.description!);
-                        },
+                children: preds.map((suggestion) {
+                  return ListTile(
+                    title: Text(
+                      suggestion.description!,
+                      style: GoogleFonts.titanOne(
+                        color: Color.fromARGB(255, 24, 191, 186),
                       ),
-                    )
-                    .toList(),
+                    ),
+                    onTap: () {
+                      _controller.text = suggestion.description!;
+                      _focusNode.unfocus();
+                      _overlayEntry?.remove();
+                      _overlayEntry = null;
+                      widget.onLocationSelected(suggestion.description!);
+                    },
+                  );
+                }).toList(),
               ),
             ),
           ),
@@ -144,7 +143,7 @@ class _LocationFieldState extends State<LocationField> {
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
-    _overlayEntry?.remove();
+    _removeOverlay();
     super.dispose();
   }
 
@@ -159,13 +158,13 @@ class _LocationFieldState extends State<LocationField> {
         keyboardType: TextInputType.text,
         textCapitalization: TextCapitalization.none,
         style: GoogleFonts.titanOne(
-          color: Color.fromARGB(255, 188, 95, 190),
+          color: Colors.white,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
           hintText: "Odkiaľ si?",
           hintStyle: GoogleFonts.titanOne(
-            color: Color.fromARGB(255, 188, 95, 190),
+            color: Colors.white,
             fontWeight: FontWeight.w300,
             fontSize: 11.sp,
           ),
@@ -173,24 +172,25 @@ class _LocationFieldState extends State<LocationField> {
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: SvgPicture.asset(
               "assets/icons/location_pin.svg",
-              color: Color.fromARGB(255, 188, 95, 190),
+              colorFilter:
+                  const ColorFilter.mode(Colors.white, BlendMode.srcIn),
             ),
           ),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: Color.fromARGB(255, 188, 95, 190),
-              width: 3.w,
+              color: Colors.white,
+              width: 3,
             ),
           ),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: Color.fromARGB(255, 188, 95, 190),
-              width: 3.w,
+              color: Colors.white,
+              width: 3,
             ),
           ),
         ),
         textInputAction: TextInputAction.search,
-        onChanged: (String value) {
+        onChanged: (value) {
           autocomplete(value);
         },
       ),

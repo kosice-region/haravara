@@ -95,7 +95,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       'REGISTRÁCIA',
                       style: GoogleFonts.titanOne(
                         fontSize: 18.sp,
-                        color: Color.fromARGB(255, 254, 152, 43),
+                        color: Color.fromARGB(255, 239, 72, 77),
                         fontWeight: FontWeight.w500,
                       ),
                     ),

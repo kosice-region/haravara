@@ -6,7 +6,7 @@ class SwitchMode extends StatefulWidget {
   const SwitchMode({
     super.key,
     required this.text,
-    required this.onPressed, 
+    required this.onPressed,
   });
 
   final String text;
@@ -25,11 +25,11 @@ class _SwitchModeState extends State<SwitchMode> {
         text,
         style: GoogleFonts.titanOne(
           fontSize: 10.sp,
-          color: Color.fromARGB(255, 254, 152, 43),
+          color: Color.fromARGB(255, 239, 72, 77),
           fontWeight: FontWeight.w500,
         ),
       ),
-      onPressed: widget.onPressed, 
+      onPressed: widget.onPressed,
     );
   }
 }

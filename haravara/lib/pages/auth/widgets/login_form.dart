@@ -1,11 +1,10 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/core/services/database_service.dart';
-import 'package:haravara/pages/admin/view/screens/admin_screen.dart';
-import 'package:haravara/pages/auth/models/user.dart';
 import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,7 +40,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    var deviceHeight = MediaQuery.of(context).size.height;
+    ScreenUtil.init(context, designSize: const Size(255, 516));
+    final deviceHeight = MediaQuery.of(context).size.height;
     var loginHeight = 120;
     if (deviceHeight < 850) {
       loginHeight = 120;
@@ -52,22 +52,14 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       width: 220.w,
       height: loginHeight.h,
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(15)),
-        color: Color.fromARGB(255, 249, 175, 97),
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromARGB(255, 188, 95, 190).withOpacity(1),
-            spreadRadius: 8,
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        color: const Color.fromARGB(255, 24, 191, 186),
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.white, width: 4),
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 children: [
@@ -115,6 +107,20 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', _enteredEmail);
+
+    final isAdmin = await DatabaseService().isAdmin(_enteredEmail);
+    if (isAdmin) {
+      try {
+        final userCredential = await FirebaseAuth.instance.signInAnonymously();
+        log('Admin signed in anonymously: ${userCredential.user?.uid}');
+
+        routeToAdminScreen(context);
+      } catch (error) {
+        showSnackBar(context, 'Admin login failed: $error');
+      }
+      isButtonDisabled = false;
+      return;
+    }
 
     await loginauthService.sendSignInWithEmailLink(_enteredEmail);
 
