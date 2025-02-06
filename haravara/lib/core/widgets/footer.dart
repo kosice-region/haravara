@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -132,13 +131,13 @@ class Footer extends ConsumerWidget {
     var currentScreen = ref.watch(routerProvider);
     if (currentScreen == ScreenType.menu && currentScreen != screenToRoute) {
       ref.read(routerProvider.notifier).changeScreen(screenToRoute);
-      ScreenRouter().routeToNextScreenWithoutAllowingRouteBackWithoutAnimation(
+      ScreenRouter().routeToNextScreen(
           context, ScreenRouter().getScreenWidget(screenToRoute));
       Navigator.of(context).pop();
       return;
     }
     ref.read(routerProvider.notifier).changeScreen(screenToRoute);
-    ScreenRouter().routeToNextScreenWithoutAllowingRouteBackWithoutAnimation(
+    ScreenRouter().routeToNextScreen(
         context, ScreenRouter().getScreenWidget(screenToRoute));
   }
 }

@@ -44,7 +44,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
             ),
             onPressed: () {
               ref.read(routerProvider.notifier).changeScreen(ScreenType.bugreport);
-              ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+              ScreenRouter().routeToNextScreen(
                 context,
                 ScreenRouter().getScreenWidget(ScreenType.bugreport),
               );

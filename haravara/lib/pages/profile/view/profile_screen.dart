@@ -57,8 +57,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ActionButtons(),
                     SizedBox(height: 10.h),
                     ActionButtons2(),
-                    // Uncomment if you want to include the ReportIcon
-                    // ReportIcon(),
                   ],
                 ),
               ),

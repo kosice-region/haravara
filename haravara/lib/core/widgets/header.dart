@@ -24,7 +24,7 @@ class Header extends ConsumerStatefulWidget {
 
 class _HeaderState extends ConsumerState<Header> {
   void openDetailMap() {
-    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+    ScreenRouter().routeToNextScreen(
         context, ScreenRouter().getScreenWidget(ScreenType.detailMap));
   }
 

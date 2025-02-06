@@ -238,7 +238,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
     ref.invalidate(userInfoProvider);
     await DatabaseService().clearRichedPlaces();
     await DatabaseService().clearUserAllAvatarsFromDatabase();
-    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+    ScreenRouter().routeToNextScreen(
         context, ScreenRouter().getScreenWidget(ScreenType.auth));
   }
 }
