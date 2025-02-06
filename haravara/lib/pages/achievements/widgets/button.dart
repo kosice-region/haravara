@@ -119,10 +119,10 @@ class _ButtonState extends ConsumerState<Button> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: Colors.black26,
+              color: const Color.fromARGB(255, 255, 255, 255),
               width: 3.0,
             ),
-            color: const Color.fromARGB(255, 86, 162, 73),
+            color: const Color(0xFF1666B1),
           ),
           elevation: 2,
         ),
@@ -131,7 +131,7 @@ class _ButtonState extends ConsumerState<Button> {
             Icons.arrow_downward_sharp,
           ),
           iconSize: 14,
-          iconEnabledColor: Colors.yellow,
+          iconEnabledColor: Color.fromARGB(255, 255, 255, 255),
           iconDisabledColor: Colors.grey,
         ),
         dropdownStyleData: DropdownStyleData(
@@ -143,7 +143,7 @@ class _ButtonState extends ConsumerState<Button> {
               color: Colors.black26,
               width: 2.0,
             ),
-            color: const Color.fromARGB(255, 73, 150, 162),
+            color: const Color(0xFF67B5E1),
           ),
           offset: const Offset(0, 0),
           scrollbarTheme: ScrollbarThemeData(

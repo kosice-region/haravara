@@ -42,33 +42,49 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
 
     return Scaffold(
       endDrawer: HeaderMenu(),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8).r,
-            child: Column(
-              children: [
-                const Header(showMenu: true),
-                10.verticalSpace,
-                Text(
-                  'MOJE PEČIATKY',
-                  style: GoogleFonts.titanOne(
-                    color: const Color.fromARGB(255, 86, 162, 73),
-                    fontSize: 15.sp,
-                  ),
-                ),
-                5.verticalSpace,
-                const SearcherLevel(color: Colors.black),
-                10.verticalSpace,
-                BuildSettings(),
-                5.verticalSpace,
-              ],
+          // Background Image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/backgrounds/background_clouds.png', // Replace with your image path
+              fit: BoxFit.cover, // Ensures it covers the entire screen
             ),
           ),
-          AchievementsList(),
-          Footer(
-            height: 40,
-          )
+
+          // Foreground Content
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 8).r,
+                child: Column(
+                  children: [
+                    const Header(showMenu: true),
+                    10.verticalSpace,
+                    Text(
+                      'MOJE PEČIATKY',
+                      style: GoogleFonts.titanOne(
+                        shadows: [Shadow(color: Colors.black, blurRadius: 15)],
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 15.sp,
+                      ),
+                    ),
+                    5.verticalSpace,
+                    const SearcherLevel(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        shadow: true),
+                    10.verticalSpace,
+                    BuildSettings(),
+                    5.verticalSpace,
+                  ],
+                ),
+              ),
+              Expanded(
+                  child:
+                      AchievementsList()), // Ensure list fills available space
+              Footer(height: 40),
+            ],
+          ),
         ],
       ),
     );
