@@ -36,7 +36,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
       return true;
     }
     if(await DBrep.isUserNameUsed(newUsername)){
-      showSnackBar(context,'Toto meno už niekto použiva');
+      showSnackBar(context,'Toto meno už niekto používa');
       return false;
     }else{
       await authRepository.updateUserName(newUsername, userId);
@@ -141,7 +141,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               borderRadius: BorderRadius.circular(15.r),
             ),
             title: Text(
-              'Upraviť udaje',
+              'Upraviť údaje',
               style: GoogleFonts.titanOne(),
             ),
             content: Column(
