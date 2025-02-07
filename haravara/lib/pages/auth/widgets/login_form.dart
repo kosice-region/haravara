@@ -42,8 +42,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
-
-    // Removed fixed height to allow the container to size itself.
     return Container(
       key: _formKey,
       width: 220.w,
@@ -52,7 +50,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: Colors.white, width: 4),
       ),
-      // Adding some vertical padding for spacing.
       padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -78,7 +75,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             text: 'PRIHLÁS SA',
             onPressed: isButtonDisabled ? () {} : _submitAndValidate,
           ),
-          // SwitchMode moved inside the container under the confirm button.
           SwitchMode(
             text: 'Nie si ešte prihlásený? ZAREGISTRUJ SA!',
             onPressed: widget.toggleMode,
@@ -129,6 +125,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
     isButtonDisabled = false;
     showSnackBar(context,
-        'An email link has been sent. Please check your email to complete login.');
+        'E-mailový odkaz bol odoslaný. Pre dokončenie prihlásenia skontrolujte svoj e-mail.');
   }
 }

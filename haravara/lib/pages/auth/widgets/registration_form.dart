@@ -94,7 +94,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     isButtonDisabled = false;
     showSnackBar(
       context,
-      'An email link has been sent. Please check your email to complete registration.',
+      'E-mailový odkaz bol odoslaný. Pre dokončenie registrácie skontrolujte svoj e-mail.',
     );
   }
 
@@ -152,7 +152,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                   inputType: TextInputType.emailAddress,
                 ),
                 FormRow(
-                  title: isFamily ? 'MENO RODINNEHO TIMU' : 'MENO POUŽÍVATEĽA',
+                  title: isFamily ? 'MENO RODINNÉHO TÍMU' : 'MENO POUŽÍVATEĽA',
                   controller: _usernameController,
                   focusNode: _usernameFocusNode,
                   inputType: TextInputType.name,

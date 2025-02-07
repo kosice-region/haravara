@@ -57,7 +57,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         child: Column(
           children: <Widget>[
             Expanded(
-              child: Column( // Wrap the top widgets with Expanded
+              child: Column( 
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Image.asset(
@@ -66,7 +66,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     height: 180.h,
                   ),
                   Text(
-                    "Initialization",
+                    "Inicializácia",
                     style: GoogleFonts.titanOne(fontSize: 20.sp, color: Colors.grey),
                   ),
                   SizedBox(height: 10.h),
