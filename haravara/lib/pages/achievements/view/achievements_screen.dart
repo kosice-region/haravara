@@ -44,15 +44,12 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
       endDrawer: HeaderMenu(),
       body: Stack(
         children: [
-          // Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/backgrounds/background_clouds.png', // Replace with your image path
-              fit: BoxFit.cover, // Ensures it covers the entire screen
+              'assets/backgrounds/background_clouds.png',
+              fit: BoxFit.cover,
             ),
           ),
-
-          // Foreground Content
           Column(
             children: [
               Padding(
@@ -79,9 +76,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                   ],
                 ),
               ),
-              Expanded(
-                  child:
-                      AchievementsList()), // Ensure list fills available space
+              Expanded(child: AchievementsList()),
               Footer(height: 40),
             ],
           ),
