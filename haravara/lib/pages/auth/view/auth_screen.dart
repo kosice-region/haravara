@@ -28,8 +28,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _usernameFocusNode = FocusNode();
   var userId = '';
-  final List<String> children = List.generate(
-      5, (index) => index == 0 ? '1 dieťa' : '${index + 1} detí');
+  final List<String> children =
+      List.generate(5, (index) => index == 0 ? '1 dieťa' : '${index + 1} detí');
   String? dropdownValue;
 
   final List<String> imageAssets = [
@@ -95,20 +95,16 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       _isLogin ? 'PRIHLÁSENIE' : 'REGISTRÁCIA',
                       style: GoogleFonts.titanOne(
                         fontSize: 18.sp,
-                        color: Color.fromARGB(255, 254, 152, 43),
+                        color: Color.fromARGB(255, 239, 72, 77),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     3.verticalSpace,
                     Opacity(
                       opacity: 0.9,
-                      child: _isLogin ? LoginForm() : RegistrationForm(),
-                    ),
-                    SwitchMode(
-                      text: !_isLogin
-                          ? "Máš už konto? PRIHLÁS SA."
-                          : 'Nie si ešte pátrač? ZAREGISTRUJ SA!',
-                      onPressed: _toggleLoginMode,
+                      child: _isLogin
+                          ? LoginForm(toggleMode: _toggleLoginMode)
+                          : RegistrationForm(toggleMode: _toggleLoginMode),
                     ),
                   ],
                 ),

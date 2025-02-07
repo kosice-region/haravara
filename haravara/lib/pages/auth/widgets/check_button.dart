@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,10 +10,17 @@ class CheckButton extends StatefulWidget {
     required this.value,
     required this.text,
     required this.onChanged,
+    this.hasClickablePart = false,
+    this.clickableText = '',
+    this.onClickableTextTap,
   }) : super(key: key);
+
   final bool value;
   final String text;
   final ValueChanged<bool> onChanged;
+  final bool hasClickablePart;
+  final String clickableText;
+  final VoidCallback? onClickableTextTap;
 
   @override
   State<CheckButton> createState() => _CheckButtonState();
@@ -22,8 +29,8 @@ class CheckButton extends StatefulWidget {
 class _CheckButtonState extends State<CheckButton> {
   @override
   Widget build(BuildContext context) {
-    bool isFamily = widget.value;
-    String text = widget.text;
+    bool isChecked = widget.value;
+
     return SizedBox(
       width: 190.w,
       height: 25.h,
@@ -33,21 +40,53 @@ class _CheckButtonState extends State<CheckButton> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5.0),
             ),
-            activeColor: Color.fromARGB(255, 155, 221, 153),
-            value: isFamily,
+            activeColor: const Color.fromARGB(255, 155, 221, 153),
+            value: isChecked,
             onChanged: (value) {
-              log('value $value');
+              log('CheckButton changed: $value');
               widget.onChanged(value!);
             },
           ),
-          Text(
-            text,
-            style: GoogleFonts.titanOne(
-              color: Color.fromARGB(255, 188, 95, 190),
-              fontWeight: FontWeight.w300,
-              fontSize: 11.sp,
+          if (!widget.hasClickablePart) ...[
+            Text(
+              widget.text,
+              style: GoogleFonts.titanOne(
+                color: Colors.white,
+                fontWeight: FontWeight.w300,
+                fontSize: 11.sp,
+              ),
             ),
-          ),
+          ] else ...[
+            RichText(
+              text: TextSpan(
+                style: GoogleFonts.titanOne(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 11.sp,
+                ),
+                children: [
+                  TextSpan(
+                    text: '${widget.text} ',
+                  ),
+                  TextSpan(
+                    text: widget.clickableText,
+                    style: GoogleFonts.titanOne(
+                      color: Color.fromARGB(255, 255, 221, 0),
+                      decoration: TextDecoration.underline,
+                      fontWeight: FontWeight.w300,
+                      fontSize: 11.sp,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        if (widget.onClickableTextTap != null) {
+                          widget.onClickableTextTap!();
+                        }
+                      },
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
