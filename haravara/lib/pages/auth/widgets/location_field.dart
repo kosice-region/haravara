@@ -163,7 +163,7 @@ class _LocationFieldState extends State<LocationField> {
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
-          hintText: "Odkiaľ si?",
+          hintText: "ODKIAĽ SI?",
           hintStyle: GoogleFonts.titanOne(
             color: Color.fromARGB(255, 188, 95, 190),
             fontWeight: FontWeight.w300,

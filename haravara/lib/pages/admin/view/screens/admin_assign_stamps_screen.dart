@@ -75,7 +75,7 @@ class _AdminAssignStampsScreenState
                           },
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
-                            hintText: 'Search by email',
+                            hintText: 'Hľadaj email',
                             hintStyle: GoogleFonts.titanOne(
                               fontSize: 16.sp,
                               color: Colors.white.withOpacity(0.5),
@@ -294,11 +294,11 @@ class _AdminAssignStampsScreenState
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            'Confirm Changes',
+            'Potvrdenie zmeny',
             style: GoogleFonts.titanOne(),
           ),
           content: Text(
-            'You are about to assign ${selectedCount} locations to $selectedEmail. Do you want to proceed?',
+            'Pridáš ${selectedCount} lokácii používateľovi $selectedEmail. Chceš pokračovať?',
             style: GoogleFonts.titanOne(),
           ),
           actions: [
@@ -307,7 +307,7 @@ class _AdminAssignStampsScreenState
                 Navigator.of(context).pop();
               },
               child: Text(
-                'Cancel',
+                'Zrušiť',
                 style: GoogleFonts.titanOne(),
               ),
             ),
@@ -319,7 +319,7 @@ class _AdminAssignStampsScreenState
                 }
               },
               child: Text(
-                'Confirm',
+                'Potvrdiť',
                 style: GoogleFonts.titanOne(),
               ),
             ),
@@ -599,11 +599,11 @@ class _LocationListState extends State<LocationList> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            'Confirm Changes',
+            'Potvrď zmeny',
             style: GoogleFonts.titanOne(),
           ),
           content: Text(
-            'Are you sure you want to save these selected locations?',
+            'Si si istý že chceš uložiť tieto lokácie?',
             style: GoogleFonts.titanOne(),
           ),
           actions: [
@@ -612,7 +612,7 @@ class _LocationListState extends State<LocationList> {
                 Navigator.of(context).pop();
               },
               child: Text(
-                'Cancel',
+                'Zrušiť',
                 style: GoogleFonts.titanOne(),
               ),
             ),
@@ -632,7 +632,7 @@ class _LocationListState extends State<LocationList> {
                 Navigator.of(context).pop();
               },
               child: Text(
-                'Save',
+                'Uložiť',
                 style: GoogleFonts.titanOne(),
               ),
             ),

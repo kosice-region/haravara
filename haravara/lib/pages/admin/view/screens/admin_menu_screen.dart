@@ -99,14 +99,11 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
                   buttonHeight,
                 ),
                 SizedBox(height: 20.h),
-                buildAdminButton(
-                  context,
-                  'Odhlasiť',
-                  Colors.red,
-                  buttonWidth,
+
+                buildAdminButton(context, 'Odhlásiť', Colors.red,buttonWidth,
                   buttonHeight,
-                  isLogout: true,
-                ),
+                    isLogout: true),
+
               ],
             ),
           ),

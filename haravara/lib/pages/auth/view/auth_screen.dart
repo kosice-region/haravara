@@ -29,7 +29,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   final FocusNode _usernameFocusNode = FocusNode();
   var userId = '';
   final List<String> children = List.generate(
-      5, (index) => index == 0 ? '1 dieťaťa' : '${index + 1} deti');
+      5, (index) => index == 0 ? '1 dieťa' : '${index + 1} detí');
   String? dropdownValue;
 
   final List<String> imageAssets = [
@@ -92,7 +92,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     if (deviceHeight > 700) 25.verticalSpace,
                     if (deviceHeight < 700) 25.verticalSpace,
                     Text(
-                      'REGISTRÁCIA',
+                      _isLogin ? 'PRIHLÁSENIE' : 'REGISTRÁCIA',
                       style: GoogleFonts.titanOne(
                         fontSize: 18.sp,
                         color: Color.fromARGB(255, 254, 152, 43),
@@ -106,8 +106,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     ),
                     SwitchMode(
                       text: !_isLogin
-                          ? "Máte už konto? Prihlás sa."
-                          : 'Nie si ešte prihlásený? ZAREGISTRUJ SA!',
+                          ? "Máš už konto? PRIHLÁS SA."
+                          : 'Nie si ešte pátrač? ZAREGISTRUJ SA!',
                       onPressed: _toggleLoginMode,
                     ),
                   ],
@@ -128,6 +128,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   @override
   void dispose() {
+    _emailFocusNode.dispose();
+    _usernameFocusNode.dispose();
     super.dispose();
   }
 }

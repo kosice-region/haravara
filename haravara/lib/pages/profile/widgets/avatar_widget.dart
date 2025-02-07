@@ -145,7 +145,7 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Vyberte si profilovku'),
+          title: Text('Vyber si profilovku'),
           content: SizedBox(
             width: 400.w,
             height: 200.h,

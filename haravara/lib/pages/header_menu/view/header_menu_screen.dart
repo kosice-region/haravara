@@ -84,7 +84,7 @@ class HeaderMenu extends ConsumerWidget {
                   webRoute: 'https://www.haravara.sk/podujatia/',
                 ),
                 RedirectButton(
-                  title: 'DETSKE ZONY',
+                  title: 'DETSKÉ ZÓNY',
                   imagePath: 'assets/menu-icons/steps2.png',
                   imageWidth: 70,
                   imageHeight: 55,
