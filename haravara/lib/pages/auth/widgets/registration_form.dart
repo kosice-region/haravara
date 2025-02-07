@@ -113,7 +113,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                   ),
                   FormRow(
                     title:
-                        isFamily ? 'MENO RODINNEHO TIMU' : 'MENO POUŽÍVATEĽA',
+                        isFamily ? 'MENO RODINNÉHO TÍMU' : 'MENO POUŽÍVATEĽA',
                     controller: _usernameController,
                     focusNode: _usernameFocusNode,
                     inputType: TextInputType.name,
@@ -134,7 +134,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                         ),
                       CheckButton(
                         value: isFamily,
-                        text: 'Patrat\' ako rodina',
+                        text: 'PÁTRAŤ\' AKO RODINA',
                         onChanged: _toggleIsFamily,
                       ),
                       20.verticalSpace,
@@ -166,15 +166,21 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     log('REGISTRATION - Checking if user already exists with email: $_enteredEmail');
 
     if (userId.isNotEmpty) {
-      log('REGISTRATION - User already exists with email: $_enteredEmail');
-      showSnackBar(context, 'Tento e-mail už existuje');
+      showSnackBar(context,'Tento e-mail už existuje');
+      isButtonDisabled = false;
+      return;
+    }
+    if(await DBrep.isUserNameUsed(_enteredUsername)){
+      showSnackBar(context, 'Toto meno už niekto používa');
+
       isButtonDisabled = false;
       return;
     }
 
     if (selectedLocation.isEmpty) {
-      log('REGISTRATION - No location selected');
-      showSnackBar(context, 'Zadajte prosim lokaciu');
+
+      showSnackBar(context, 'Zadajte prosím lokáciu');
+
       isButtonDisabled = false;
       return;
     }

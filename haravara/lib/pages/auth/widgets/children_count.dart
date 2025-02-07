@@ -15,7 +15,7 @@ class ChildrenCount extends StatefulWidget {
 
 class ChildrenCountState extends State<ChildrenCount> {
   final List<String> children = List.generate(
-      5, (index) => index == 0 ? '1 dieťaťa' : '${index + 1} deti');
+      5, (index) => index == 0 ? '1 dieťa' : '${index + 1} detí');
   FocusNode _dropdownFocusNode = FocusNode();
   String? dropdownValue;
 
@@ -52,7 +52,7 @@ class ChildrenCountState extends State<ChildrenCount> {
                   padding: EdgeInsets.only(top: 15),
                   child: Center(
                     child: Text(
-                      'POCET DETSKYCH PATRACOV',
+                      'POČET DETSKÝCH PÁTRAČOV',
                       style: GoogleFonts.titanOne(
                         color: Color.fromARGB(255, 188, 95, 190),
                         fontWeight: FontWeight.w300,
