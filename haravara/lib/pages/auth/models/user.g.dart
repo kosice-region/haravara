@@ -18,12 +18,8 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => _$UserImpl(
       userProfile: json['profile'] == null
           ? null
           : UserProfile.fromJson(json['profile'] as Map<String, dynamic>),
-      createdAt: json['created_at'] == null
-          ? null
-          : DateTime.parse(json['created_at'] as String),
-      updatedAt: json['updated_at'] == null
-          ? null
-          : DateTime.parse(json['updated_at'] as String),
+      createdAt: _fromJsonTimestamp(json['created_at']),
+      updatedAt: _fromJsonTimestamp(json['updated_at']),
     );
 
 Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
@@ -34,8 +30,8 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
       'phone_number': instance.phoneNumber,
       'phone_ids': instance.phones,
       'profile': instance.userProfile,
-      'created_at': instance.createdAt?.toIso8601String(),
-      'updated_at': instance.updatedAt?.toIso8601String(),
+      'created_at': _toJsonTimestamp(instance.createdAt),
+      'updated_at': _toJsonTimestamp(instance.updatedAt),
     };
 
 _$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>

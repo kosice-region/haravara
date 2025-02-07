@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:haravara/pages/auth/models/user.dart';
@@ -6,9 +7,15 @@ import 'package:haravara/pages/auth/models/user.dart';
 FirebaseDatabase database = FirebaseDatabase.instance;
 DatabaseReference usersRef = database.ref('users');
 DatabaseReference usersIdsRef = database.ref('userIds');
+DatabaseReference usersHashesRef = database.ref('userHashes');
 
 class AuthRepository {
   Future<void> registerUser(User user, String id, String base64) async {
+    String email = (user.email ?? '').trim().toLowerCase();
+    String base64Email = generateBase64(email);
+    log('Registering user with email: $email');
+    log('Base64-encoded email during registration: $base64Email');
+
     final userToRegister = database.ref('users/$id');
     await userToRegister.set(
       {
@@ -29,12 +36,13 @@ class AuthRepository {
       },
     );
     final newUsersIdRef = database.ref('userIds/$base64');
-    newUsersIdRef.set(id);
+    await newUsersIdRef.set(id);
     String username = user.username;
     final newUserNameRef = database.ref('usernames/$id');
     newUserNameRef.set(username);
 
-
+    log('Storing in userHashes: $base64Email -> $id');
+    await usersHashesRef.child(base64Email).set(id);
   }
 
   Future<User> getUserById(String userId) async {
@@ -49,15 +57,32 @@ class AuthRepository {
     return user;
   }
 
-  Future<String> findUserByEmail(String email) async {
-    DataSnapshot snapshot = await usersIdsRef.child(email).get();
+  Future<String> findUserByEmail(String emailInput) async {
+    String email = emailInput.trim().toLowerCase();
+
+    String base64Email = generateBase64(email);
+
+    log('Attempting to find user with email: $email');
+    log('Base64-encoded email during login: $base64Email');
+
+    DataSnapshot snapshot = await usersHashesRef.child(base64Email).get();
+
+    log('Snapshot exists: ${snapshot.exists}');
+    log('Snapshot value: ${snapshot.value}');
 
     if (snapshot.exists && snapshot.value != null) {
       String userId = snapshot.value.toString();
+      log('User ID found: $userId');
       return userId;
     } else {
+      log('User ID not found for email: $email');
       return '';
     }
+  }
+
+  String generateBase64(String input) {
+    Codec<String, String> stringToBase64 = utf8.fuse(base64);
+    return stringToBase64.encode(input);
   }
 
   Future<void> updateUser(User user) async {

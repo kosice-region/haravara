@@ -15,8 +15,16 @@ class User with _$User {
     @JsonKey(name: 'phone_number') String? phoneNumber,
     @JsonKey(name: 'phone_ids') @Default([]) List<String> phones,
     @JsonKey(name: 'profile') UserProfile? userProfile,
-    @JsonKey(name: 'created_at') DateTime? createdAt,
-    @JsonKey(name: 'updated_at') DateTime? updatedAt,
+    @JsonKey(
+        name: 'created_at',
+        fromJson: _fromJsonTimestamp,
+        toJson: _toJsonTimestamp)
+    DateTime? createdAt,
+    @JsonKey(
+        name: 'updated_at',
+        fromJson: _fromJsonTimestamp,
+        toJson: _toJsonTimestamp)
+    DateTime? updatedAt,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -58,7 +66,7 @@ class UserModel {
 
   UserModel(
       {this.isLoggedIn = false,
-      this.isFamily = false,   
+      this.isFamily = false,
       this.username = '',
       this.location = '',
       this.email = '',
@@ -89,4 +97,17 @@ class UserModel {
       isFamily: isFamily ?? this.isFamily,
     );
   }
+}
+
+DateTime? _fromJsonTimestamp(dynamic value) {
+  if (value is int) {
+    return DateTime.fromMillisecondsSinceEpoch(value);
+  } else if (value is String) {
+    return DateTime.tryParse(value);
+  }
+  return null;
+}
+
+String? _toJsonTimestamp(DateTime? date) {
+  return date?.toIso8601String();
 }

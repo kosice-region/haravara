@@ -232,17 +232,17 @@ class _AdminAssignStampsScreenState
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Color(0xFF4CAF50),
-                                side: BorderSide(color: Colors.white, width: 4),
+                                side: BorderSide(color: Colors.white, width: 5),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(25),
                                 ),
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 15.w, vertical: 10.h),
+                                    horizontal: 15.w, vertical: 14.h),
                               ),
                               child: Text(
-                                'Confirm',
+                                'PRIDAŤ',
                                 style: GoogleFonts.titanOne(
-                                  fontSize: 14.sp,
+                                  fontSize: 10.sp,
                                   color: Colors.white,
                                 ),
                               ),

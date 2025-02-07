@@ -36,7 +36,7 @@ exports.sendVerificationCode = functions.https.onCall(
         code: code,
         timestamp: admin.database.ServerValue.TIMESTAMP,
       });
-      return {success: true};
+      return { success: true };
     } catch (error) {
       console.error("Error sending email: ", error);
       throw new functions.https.HttpsError(

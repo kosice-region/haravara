@@ -7,8 +7,7 @@ import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/view/auth_screen.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
-import 'package:haravara/router/router.dart';
-import 'package:haravara/router/screen_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/repositories/database_repository.dart';
 
 class RegistrationForm extends ConsumerStatefulWidget {
@@ -161,7 +160,10 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
   }
 
   Future<void> _handleRegistration() async {
+    log('REGISTRATION - Start registration process');
+
     final userId = await authService.findUserByEmail(_enteredEmail);
+    log('REGISTRATION - Checking if user already exists with email: $_enteredEmail');
 
     if (userId.isNotEmpty) {
       showSnackBar(context,'Tento e-mail už existuje');
@@ -170,37 +172,53 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     }
     if(await DBrep.isUserNameUsed(_enteredUsername)){
       showSnackBar(context, 'Toto meno už niekto používa');
-      isButtonDisabled = false;
-      return;
-    }
-    if (selectedLocation.isEmpty) {
-      showSnackBar(context, 'Zadajte prosím lokáciu');
-      isButtonDisabled = false;
-      return;
-    }
-    
-    await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
-    await ref.read(userInfoProvider.notifier).updateCountOfChildren(int.tryParse(childrenCount) ?? -1);
 
-    int? children = int.tryParse(childrenCount);
-    ref.read(authNotifierProvider.notifier).toggleRememberState(rememberPhone);
+      isButtonDisabled = false;
+      return;
+    }
+
+    if (selectedLocation.isEmpty) {
+
+      showSnackBar(context, 'Zadajte prosím lokáciu');
+
+      isButtonDisabled = false;
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', _enteredEmail);
+    log('REGISTRATION - Email stored locally: $_enteredEmail');
+
+    await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
+    log('REGISTRATION - Profile type updated (isFamily): $isFamily');
+
+    int? children = int.tryParse(childrenCount) ?? -1;
+    await ref.read(userInfoProvider.notifier).updateCountOfChildren(children);
+    log('REGISTRATION - Children count updated: $children');
+
     ref
         .read(authNotifierProvider.notifier)
         .setEnteredUsername(_enteredUsername);
     ref.read(authNotifierProvider.notifier).setEnteredEmail(_enteredEmail);
-    ref.read(authNotifierProvider.notifier).toggleLoginState(false);
-    ref.read(authNotifierProvider.notifier).toggleFamilyState(isFamily);
-    ref.read(authNotifierProvider.notifier).setEnteredChildren(children ?? -1);
+    ref.read(authNotifierProvider.notifier).setEnteredChildren(children);
     ref.read(authNotifierProvider.notifier).setLocation(selectedLocation);
-    onSendCode();
-    isButtonDisabled = false;
-  }
+    ref.read(authNotifierProvider.notifier).toggleFamilyState(isFamily);
+    ref.read(authNotifierProvider.notifier).toggleRememberState(rememberPhone);
 
-  onSendCode() async {
-    final sentCode = await authService.sendEmail(context, _enteredEmail);
-    ref.read(routerProvider.notifier).changeScreen(ScreenType.code);
-    ref.read(authNotifierProvider.notifier).updateCode(sentCode);
-    routeToCodeScreen(context);
+    log('REGISTRATION - State updated with username: ${ref.read(authNotifierProvider).enteredUsername}');
+    log('REGISTRATION - State updated with email: ${ref.read(authNotifierProvider).enteredEmail}');
+    log('REGISTRATION - State updated with children: ${ref.read(authNotifierProvider).children}');
+    log('REGISTRATION - State updated with location: ${ref.read(authNotifierProvider).location}');
+    log('REGISTRATION - Family state: ${ref.read(authNotifierProvider).isFamily}');
+    log('REGISTRATION - Remember phone state: ${ref.read(authNotifierProvider).isNeedToRemeber}');
+
+    await authService.sendSignInWithEmailLink(_enteredEmail);
+    log('REGISTRATION - Sign-in email link sent to: $_enteredEmail');
+
+    isButtonDisabled = false;
+    showSnackBar(context,
+        'An email link has been sent. Please check your email to complete registration.');
+    log('REGISTRATION - Registration process complete');
   }
 
   void _toggleIsFamily(bool value) {
@@ -209,12 +227,6 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     });
     setState(() {
       childrenCount = '1';
-    });
-  }
-
-  void _toggleRememberMe(bool value) {
-    setState(() {
-      rememberPhone = value;
     });
   }
 }
