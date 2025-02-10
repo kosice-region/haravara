@@ -12,7 +12,7 @@ import 'package:haravara/pages/map_detail/providers/places_provider.dart';
 import '../../auth/services/auth_screen_service.dart';
 import 'widgets.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
-import 'package:haravara/pages/leaderBoard/providers/userList.dart'; // Adjust based on actual file location
+import 'package:haravara/pages/leaderBoard/providers/userList.dart';
 
 DatabaseRepository DBrep = DatabaseRepository();
 
@@ -224,7 +224,10 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  Navigator.of(context).pop();
+                  if (await _updateUsername()) {
+                    _updateUserLocation();
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text(
                   'Uložiť',
