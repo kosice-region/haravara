@@ -40,7 +40,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 8.h),
                     const Header(),
                     AvatarWidget(),
                     SizedBox(height: 5.h),
@@ -53,7 +52,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         children: [
                           Container(
                               width: 105.w,
-                              height: 95.h,
+                              height: 160,
                               decoration: BoxDecoration(
                                 color: const Color.fromARGB(255, 91, 187, 75),
                                 borderRadius:
@@ -97,7 +96,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               )),
                           Container(
                             width: 105.w,
-                            height: 95.h,
+                            height: 160,
                             decoration: BoxDecoration(
                                 color: const Color.fromARGB(255, 91, 187, 75),
                                 borderRadius:

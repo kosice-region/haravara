@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/core/providers/login_provider.dart';
 import 'package:haravara/core/providers/preferences_provider.dart';
+import 'package:haravara/core/repositories/database_repository.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/pages/map_detail/providers/places_provider.dart';
 
@@ -12,6 +13,8 @@ import '../../auth/services/auth_screen_service.dart';
 import 'widgets.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 import 'package:haravara/pages/leaderBoard/providers/userList.dart'; // Adjust based on actual file location
+
+DatabaseRepository DBrep = DatabaseRepository();
 
 class ActionButtons extends ConsumerStatefulWidget {
   const ActionButtons({super.key});
@@ -156,7 +159,6 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               borderRadius: BorderRadius.circular(15.r),
             ),
             title: Text(
-              'Upraviť údaje',
               'Upraviť údaje',
               style: GoogleFonts.titanOne(),
             ),
