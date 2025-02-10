@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:haravara/core/widgets/header.dart';
+import 'package:haravara/pages/admin/FooterAdmin.dart';
 import 'package:haravara/pages/admin/view/screens/admin_confirm_screen.dart';
-import 'package:haravara/pages/admin/view/screens/admin_menu_screen.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class AdminScreen extends ConsumerStatefulWidget {
   const AdminScreen({Key? key}) : super(key: key);
@@ -82,167 +82,121 @@ class _AdminScreenState extends ConsumerState<AdminScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  Expanded(
-                    child: Image.asset(
-                      'assets/backgrounds/verification_background.png',
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      alignment: Alignment.topCenter,
-                    ),
-                  ),
-                  Container(
-                    height: 50.h,
-                    color: const Color.fromRGBO(41, 141, 116, 1),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                PageRouteBuilder(
-                                  pageBuilder: (_, __, ___) => const AdminMenu(),
-                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: child,
-                                    );
-                                  },
-                                  transitionDuration: const Duration(milliseconds: 150),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(8.w),
-                              color: Colors.transparent,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(height: 3.5.h, width: 35.48.w, child: const ColoredBox(color: Colors.black)),
-                                  SizedBox(height: 8.h),
-                                  SizedBox(height: 3.5.h, width: 35.48.w, child: const ColoredBox(color: Colors.black)),
-                                  SizedBox(height: 8.h),
-                                  SizedBox(height: 3.5.h, width: 35.48.w, child: const ColoredBox(color: Colors.black)),
-                                ],
-                              ),
-                            ),
-                          ),
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double buttonHeight = 33.h;
+    double buttonWidth = 85.w;
+
+    if (deviceHeight < 850) {
+      buttonHeight = 38.h;
+      buttonWidth = 95.w;
+    }
+    if (deviceHeight < 700) {
+      buttonHeight = 43.h;
+      buttonWidth = 105.w;
+    }
+    if (deviceHeight < 650) {
+      buttonHeight = 48.h;
+      buttonWidth = 115.w;
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Background image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/backgrounds/verification_background.png',
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 8.h),
+            child: Column(
+              children: [
+                Header(),
+                50.verticalSpace,
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10.h),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 230.w,
+                        padding: EdgeInsets.all(10.w),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25),
+                          color: const Color(0xFF9260A8),
+                          border: Border.all(color: Colors.white, width: 4),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 8.w),
-                          child: ElevatedButton(
-                            onPressed: () => _verifyCode(context),
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: Size(85.w, 33.h),
-                              backgroundColor: const Color(0xFF4CAF50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              side: const BorderSide(color: Colors.white, width: 4),
-                            ),
-                            child: Text(
-                              'Potvrď',
+                        child: Text(
+                          _isCodeIncorrect
+                              ? 'Kód bol nesprávny, zadajte kód znovu'
+                              : 'Zadajte 8 miestny kód',
+                          style: GoogleFonts.titanOne(
+                            fontSize: 14.sp,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                      Container(
+                        width: 230.w,
+                        padding: EdgeInsets.all(10.w),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE65F33),
+                          borderRadius: BorderRadius.circular(25),
+                          border: Border.all(color: Colors.white, width: 4),
+                        ),
+                        child: Column(
+                          children: [
+                            TextField(
+                              controller: _codeController,
+                              focusNode: _focusNode,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              maxLength: 8,
                               style: GoogleFonts.titanOne(
-                                fontSize: 13.sp,
+                                fontSize: 28.sp,
+                                color: Colors.white,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: '- - - - - - - -',
+                                hintStyle: GoogleFonts.titanOne(
+                                  fontSize: 28.sp,
+                                  color: Colors.white.withOpacity(0.5),
+                                ),
+                                counterText: '',
+                                border: InputBorder.none,
+                              ),
+                              onChanged: (_) => setState(() {}),
+                              onSubmitted: (_) => _verifyCode(context),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              '${_codeController.text.length}/8',
+                              style: GoogleFonts.titanOne(
+                                fontSize: 16.sp,
                                 color: Colors.white,
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 5.h),
-                child: Column(
-                  children: [
-                    const Header(),
-                    SizedBox(height: 40.h),
-                    Column(
-                      children: [
-                        Container(
-                          width: 210.w,
-                          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF9260A8),
-                            borderRadius: BorderRadius.circular(25),
-                            border: Border.all(color: Colors.white, width: 4),
-                          ),
-                          child: Text(
-                            _isCodeIncorrect
-                                ? 'Kód bol nesprávny, zadajte kód znovu'
-                                : 'Zadajte 8 miestny kód',
-                            style: GoogleFonts.titanOne(
-                              fontSize: 14.sp,
-                              color: Colors.white,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        SizedBox(height: 20.h),
-                        Container(
-                          width: 210.w,
-                          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE65F33),
-                            borderRadius: BorderRadius.circular(25),
-                            border: Border.all(color: Colors.white, width: 4),
-                          ),
-                          child: Column(
-                            children: [
-                              TextField(
-                                controller: _codeController,
-                                focusNode: _focusNode,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                maxLength: 8,
-                                style: GoogleFonts.titanOne(
-                                  fontSize: 28.sp,
-                                  color: Colors.white,
-                                ),
-                                decoration: InputDecoration(
-                                  hintText: '- - - - - - - -',
-                                  hintStyle: GoogleFonts.titanOne(
-                                    fontSize: 28.sp,
-                                    color: Colors.white.withOpacity(0.5),
-                                  ),
-                                  counterText: '',
-                                  border: InputBorder.none,
-                                ),
-                                onChanged: (_) => setState(() {}),
-                                onSubmitted: (_) => _verifyCode(context),
-                              ),
-                              SizedBox(height: 5.h),
-                              Text(
-                                '${_codeController.text.length}/8',
-                                style: GoogleFonts.titanOne(
-                                  fontSize: 14.sp,
-                                  color: Colors.white.withOpacity(0.7),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: FooterAdmin(), // Place the Footer widget at the bottom
+          ),
+        ],
       ),
     );
   }

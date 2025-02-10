@@ -31,7 +31,7 @@ class SummaryItem extends StatelessWidget {
           padding: EdgeInsets.all(19.w),
           child: SingleChildScrollView(
             child: Text(
-              'Pátračka po Kaškovych pečiatkach funguje veľmi jednoducho. Stačí si stiahnuť aplikáciu Haravara Pátračka, zaregistrovať sa pod '
+              'Pátračka po Kaškových pečiatkach funguje veľmi jednoducho. Stačí si stiahnuť aplikáciu Haravara Pátračka, zaregistrovať sa pod '
               'svojim špeciálnym pátračským menom a môžeš vyraziť na dobrodružnú túru po krajine Haravara! '
               'K tomu, aby si nezišiel z cesty, ti bude pomáhať Kaškov kompas, ktorý ťa bude navigovať k presnému miestu, '
               'kde môžeš získať jednu z jeho pečiatok. V sekcii "Rebríček" si môžeš sledovať, na akej úrovni zberateľstva '

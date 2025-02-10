@@ -26,8 +26,7 @@ class FormRow extends StatelessWidget {
         keyboardType: inputType,
         textCapitalization: TextCapitalization.none,
         style: GoogleFonts.titanOne(
-            color: Color.fromARGB(255, 188, 95, 190),
-            fontWeight: FontWeight.bold),
+            color: Colors.white, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           label: focusNode.hasFocus || controller.text.isNotEmpty
               ? null
@@ -37,7 +36,7 @@ class FormRow extends StatelessWidget {
                     child: Text(
                       title,
                       style: GoogleFonts.titanOne(
-                        color: Color.fromARGB(255, 188, 95, 190),
+                        color: Colors.white,
                         fontWeight: FontWeight.w300,
                         fontSize: 11.sp,
                       ),
@@ -46,13 +45,13 @@ class FormRow extends StatelessWidget {
                 ),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: Color.fromARGB(255, 188, 95, 190),
+              color: Colors.white,
               width: 3.w,
             ),
           ),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: Color.fromARGB(255, 188, 95, 190),
+              color: Colors.white,
               width: 3.w,
             ),
           ),

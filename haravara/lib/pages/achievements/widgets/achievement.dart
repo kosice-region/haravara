@@ -36,20 +36,20 @@ class _AchievementState extends ConsumerState<Achievement> {
     }
     final isSizeTwo = (widget.size == ScreenSize.two);
     final isClosed = !widget.place.isReached;
-    
+
     return Consumer(
       builder: (context, ref, child) {
         return Column(
           children: [
             if (isClosed)
               Container(
-                width: isSizeTwo ? 90.w : 70.w,
-                height: isSizeTwo ? 90.h : 70.h,
+                width: isSizeTwo ? 100.w : 70.w,
+                height: isSizeTwo ? 100.h : 70.h,
                 decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(26)).r,
-                  color: const Color.fromARGB(255, 91, 187, 75),
+                  borderRadius: const BorderRadius.all(Radius.circular(15)).r,
+                  color: const Color(0xFF67B5E1),
                   border: Border.all(
-                    color: const Color.fromARGB(255, 73, 155, 58),
+                    color: const Color.fromARGB(255, 255, 255, 255),
                     width: 4.0,
                   ),
                 ),
@@ -64,7 +64,7 @@ class _AchievementState extends ConsumerState<Achievement> {
             if (!isClosed)
               SizedBox(
                 width: isSizeTwo ? 140.w : 80.w,
-                height: isSizeTwo ? 90.h : 70.h,
+                height: isSizeTwo ? 100.h : 70.h,
                 child: Image.file(
                   File(widget.place.placeImages!.stamp),
                   fit: BoxFit.contain,
@@ -72,32 +72,27 @@ class _AchievementState extends ConsumerState<Achievement> {
               ),
             5.verticalSpace,
             Container(
-  width: isSizeTwo ? 120.w : 80.w,
-  height: isSizeTwo ? 56.h : 45.h,
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(15.r),
-    color: const Color.fromARGB(255, 155, 221, 153),
-    border: Border.all(
-      color: const Color.fromARGB(255, 73, 155, 58),
-      width: 3.0,
-    ),
-  ),
-  child: Center(
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.w),
-      child: Text(
-        widget.place.name,
-        style: GoogleFonts.titanOne(
-          color: Colors.black,
-          fontSize: isSizeTwo ? fontSizeMax.sp : fontSizeMin.sp,
-        ),
-        maxLines: 5,
-        textAlign: TextAlign.center,
-      ),
-    ),
-  ),
-),
-
+              width: isSizeTwo ? 120.w : 80.w,
+              height: isSizeTwo ? 40.h : 40.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.r),
+                color: const Color(0xFF1666B1),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  child: Text(
+                    widget.place.name,
+                    style: GoogleFonts.titanOne(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      fontSize: isSizeTwo ? fontSizeMax.sp : fontSizeMin.sp,
+                    ),
+                    maxLines: 5,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
           ],
         );
       },
