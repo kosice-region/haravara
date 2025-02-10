@@ -7,10 +7,10 @@ class RedirectButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
         RedirectButton(
-          title: 'moje pečiatky',
+          title: 'Moje\npečiatky',
           imagePath: 'assets/PECIATKA.png',
           imageWidth: 51,
           imageHeight: 57,
@@ -19,7 +19,7 @@ class RedirectButtons extends StatelessWidget {
           screenToRoute: ScreenType.achievements,
         ),
         RedirectButton(
-          title: 'moje výhry',
+          title: 'Moje\nvýhry',
           imagePath: 'assets/menu-icons/horse.png',
           imageWidth: 73,
           imageHeight: 60,
