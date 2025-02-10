@@ -224,7 +224,10 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  Navigator.of(context).pop();
+                  if (await _updateUsername()) {
+                    _updateUserLocation();
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text(
                   'Uložiť',
