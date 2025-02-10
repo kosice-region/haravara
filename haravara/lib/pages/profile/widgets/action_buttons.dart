@@ -207,6 +207,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ElevatedButton(
                 onPressed: () async {
                   if(await _updateUsername()){
+                    selectedCity = "";
                     newUsername = "";
                     _updateUserLocation();
                     Navigator.of(context).pop();

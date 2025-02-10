@@ -10,12 +10,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/core/models/place.dart';
 import 'package:haravara/core/services/notification_service.dart';
 import 'package:haravara/core/services/database_service.dart';
-import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/compass/distance_model.dart';
 import 'package:haravara/pages/compass/functions/compass_functions.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 
+import '../../../core/widgets/close_button.dart';
+import '../../../router/router.dart';
 import '../../map_detail/map_detail.dart';
 import '../widgets/widgets.dart';
 
@@ -125,44 +126,40 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
           BackgroundImage(
             image: 'assets/backgrounds/background_clouds.png',
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8).h,
-            child: Column(
-              children: [
-                const Header(
-                  backButton: true,
-                  backGroundColor: Color.fromARGB(255, 22, 102, 177),
+          // Center the compass within the Stack
+          Center(
+            child: Container(
+              width: 230.w,
+              height: 230.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(120).r,
                 ),
-                40.verticalSpace,
-                Container(
-                  width: 230.w,
-                  height: 230.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      const Radius.circular(120).r,
+              ),
+              child: Stack(
+                children: [
+                  BuildCompass(), // This should be the rotating compass image
+                  Center(
+                    child: Transform.rotate(
+                      angle: (direction * (math.pi / 180)),
+                      child: Image.asset(
+                        "assets/compass-fixed.png",
+                        scale: 1.1,
+                        width: 200.w,
+                        height: 300.h,
+                      ),
                     ),
                   ),
-                  child: Stack(children: [
-                    Positioned(
-                      child: BuildCompass(),
-                    ),
-                    Positioned(
-                      child: Center(
-                        child: Transform.rotate(
-                          angle: (direction * (math.pi / 180)),
-                          child: Image.asset(
-                            "assets/compass-fixed.png",
-                            scale: 1.1,
-                            width: 200.w,
-                            height: 300.h,
-                          ),
-                        ),
-                      ),
-                    )
-                  ]),
-                ),
-              ],
+                ],
+              ),
             ),
+          ),
+
+          // Keep Positioned for the Close_Button and Distance
+          Positioned(
+            top: 43.h,
+            right: 30.w,
+            child: Close_Button(screenType: ScreenType.detailMap,),
           ),
           Distance(
             distanceToTarget: this.distanceToTarget,

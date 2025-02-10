@@ -163,7 +163,7 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
             Positioned(
               top: 43.h,
               right: 30.w,
-              child: Close_Button(),
+              child: Close_Button(screenType: ScreenType.map,),
             ),
           ],
         ),

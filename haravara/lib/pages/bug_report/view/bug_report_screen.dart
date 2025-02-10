@@ -115,7 +115,6 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
             fit: BoxFit.cover,
           ),
         ),
-        child: SafeArea(
           child: Column(
             children: [
               Stack(
@@ -311,7 +310,6 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
               ),
             ],
           ),
-        ),
       ),
       bottomNavigationBar: Footer(height: 175),
     );
