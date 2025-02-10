@@ -26,6 +26,33 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   late String userId;
   String selectedCity = '';
 
+  Future<bool> _updateUsername() async {
+    if (newUsername.isEmpty || newUsername == "") {
+      return true;
+    }
+    if (await DBrep.isUserNameUsed(newUsername)) {
+      showSnackBar(context, 'Toto meno už niekto používa');
+      return false;
+    } else {
+      await authRepository.updateUserName(newUsername, userId);
+      await ref.read(userInfoProvider.notifier).updateUsername(newUsername);
+      return true;
+    }
+  }
+
+  _updateUserLocation() async {
+    if (selectedCity.isEmpty) {
+      return;
+    }
+    final avatar = ref.read(avatarsProvider.notifier).getCurrentAvatar();
+    String userProfileType =
+        ref.watch(userInfoProvider).isFamily ? 'family' : 'individual';
+    int children = ref.watch(userInfoProvider).children;
+    await authRepository.updateUserProfile(
+        userId, avatar.id!, userProfileType, selectedCity, children);
+    await ref.read(userInfoProvider.notifier).updateLocation(selectedCity);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -129,6 +156,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               borderRadius: BorderRadius.circular(15.r),
             ),
             title: Text(
+              'Upraviť údaje',
               'Upraviť údaje',
               style: GoogleFonts.titanOne(),
             ),

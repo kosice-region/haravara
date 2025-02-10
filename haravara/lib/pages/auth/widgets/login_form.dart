@@ -1,11 +1,9 @@
 import 'dart:developer';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/core/services/database_service.dart';
-import 'package:haravara/pages/admin/view/screens/admin_screen.dart';
-import 'package:haravara/pages/auth/models/user.dart';
 import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +13,9 @@ import '../services/auth_service.dart';
 final loginauthService = AuthService();
 
 class LoginForm extends ConsumerStatefulWidget {
-  const LoginForm();
+  final VoidCallback toggleMode;
+  const LoginForm({Key? key, required this.toggleMode}) : super(key: key);
+
   @override
   ConsumerState<LoginForm> createState() => _LoginFormState();
 }
@@ -41,33 +41,21 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    var deviceHeight = MediaQuery.of(context).size.height;
-    var loginHeight = 120;
-    if (deviceHeight < 850) {
-      loginHeight = 120;
-    }
-
+    ScreenUtil.init(context, designSize: const Size(255, 516));
     return Container(
       key: _formKey,
       width: 220.w,
-      height: loginHeight.h,
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(15)),
-        color: Color.fromARGB(255, 249, 175, 97),
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromARGB(255, 188, 95, 190).withOpacity(1),
-            spreadRadius: 8,
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        color: const Color.fromARGB(255, 24, 191, 186),
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.white, width: 4),
       ),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 children: [
@@ -86,6 +74,10 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           ConfirmButton(
             text: 'PRIHLÁS SA',
             onPressed: isButtonDisabled ? () {} : _submitAndValidate,
+          ),
+          SwitchMode(
+            text: 'Nie si ešte prihlásený? ZAREGISTRUJ SA!',
+            onPressed: widget.toggleMode,
           ),
         ],
       ),
@@ -116,10 +108,23 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', _enteredEmail);
 
+    final isAdmin = await DatabaseService().isAdmin(_enteredEmail);
+    if (isAdmin) {
+      try {
+        final userCredential = await FirebaseAuth.instance.signInAnonymously();
+        log('Admin signed in anonymously: ${userCredential.user?.uid}');
+        routeToAdminScreen(context);
+      } catch (error) {
+        showSnackBar(context, 'Admin login failed: $error');
+      }
+      isButtonDisabled = false;
+      return;
+    }
+
     await loginauthService.sendSignInWithEmailLink(_enteredEmail);
 
     isButtonDisabled = false;
     showSnackBar(context,
-        'An email link has been sent. Please check your email to complete login.');
+        'E-mailový odkaz bol odoslaný. Pre dokončenie prihlásenia skontrolujte svoj e-mail.');
   }
 }
