@@ -29,9 +29,15 @@ mixin _$User {
   List<String> get phones => throw _privateConstructorUsedError;
   @JsonKey(name: 'profile')
   UserProfile? get userProfile => throw _privateConstructorUsedError;
-  @JsonKey(name: 'created_at')
+  @JsonKey(
+      name: 'created_at',
+      fromJson: _fromJsonTimestamp,
+      toJson: _toJsonTimestamp)
   DateTime? get createdAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'updated_at')
+  @JsonKey(
+      name: 'updated_at',
+      fromJson: _fromJsonTimestamp,
+      toJson: _toJsonTimestamp)
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -51,8 +57,16 @@ abstract class $UserCopyWith<$Res> {
       @JsonKey(name: 'phone_number') String? phoneNumber,
       @JsonKey(name: 'phone_ids') List<String> phones,
       @JsonKey(name: 'profile') UserProfile? userProfile,
-      @JsonKey(name: 'created_at') DateTime? createdAt,
-      @JsonKey(name: 'updated_at') DateTime? updatedAt});
+      @JsonKey(
+          name: 'created_at',
+          fromJson: _fromJsonTimestamp,
+          toJson: _toJsonTimestamp)
+      DateTime? createdAt,
+      @JsonKey(
+          name: 'updated_at',
+          fromJson: _fromJsonTimestamp,
+          toJson: _toJsonTimestamp)
+      DateTime? updatedAt});
 
   $UserProfileCopyWith<$Res>? get userProfile;
 }
@@ -142,8 +156,16 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       @JsonKey(name: 'phone_number') String? phoneNumber,
       @JsonKey(name: 'phone_ids') List<String> phones,
       @JsonKey(name: 'profile') UserProfile? userProfile,
-      @JsonKey(name: 'created_at') DateTime? createdAt,
-      @JsonKey(name: 'updated_at') DateTime? updatedAt});
+      @JsonKey(
+          name: 'created_at',
+          fromJson: _fromJsonTimestamp,
+          toJson: _toJsonTimestamp)
+      DateTime? createdAt,
+      @JsonKey(
+          name: 'updated_at',
+          fromJson: _fromJsonTimestamp,
+          toJson: _toJsonTimestamp)
+      DateTime? updatedAt});
 
   @override
   $UserProfileCopyWith<$Res>? get userProfile;
@@ -215,8 +237,16 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
       @JsonKey(name: 'phone_number') this.phoneNumber,
       @JsonKey(name: 'phone_ids') final List<String> phones = const [],
       @JsonKey(name: 'profile') this.userProfile,
-      @JsonKey(name: 'created_at') this.createdAt,
-      @JsonKey(name: 'updated_at') this.updatedAt})
+      @JsonKey(
+          name: 'created_at',
+          fromJson: _fromJsonTimestamp,
+          toJson: _toJsonTimestamp)
+      this.createdAt,
+      @JsonKey(
+          name: 'updated_at',
+          fromJson: _fromJsonTimestamp,
+          toJson: _toJsonTimestamp)
+      this.updatedAt})
       : _phones = phones;
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
@@ -244,10 +274,16 @@ class _$UserImpl with DiagnosticableTreeMixin implements _User {
   @JsonKey(name: 'profile')
   final UserProfile? userProfile;
   @override
-  @JsonKey(name: 'created_at')
+  @JsonKey(
+      name: 'created_at',
+      fromJson: _fromJsonTimestamp,
+      toJson: _toJsonTimestamp)
   final DateTime? createdAt;
   @override
-  @JsonKey(name: 'updated_at')
+  @JsonKey(
+      name: 'updated_at',
+      fromJson: _fromJsonTimestamp,
+      toJson: _toJsonTimestamp)
   final DateTime? updatedAt;
 
   @override
@@ -325,8 +361,16 @@ abstract class _User implements User {
       @JsonKey(name: 'phone_number') final String? phoneNumber,
       @JsonKey(name: 'phone_ids') final List<String> phones,
       @JsonKey(name: 'profile') final UserProfile? userProfile,
-      @JsonKey(name: 'created_at') final DateTime? createdAt,
-      @JsonKey(name: 'updated_at') final DateTime? updatedAt}) = _$UserImpl;
+      @JsonKey(
+          name: 'created_at',
+          fromJson: _fromJsonTimestamp,
+          toJson: _toJsonTimestamp)
+      final DateTime? createdAt,
+      @JsonKey(
+          name: 'updated_at',
+          fromJson: _fromJsonTimestamp,
+          toJson: _toJsonTimestamp)
+      final DateTime? updatedAt}) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 
@@ -346,10 +390,16 @@ abstract class _User implements User {
   @JsonKey(name: 'profile')
   UserProfile? get userProfile;
   @override
-  @JsonKey(name: 'created_at')
+  @JsonKey(
+      name: 'created_at',
+      fromJson: _fromJsonTimestamp,
+      toJson: _toJsonTimestamp)
   DateTime? get createdAt;
   @override
-  @JsonKey(name: 'updated_at')
+  @JsonKey(
+      name: 'updated_at',
+      fromJson: _fromJsonTimestamp,
+      toJson: _toJsonTimestamp)
   DateTime? get updatedAt;
   @override
   @JsonKey(ignore: true)

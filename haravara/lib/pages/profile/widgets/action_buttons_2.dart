@@ -7,6 +7,13 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../router/router.dart';
 import '../../../router/screen_router.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:haravara/core/providers/login_provider.dart';
+import 'package:haravara/core/providers/preferences_provider.dart';
+import 'package:haravara/core/services/database_service.dart';
+import 'package:haravara/pages/map_detail/providers/collected_places_provider.dart';
+import 'package:haravara/pages/profile/providers/user_info_provider.dart';
+
 class ActionButtons2 extends ConsumerStatefulWidget {
   const ActionButtons2({super.key});
 
@@ -26,8 +33,8 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Container(
-          width: 135.w,
-          height: 30.h,
+          width: 105.w,
+          height: 40.h,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 255, 190, 0),
@@ -43,14 +50,16 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
               shadowColor: Colors.black.withOpacity(0.3),
             ),
             onPressed: () {
-              ref.read(routerProvider.notifier).changeScreen(ScreenType.bugreport);
+              ref
+                  .read(routerProvider.notifier)
+                  .changeScreen(ScreenType.bugreport);
               ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
                 context,
                 ScreenRouter().getScreenWidget(ScreenType.bugreport),
               );
             },
             child: Text(
-              'Nahlasit problem',
+              'Nahlásiť\nproblem',
               style: GoogleFonts.titanOne(
                 color: Colors.white,
                 fontSize: 11.sp,
@@ -59,12 +68,12 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
           ),
         ),
         Container(
-          width: 91.w,
-          height: 30.h,
+          width: 105.w,
+          height: 40.h,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
+              backgroundColor: Color(0xFFFD584A),
+              foregroundColor: Colors.black,
               side: BorderSide(
                 color: Colors.white,
                 width: 4,
@@ -73,19 +82,34 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
                 borderRadius: BorderRadius.circular(15.r),
               ),
               elevation: 3,
-              shadowColor: Colors.white.withOpacity(0.3),
+              shadowColor: Colors.black.withOpacity(0.3),
             ),
-            onPressed: () => null,
+            onPressed: () async {
+              handleLogout(ref, context);
+            },
             child: Text(
-              'Info',
+              'Odhlásiť',
               style: GoogleFonts.titanOne(
-                color: Colors.white,
-                fontSize: 12.sp,
+                color: const Color.fromARGB(255, 255, 255, 255),
+                fontSize: 13.sp,
               ),
             ),
           ),
         ),
       ],
     );
+  }
+
+  Future<void> handleLogout(WidgetRef ref, BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    ref.read(loginNotifierProvider.notifier).logout();
+    ref.read(collectedPlacesProvider.notifier).deleteAllPlaces();
+    await ref.read(userInfoProvider.notifier).clear();
+    ref.invalidate(loginNotifierProvider);
+    ref.invalidate(userInfoProvider);
+    await DatabaseService().clearRichedPlaces();
+    await DatabaseService().clearUserAllAvatarsFromDatabase();
+    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+        context, ScreenRouter().getScreenWidget(ScreenType.auth));
   }
 }

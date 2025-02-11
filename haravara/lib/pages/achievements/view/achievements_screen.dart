@@ -8,6 +8,7 @@ import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/pages/profile/widgets/searcher_level.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 import '../../../router/router.dart';
 import '../../map_detail/map_detail.dart';

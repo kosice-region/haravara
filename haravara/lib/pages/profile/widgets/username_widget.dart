@@ -12,22 +12,13 @@ class UsernameWidget extends ConsumerWidget {
     var username = ref.watch(userInfoProvider).username;
     return Container(
       width: 195.w,
-      height: 38.h,
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(225, 158, 230, 165),
-        borderRadius: BorderRadius.all(Radius.circular(50.r)),
-        border: Border.all( 
-          color: const Color.fromARGB(255, 255, 255, 255),
-          width: 4.0,
-        ),
-      ),
       child: Center(
         child: Text(
           username,
           style: GoogleFonts.titanOne(
-            fontSize: 20.sp,
+            fontSize: 22.sp,
             fontWeight: FontWeight.w400,
-            color: Colors.black,
+            color: const Color.fromARGB(255, 255, 255, 255),
           ),
         ),
       ),
