@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haravara/core/widgets/close_button.dart';
 import 'package:haravara/pages/conditions/widgets/widgets.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/core/widgets/footer.dart';
+
+import '../../../router/router.dart';
 
 class PodmienkyScreen extends StatefulWidget {
   const PodmienkyScreen({Key? key}) : super(key: key);
@@ -15,7 +18,7 @@ class PodmienkyScreen extends StatefulWidget {
 
 class _PodmienkyScreenState extends State<PodmienkyScreen> {
   final List<String> imageAssets = [
-    'assets/background.jpg',
+    'assets/backgrounds/background.jpg',
   ];
 
   @override
@@ -75,7 +78,11 @@ class _PodmienkyScreenState extends State<PodmienkyScreen> {
               ),
             ],
           ),
-        ],
+          Positioned(
+            top: 43.h,
+            right: 30.w,
+            child: Close_Button(screenType: ScreenType.news,),
+          ),        ],
       ),
       bottomSheet: Footer(height: 175, boxFit: BoxFit.fill),
     );

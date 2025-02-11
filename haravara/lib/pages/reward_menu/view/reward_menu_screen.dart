@@ -10,6 +10,8 @@ import 'package:haravara/pages/reward_menu/view/reward_details_screen.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/pages/map_detail/providers/places_provider.dart';
 
+import '../../../core/widgets/close_button.dart';
+
 class RewardScreen extends ConsumerStatefulWidget {
   const RewardScreen({Key? key}) : super(key: key);
 
@@ -101,24 +103,9 @@ class _RewardScreenState extends ConsumerState<RewardScreen> {
                     ),
                   ),
                   Positioned(
-                    top: 50.h,
+                    top: 43.h,
                     right: 30.w,
-                    child: GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Container(
-                        width: 36.w,
-                        height: 36.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.transparent,
-                        ),
-                        child: Image.asset(
-                          'assets/menu-icons/backbutton.png',
-                          width: 36.w,
-                          height: 36.h,
-                        ),
-                      ),
-                    ),
+                    child: Close_Button(),
                   ),
                 ],
               ),

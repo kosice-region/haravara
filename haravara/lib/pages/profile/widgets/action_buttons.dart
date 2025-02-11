@@ -25,11 +25,12 @@ class ActionButtons extends ConsumerStatefulWidget {
 
 class _ActionButtonsState extends ConsumerState<ActionButtons> {
   late String username;
-  late String newUsername;
+  late String newUsername = '';
   late String userId;
   String selectedCity = '';
 
   Future<bool> _updateUsername() async {
+
     if (newUsername.isEmpty || newUsername == "") {
       return true;
     }
@@ -224,7 +225,9 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ),
               ElevatedButton(
                 onPressed: () async {
+
                   if (await _updateUsername()) {
+
                     _updateUserLocation();
                     Navigator.of(context).pop();
                   }

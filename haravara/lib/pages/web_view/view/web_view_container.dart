@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,15 +27,17 @@ class _WebViewContainerState extends State<WebViewContainer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.close,
-            size: 15.dg,
+        automaticallyImplyLeading: false, // Remove default leading widget
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 10.0.w), // Add some right padding
+            child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  },
+                icon: Icon(Icons.close,size:15.dg)),
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        ],
       ),
       body: WebViewWidget(
         controller: controller,

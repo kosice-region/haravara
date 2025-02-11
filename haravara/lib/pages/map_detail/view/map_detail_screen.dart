@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/core/models/place.dart';
+import 'package:haravara/core/widgets/close_button.dart';
 import 'package:haravara/pages/map_detail/services/screen_service.dart';
 import 'package:haravara/pages/map_detail/widgets/widgets.dart';
 import 'package:haravara/router/router.dart';
@@ -104,7 +105,7 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     precacheImage(const AssetImage('assets/places-map.jpg'), context);
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return PopScope(
-      onPopInvoked: (result) {
+      onPopInvokedWithResult: (bool didPop, Object? result) {
         _pickedPlaceNotifier.resetPlace();
         return;
       },
@@ -159,7 +160,11 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                 ),
               ),
             ),
-            Positioned(top: 40.h, left: 10.w, child: ExitButton()),
+            Positioned(
+              top: 43.h,
+              right: 30.w,
+              child: Close_Button(screenType: ScreenType.map,),
+            ),
           ],
         ),
       ),

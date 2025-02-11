@@ -9,6 +9,9 @@ import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/router/router.dart';
 
+import '../../../core/widgets/close_button.dart';
+import '../../../router/router.dart';
+
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
@@ -32,7 +35,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             imagePath: 'assets/backgrounds/HARAVARA_profil.jpg',
           ),
           Positioned.fill(
-            child: SafeArea(
               child: SingleChildScrollView(
                 padding: EdgeInsets.only(
                   bottom: 65.h,
@@ -143,12 +145,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     SizedBox(height: 10.h),
                     ActionButtons2(),
-                    // Uncomment if you want to include the ReportIcon
-                    // ReportIcon(),
                   ],
                 ),
               ),
             ),
+          Positioned(
+            top: 43.h,
+            right: 30.w,
+            child: Close_Button(screenType: ScreenType.news,),
           ),
         ],
       ),

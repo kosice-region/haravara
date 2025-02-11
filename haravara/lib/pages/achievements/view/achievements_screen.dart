@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/core/services/database_service.dart';
+import 'package:haravara/core/widgets/close_button.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/pages/profile/widgets/searcher_level.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 
+import '../../../router/router.dart';
 import '../../map_detail/map_detail.dart';
 import '../widgets/widgets.dart';
 
@@ -59,7 +61,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                     const Header(showMenu: true),
                     10.verticalSpace,
                     Text(
-                      'MOJE PEČIATKY',
+                      'TVOJE PEČIATKY',
                       style: GoogleFonts.titanOne(
                         shadows: [Shadow(color: Colors.black, blurRadius: 15)],
                         color: const Color.fromARGB(255, 255, 255, 255),
@@ -67,9 +69,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                       ),
                     ),
                     5.verticalSpace,
-                    const SearcherLevel(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        shadow: true),
+                    const SearcherLevel(color: Colors.black),
                     10.verticalSpace,
                     BuildSettings(),
                     5.verticalSpace,
@@ -77,8 +77,15 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                 ),
               ),
               Expanded(child: AchievementsList()),
-              Footer(height: 40),
+              Footer(
+                height: 40,
+              ),
             ],
+          ),
+          Positioned(
+            top: 43.h,
+            right: 30.w,
+            child: Close_Button(screenType: ScreenType.news,),
           ),
         ],
       ),
