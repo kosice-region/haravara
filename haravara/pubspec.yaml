@@ -84,6 +84,7 @@ dependencies:
   cloud_firestore: ^4.17.5
   firebase_auth: ^4.7.6
   diacritic: ^0.1.2
+  firebase_dynamic_links: ^5.0.0
 
 
 dev_dependencies:
@@ -184,6 +185,9 @@ flutter:
     - assets/backgrounds/verification_background.png
     - assets/avatars/KASO_CITA (1).png
     - assets/company-logo/
+    - assets/home_button.png
+    - assets/badges/
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

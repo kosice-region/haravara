@@ -5,13 +5,19 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:haravara/core/providers/auth_provider.dart';
+import 'package:haravara/core/providers/login_provider.dart';
+import 'package:haravara/haravara_app_phone.dart';
 import 'package:haravara/pages/auth/models/user.dart' as local_user;
+import 'package:haravara/pages/auth/models/user.dart';
 import 'package:haravara/pages/auth/repositories/auth_repository.dart';
 import 'package:haravara/core/repositories/database_repository.dart';
 import 'package:haravara/core/services/database_service.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
-import 'dart:math' as math;
+import 'package:haravara/pages/profile/providers/avatars.provider.dart';
+import 'package:haravara/pages/profile/providers/user_info_provider.dart';
+import 'package:haravara/router/router.dart';
+import 'package:haravara/router/screen_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -22,85 +28,98 @@ final DatabaseRepository databaseRepository = DatabaseRepository();
 const String DEFAULT_AVATAR = '0387c644-249c-4c1e-ac0b-bc6c861d580c';
 
 class AuthService {
-  Future<User?> signInAnonymously() async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInAnonymously();
-      User? user = userCredential.user;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-      if (user != null && user.isAnonymous) {
-        log("Signed in anonymously as: ${user.uid}");
-        return user;
+  Future<void> sendSignInWithEmailLink(String email) async {
+    ActionCodeSettings actionCodeSettings = ActionCodeSettings(
+      url: 'https://haravara.page.link/XwD9?email=$email',
+      handleCodeInApp: true,
+      androidPackageName: 'com.development.haravara',
+      androidInstallApp: true,
+      iOSBundleId: 'com.example.yourapp',
+    );
+
+    try {
+      await _firebaseAuth.sendSignInLinkToEmail(
+        email: email,
+        actionCodeSettings: actionCodeSettings,
+      );
+      log('Email link sent to $email');
+    } catch (e) {
+      print('Failed to send email link: $e');
+    }
+  }
+
+  Future<void> signInWithEmailLink(String email, String link) async {
+    try {
+      if (_firebaseAuth.isSignInWithEmailLink(link)) {
+        await _firebaseAuth.signInWithEmailLink(email: email, emailLink: link);
+        print('Successfully signed in with email link.');
       } else {
-        log("User sign-in failed or user is not anonymous.");
-        return null;
+        print('Invalid sign-in link.');
       }
     } catch (e) {
-      log("Failed to sign in anonymously: $e");
-      return null;
+      print('Error signing in with email link: $e');
     }
   }
 
   Future<local_user.User> registerUserByEmail(
-  String email,
-  String username,
-  bool isFamilyType,
-  int children,
-  String location,
-  bool isNeedToRemember,
-) async {
-  List<String> phoneDetail = await getDeviceDetails();
-  final id = uuid.v4();
-  final base64Id = generateBase64(email);
-  final local_user.User user = local_user.User(
-    username: username,
-    phones: isNeedToRemember ? [phoneDetail[0]] : [],
-    userProfile: local_user.UserProfile(
-      avatar: DEFAULT_AVATAR,
-      profileType: isFamilyType
-          ? local_user.ProfileType.family
-          : local_user.ProfileType.individual,
-      children: children,
-      location: location,
-    ),
-    email: email,
-    id: id,
-  );
-  await authRepository.registerUser(user, id, base64Id);
-  await setLoginPreferences(user);
-  return user;
-}
+    String email,
+    String username,
+    bool isFamilyType,
+    int children,
+    String location,
+    bool isNeedToRemember,
+  ) async {
+    List<String> phoneDetail = await getDeviceDetails();
+    final id = uuid.v4();
+    final base64Id = generateBase64(email);
+    final local_user.User user = local_user.User(
+      username: username,
+      phones: isNeedToRemember ? [phoneDetail[0]] : [],
+      userProfile: local_user.UserProfile(
+        avatar: DEFAULT_AVATAR,
+        profileType: isFamilyType
+            ? local_user.ProfileType.family
+            : local_user.ProfileType.individual,
+        children: children,
+        location: location,
+      ),
+      email: email,
+      id: id,
+    );
+    await authRepository.registerUser(user, id, base64Id);
+    await setLoginPreferences(user);
+    return user;
+  }
 
-  Future<String> findUserByEmail(String email) async {
-  User? user = await signInAnonymously();
-  if (user != null) {
-    return authRepository.findUserByEmail(generateBase64(email));
-  } else {
-    log("Failed to authenticate anonymously.");
-    return '';
+  Future<String> findUserByEmail(String emailInput) async {
+    String email = emailInput.trim().toLowerCase();
+    log('AuthService: Looking up user by email: $email');
+    return authRepository.findUserByEmail(email);
   }
-}
 
-Future<local_user.User?> loginUserByEmail(
-  String enteredEmail,
-  bool isNeedToRememberPhone,
-) async {
-  List<String> phoneDetails = await getDeviceDetails();
-  final userId = await findUserByEmail(enteredEmail);
-  if (userId.isEmpty) {
-    return null;
+  Future<local_user.User?> loginUserByEmail(
+    String enteredEmail,
+    bool isNeedToRememberPhone,
+  ) async {
+    List<String> phoneDetails = await getDeviceDetails();
+    final userId = await findUserByEmail(enteredEmail);
+    if (userId.isEmpty) {
+      return null;
+    }
+    local_user.User? user = await getUserById(userId);
+    if (user == null) {
+      return null;
+    }
+    final updatedUser = isNeedToRememberPhone
+        ? user.copyWith(phones: [...user.phones, phoneDetails[0]])
+        : user.copyWith(phones: [...user.phones]);
+    await authRepository.updateUser(updatedUser);
+    await setLoginPreferences(updatedUser);
+    await getCollectedPlacesByUser(updatedUser.id!);
+    return updatedUser;
   }
-  local_user.User? user = await getUserById(userId);
-  if (user == null) {
-    return null;
-  }
-  final updatedUser = isNeedToRememberPhone
-      ? user.copyWith(phones: [...user.phones, phoneDetails[0]])
-      : user.copyWith(phones: [...user.phones]);
-  await authRepository.updateUser(updatedUser);
-  await setLoginPreferences(updatedUser);
-  await getCollectedPlacesByUser(updatedUser.id!);
-  return updatedUser;
-}
 
   Future<void> getCollectedPlacesByUser(String id) async {
     await DatabaseService().getCollectedPlacesByUser(id);
@@ -128,40 +147,6 @@ Future<local_user.User?> loginUserByEmail(
     return ['empty'];
   }
 
-  Future<String> generateRandomNumbers() async {
-    String code = '';
-    final random = math.Random();
-    for (int i = 0; i < 4; i++) {
-      code += random.nextInt(10).toString();
-    }
-    return code;
-  }
-
-  Future<String> sendEmail(BuildContext context, String email) async {
-    String code = await generateRandomNumbers();
-    final smtpServer = SmtpServer('smtp.m1.websupport.sk',
-        username: 'users@haravara.sk', password: 'H4r4v4r4!808');
-    final message = Message()
-      ..from = const Address('users@haravara.sk', 'Haravara')
-      ..recipients.add(email)
-      ..subject = 'Haravara Code'
-      ..text = 'Hello, thanks for using Haravara,\n Your code is $code';
-
-    try {
-      final sendReport = await send(message, smtpServer);
-      log('$code Message sent: $sendReport');
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Mail Sent Successfully")));
-    } on MailerException catch (e) {
-      print('Message not sent. $code');
-      print(e.message);
-      for (var p in e.problems) {
-        print('Problem: ${p.code}: ${p.msg}');
-      }
-    }
-    return code;
-  }
-
   setLoginPreferences(local_user.User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool("isLoggedIn", true);
@@ -176,5 +161,143 @@ Future<local_user.User?> loginUserByEmail(
             : 'individual');
     prefs.setInt('children', user.userProfile!.children ?? -1);
     prefs.setString('profile_image', user.userProfile!.avatar ?? '');
+  }
+
+  Future<void> handleRegistrationOrLogin(
+      String email, WidgetRef ref, BuildContext context) async {
+    final userId = await findUserByEmail(email);
+
+    log('$userId');
+
+    if (userId.isNotEmpty) {
+      log('userId.isNotEmpty so logging in');
+      await loginUserByEmail(
+          email, ref.read(authNotifierProvider).isNeedToRemeber);
+
+      await fetchUserDataAndUpdateProviders(userId, ref);
+
+      final authState = ref.read(authNotifierProvider);
+
+      log('LOGIN - enteredUsername: ${authState.enteredUsername}');
+      log('LOGIN - enteredEmail: ${authState.enteredEmail}');
+      log('LOGIN - userId: $userId');
+      log('LOGIN - children: ${authState.children ?? -1}');
+      log('LOGIN - location: ${authState.location ?? ''}');
+
+      ref.read(loginNotifierProvider.notifier).login(
+            authState.enteredUsername!,
+            authState.enteredEmail!,
+            userId,
+            authState.children ?? -1,
+            authState.location ?? '',
+          );
+
+      ref.read(userInfoProvider.notifier).build();
+
+      log('USER INFO PROVIDER - updating username: ${authState.enteredUsername}');
+      ref
+          .read(userInfoProvider.notifier)
+          .updateUsername(authState.enteredUsername!);
+
+      log('navigating to ScreenType.news');
+      routeToNewsScreen();
+    } else {
+      final authState = ref.read(authNotifierProvider);
+
+      log('REGISTER - enteredUsername: ${authState.enteredUsername}');
+      log('REGISTER - enteredEmail: ${authState.enteredEmail}');
+      log('REGISTER - userId: $userId');
+      log('REGISTER - children: ${authState.children ?? -1}');
+      log('REGISTER - location: ${authState.location ?? ''}');
+
+      final user = await registerUserByEmail(
+        email,
+        authState.enteredUsername!,
+        authState.isFamily,
+        authState.children ?? -1,
+        authState.location ?? '',
+        authState.isNeedToRemeber,
+      );
+
+      ref.read(loginNotifierProvider.notifier).login(
+            authState.enteredUsername!,
+            authState.enteredEmail!,
+            user.id!,
+            authState.children ?? -1,
+            authState.location ?? '',
+          );
+
+      ref.read(userInfoProvider.notifier).build();
+      ref
+          .read(userInfoProvider.notifier)
+          .updateUsername(authState.enteredUsername!);
+
+      log('navigating to ScreenType.news');
+      routeToNewsScreen();
+    }
+  }
+
+  Future<void> fetchUserDataAndUpdateProviders(
+      String userId, WidgetRef ref) async {
+    local_user.User? user = await getUserById(userId);
+    if (user == null) {
+      log('User not found after authentication.');
+      return;
+    }
+
+    log('User retrieved: ${user.username} - ${user.email}');
+
+    await getCollectedPlacesByUser(userId);
+
+    bool isFamily = user.userProfile!.profileType == ProfileType.family;
+    String location = user.userProfile!.location ?? '';
+    int children = user.userProfile!.children ?? -1;
+
+    await ref.read(userInfoProvider.notifier).updateUserId(userId);
+    log('FETCHING - update userId: $userId');
+
+    await ref.read(userInfoProvider.notifier).updateUsername(user.username);
+    log('FETCHING - username: ${user.username}');
+
+    await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
+    log('FETCHING - profileType: ${isFamily ? 'family' : 'individual'}');
+
+    await ref.read(userInfoProvider.notifier).updateCountOfChildren(children);
+    log('FETCHING - children: $children');
+
+    ref.read(authNotifierProvider.notifier).setEnteredUsername(user.username);
+    log('FETCHING - enteredUsername: ${user.username}');
+
+    ref.read(authNotifierProvider.notifier).setEnteredEmail(user.email);
+    log('FETCHING - enteredEmail: ${user.email}');
+
+    ref.read(authNotifierProvider.notifier).setUserId(user.id);
+    log('FETCHING - userId: ${user.id}');
+
+    ref.read(authNotifierProvider.notifier).setLocation(location);
+    log('FETCHING - location: $location');
+
+    ref.read(authNotifierProvider.notifier).setEnteredChildren(children);
+    log('FETCHING - enteredChildren: $children');
+
+    ref.read(authNotifierProvider.notifier).toggleFamilyState(isFamily);
+    log('FETCHING - familyState: ${isFamily ? 'family' : 'individual'}');
+
+    await DatabaseService().saveUserAvatarsLocally(userId);
+    final List<UserAvatar> avatars = await DatabaseService().loadAvatars();
+    ref.read(avatarsProvider.notifier).addAvatars(avatars);
+    log('FETCHING - avatars loaded and updated.');
+
+    log('User data fetched and providers updated.');
+  }
+
+  void routeToNewsScreen() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      navigatorKey.currentState?.pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ScreenRouter().getScreenWidget(ScreenType.news),
+        ),
+      );
+    });
   }
 }

@@ -1,22 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/core/providers/login_provider.dart';
 import 'package:haravara/core/providers/preferences_provider.dart';
-import 'package:haravara/core/services/database_service.dart';
-import 'package:haravara/pages/map_detail/providers/collected_places_provider.dart';
-import 'package:haravara/pages/profile/providers/avatars.provider.dart';
-import 'package:haravara/pages/profile/providers/user_info_provider.dart';
-import 'package:haravara/router/router.dart';
-import 'package:haravara/router/screen_router.dart';
 import 'package:haravara/core/repositories/database_repository.dart';
+import 'package:haravara/pages/profile/providers/user_info_provider.dart';
+import 'package:haravara/pages/map_detail/providers/places_provider.dart';
 
 import '../../auth/services/auth_screen_service.dart';
 import 'widgets.dart';
+import 'package:haravara/pages/profile/providers/avatars.provider.dart';
+import 'package:haravara/pages/leaderBoard/providers/userList.dart';
+
 DatabaseRepository DBrep = DatabaseRepository();
+
 class ActionButtons extends ConsumerStatefulWidget {
   const ActionButtons({super.key});
 
@@ -31,14 +30,13 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   String selectedCity = '';
 
   Future<bool> _updateUsername() async {
-
     if (newUsername.isEmpty || newUsername == "") {
       return true;
     }
-    if(await DBrep.isUserNameUsed(newUsername)){
-      showSnackBar(context,'Toto meno už niekto použiva');
+    if (await DBrep.isUserNameUsed(newUsername)) {
+      showSnackBar(context, 'Toto meno už niekto používa');
       return false;
-    }else{
+    } else {
       await authRepository.updateUserName(newUsername, userId);
       await ref.read(userInfoProvider.notifier).updateUsername(newUsername);
       return true;
@@ -63,73 +61,93 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
     super.initState();
   }
 
+  /// Determines the correct badge image based on the user's stamp count
+  String getBadgeImageForUser(int stamps) {
+    for (final level in levels) {
+      if (stamps >= level.min && stamps <= level.max) {
+        return level.badgeImage;
+      }
+    }
+    return 'assets/badges/empty.png'; // Default fallback badge
+  }
+
   @override
   Widget build(BuildContext context) {
     username = ref.watch(userInfoProvider).username;
     userId = ref.watch(userInfoProvider).id;
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      Container(
-        width: 91.w,
-        height: 30.h,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
-              offset: Offset(4, 4),
-            ),
-          ],
-          border: Border.all(color: Colors.white, width: 4),
-          borderRadius: BorderRadius.circular(50.r),
-        ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 239, 72, 77),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15.r)),
-            ),
-          ),
-          onPressed: () async {
-            handleLogout(ref, context);
-          },
-          child: Text(
-            'ODHLÁSIŤ',
-            style: GoogleFonts.titanOne(
-              color: const Color.fromARGB(255, 255, 255, 255),
-              fontSize: 10.sp,
-            ),
-          ),
-        ),
+
+    // Get user data from UsersNotifier
+    final usersAvatars =
+        ref.watch(avatarsProvider).getAllUserIdsAndAvatarLocations();
+    final usersAsync = ref.watch(usersNotifierProvider(usersAvatars));
+
+    // Find current user based on ID
+    final PersonsItem? currentUser = usersAsync.when(
+      data: (users) => users.firstWhere(
+        (user) => user.personsName == username,
+        orElse: () =>
+            PersonsItem(personsName: '', stampsNumber: 0, profileIcon: ''),
       ),
-      Container(
-        width: 91.w,
-        height: 30.h,
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
-              offset: Offset(4, 4),
+      loading: () => null,
+      error: (_, __) => null,
+    );
+
+    final int userStamps = currentUser?.stampsNumber ?? 0;
+    // final int userStamps = 30; //Uncomment it if you test each variant
+    final String badgeImage = getBadgeImageForUser(userStamps);
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 3.h),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              side: BorderSide(color: Colors.white, width: 4),
+              backgroundColor: const Color.fromARGB(216, 81, 182, 240),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.r)),
+              ),
             ),
-          ],
-          border: Border.all(color: Colors.white, width: 4),
-          borderRadius: BorderRadius.circular(50.r),
-        ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 42, 177, 255),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15.r)),
+            onPressed: () => _showUsernameDialog(context),
+            child: Column(
+              children: [
+                SizedBox(height: 5.h),
+                UsernameWidget(),
+                Text(
+                  ref.watch(placesProvider.select((state) =>
+                      ref.read(placesProvider.notifier).getLevelOfSearcher())),
+                  style: GoogleFonts.titanOne(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+              ],
             ),
           ),
-          onPressed: () => _showUsernameDialog(context),
-          child: Text(
-            'UPRAVIŤ',
-            style: GoogleFonts.titanOne(color: const Color.fromARGB(255, 255, 255, 255), fontSize: 10.sp),
+
+          // Positioned Badge Image
+          Positioned(
+            right: -5.w,
+            bottom: 35.h,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                boxShadow: [BoxShadow(color: Colors.white, blurRadius: 30)],
+              ),
+              child: Image.asset(
+                badgeImage, // Correct badge image based on user's stamps
+                width: 50.w,
+                height: 50.h,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
-        ),
+        ],
       ),
-    ]);
+    );
   }
 
   void _showUsernameDialog(BuildContext context) {
@@ -141,7 +159,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               borderRadius: BorderRadius.circular(15.r),
             ),
             title: Text(
-              'Upraviť udaje',
+              'Upraviť údaje',
               style: GoogleFonts.titanOne(),
             ),
             content: Column(
@@ -206,7 +224,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  if(await _updateUsername()){
+                  if (await _updateUsername()) {
                     _updateUserLocation();
                     Navigator.of(context).pop();
                   }
@@ -241,4 +259,5 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
     ScreenRouter().routeToNextScreen(
         context, ScreenRouter().getScreenWidget(ScreenType.auth));
   }
+
 }

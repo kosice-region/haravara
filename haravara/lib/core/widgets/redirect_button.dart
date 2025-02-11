@@ -75,7 +75,8 @@ class RedirectButton extends ConsumerWidget {
                   style: TextButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 91, 187, 75),
                     shape: RoundedRectangleBorder(
-                      borderRadius: const BorderRadius.all(Radius.circular(20)).h,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(20)).h,
                     ),
                     side: BorderSide(
                       color: Colors.white,
@@ -86,15 +87,18 @@ class RedirectButton extends ConsumerWidget {
                     if (screenToRoute == null && webRoute != null) {
                       Navigator.of(context).push(
                         PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) {
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) {
                             return WebViewContainer(url: webRoute!);
                           },
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
                             const begin = Offset(0.0, 1.0);
                             const end = Offset(0.0, 0.0);
                             const curve = Curves.ease;
 
-                            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                            var tween = Tween(begin: begin, end: end)
+                                .chain(CurveTween(curve: curve));
                             var offsetAnimation = animation.drive(tween);
 
                             return SlideTransition(
@@ -108,8 +112,10 @@ class RedirectButton extends ConsumerWidget {
                     }
                     var currentScreen = ref.watch(routerProvider);
                     if (currentScreen != screenToRoute) {
+
                       ref.read(routerProvider.notifier).changeScreen(screenToRoute!);
                       ScreenRouter().routeToNextScreen(
+
                         context,
                         ScreenRouter().getScreenWidget(screenToRoute!),
                       );

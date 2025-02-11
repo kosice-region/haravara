@@ -13,7 +13,6 @@ import 'package:haravara/pages/summary/summary.dart';
 
 import '../pages/achievements/achiviements.dart';
 import '../pages/auth/auth.dart';
-import '../pages/auth_verification/auth_verification.dart';
 import '../pages/compass/compass.dart';
 import '../pages/conditions/conditions.dart';
 import '../pages/map/map.dart';
@@ -50,7 +49,6 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.compass: const Compass(),
   ScreenType.achievements: const AchievementsScreen(),
   ScreenType.auth: const AuthScreen(),
-  ScreenType.code: const AuthVerificationScreen(),
   ScreenType.detailMap: const MapDetailScreen(),
   ScreenType.prizes: PrizesScreen(),
   ScreenType.profile: const ProfileScreen(),

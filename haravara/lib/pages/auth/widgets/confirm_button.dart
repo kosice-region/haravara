@@ -17,8 +17,9 @@ class ConfirmButton extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         textStyle: GoogleFonts.titanOne(fontSize: 11.sp),
-        foregroundColor: Color.fromARGB(255, 188, 95, 190),
-        backgroundColor: Color(0xFFFFD87E),
+        foregroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 239, 72, 77),
+        side: const BorderSide(color: Colors.white, width: 3),
       ),
       onPressed: onPressed,
       child: SizedBox(

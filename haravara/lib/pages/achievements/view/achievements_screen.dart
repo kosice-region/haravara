@@ -7,6 +7,7 @@ import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/pages/profile/widgets/searcher_level.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 import '../../map_detail/map_detail.dart';
 import '../widgets/widgets.dart';
@@ -41,32 +42,43 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
 
     return Scaffold(
       endDrawer: HeaderMenu(),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8).r,
-            child: Column(
-              children: [
-                const Header(showMenu: true),
-                10.verticalSpace,
-                Text(
-                  'TVOJE PEČIATKY',
-                  style: GoogleFonts.titanOne(
-                    color: const Color.fromARGB(255, 86, 162, 73),
-                    fontSize: 15.sp,
-                  ),
-                ),
-                5.verticalSpace,
-                const SearcherLevel(color: Colors.black),
-                10.verticalSpace,
-                BuildSettings(),
-                5.verticalSpace,
-              ],
+          Positioned.fill(
+            child: Image.asset(
+              'assets/backgrounds/background_clouds.png',
+              fit: BoxFit.cover,
             ),
           ),
-          AchievementsList(),
-          Footer(
-            height: 40,
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 8).r,
+                child: Column(
+                  children: [
+                    const Header(showMenu: true),
+                    10.verticalSpace,
+                    Text(
+                      'MOJE PEČIATKY',
+                      style: GoogleFonts.titanOne(
+                        shadows: [Shadow(color: Colors.black, blurRadius: 15)],
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 15.sp,
+                      ),
+                    ),
+                    5.verticalSpace,
+                    const SearcherLevel(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        shadow: true),
+                    10.verticalSpace,
+                    BuildSettings(),
+                    5.verticalSpace,
+                  ],
+                ),
+              ),
+              Expanded(child: AchievementsList()),
+              Footer(height: 40),
+            ],
           ),
         ],
       ),

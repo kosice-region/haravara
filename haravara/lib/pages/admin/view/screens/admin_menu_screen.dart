@@ -30,6 +30,23 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
       ScreenUtil.init(context, designSize: const Size(255, 516));
     });
 
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double buttonHeight = 38.h;
+    double buttonWidth = 160.w;
+
+    if (deviceHeight < 850) {
+      buttonHeight = 38.h;
+      buttonWidth = 160.w;
+    }
+    if (deviceHeight < 700) {
+      buttonHeight = 43.h;
+      buttonWidth = 160.w;
+    }
+    if (deviceHeight < 650) {
+      buttonHeight = 48.h;
+      buttonWidth = 160.w;
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -54,88 +71,38 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            AdminActualRewardsScreen(), 
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(150.w, 40.h),
-                    backgroundColor: const Color(0xFF9260A8),
-                    side: const BorderSide(color: Colors.white, width: 4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    'Ceny',
-                    style: GoogleFonts.titanOne(
-                      fontSize: 14.sp,
-                      color: Colors.white,
-                    ),
-                  ),
+                buildResponsiveButton(
+                  context,
+                  'Ceny',
+                  const Color(0xFF9260A8),
+                  AdminActualRewardsScreen(),
+                  buttonWidth,
+                  buttonHeight,
                 ),
                 SizedBox(height: 20.h),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SpecialRewardScreen(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(150.w, 40.h),
-                    backgroundColor: const Color(0xFFE65F33),
-                    side: const BorderSide(color: Colors.white, width: 4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    'Špecialne ceny',
-                    style: GoogleFonts.titanOne(
-                      fontSize: 14.sp,
-                      color: Colors.white,
-                    ),
-                  ),
+                buildResponsiveButton(
+                  context,
+                  'Špecialne ceny',
+                  const Color(0xFFE65F33),
+                  SpecialRewardScreen(),
+                  buttonWidth,
+                  buttonHeight,
                 ),
                 SizedBox(height: 20.h),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AdminAssignStampsScreen(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(150.w, 40.h),
-                    backgroundColor: const Color(0xFF33C233),
-                    side: const BorderSide(color: Colors.white, width: 4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    'Pridaj pečiatky',
-                    style: GoogleFonts.titanOne(
-                      fontSize: 14.sp,
-                      color: Colors.white,
-                    ),
-                  ),
+                buildResponsiveButton(
+                  context,
+                  'Pridaj pečiatky',
+                  const Color(0xFF33C233),
+                  AdminAssignStampsScreen(),
+                  buttonWidth,
+                  buttonHeight,
                 ),
+                SizedBox(height: 20.h),
 
-                SizedBox(height: 20.h),
-                buildAdminButton(context, 'Odhlasiť', Colors.red,
+                buildAdminButton(context, 'Odhlásiť', Colors.red,buttonWidth,
+                  buttonHeight,
                     isLogout: true),
+
               ],
             ),
           ),
@@ -166,17 +133,55 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
     );
   }
 
-  Widget buildAdminButton(BuildContext context, String buttonText, Color color,
-      {bool isLogout = false}) {
+  Widget buildResponsiveButton(
+    BuildContext context,
+    String text,
+    Color color,
+    Widget screen,
+    double width,
+    double height,
+  ) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => screen),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        fixedSize: Size(width, height),
+        backgroundColor: color,
+        side: const BorderSide(color: Colors.white, width: 4),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.titanOne(
+          fontSize: 14.sp,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget buildAdminButton(
+    BuildContext context,
+    String buttonText,
+    Color color,
+    double width,
+    double height, {
+    bool isLogout = false,
+  }) {
     return ElevatedButton(
       onPressed: () async {
         if (isLogout) {
           await handleLogout(ref, context);
-        } else {
         }
       },
       style: ElevatedButton.styleFrom(
-        fixedSize: Size(150.w, 40.h),
+        fixedSize: Size(width, height),
         backgroundColor: color,
         side: const BorderSide(color: Colors.white, width: 4),
         shape: RoundedRectangleBorder(

@@ -8,6 +8,15 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Haravara</string>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+<array>
+    <string>https://haravara.page.link</string> 
+</array>
+<key>UIApplicationExitsOnSuspend</key>
+<false/>
+<key>UILaunchStoryboardName</key>
+<string>LaunchScreen</string>
+
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -22,6 +31,19 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>bundle ID</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.example.haravara</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -44,6 +66,13 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Used to allow camera</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Used to provide geofence services in the background.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
@@ -54,15 +83,6 @@
 	<string>Used to recognize user activity information.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to allow camera</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Used to allow camera</string>
-	<key>io.flutter.embedded_views_preview</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -87,5 +107,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>
