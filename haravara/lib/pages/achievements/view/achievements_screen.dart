@@ -44,8 +44,14 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
 
     return Scaffold(
       endDrawer: HeaderMenu(),
-      body: Stack( // Use a Stack to overlay widgets
+      body: Stack(
         children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/backgrounds/background_clouds.png',
+              fit: BoxFit.cover,
+            ),
+          ),
           Column(
             children: [
               Padding(
@@ -57,7 +63,8 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                     Text(
                       'TVOJE PEČIATKY',
                       style: GoogleFonts.titanOne(
-                        color: const Color.fromARGB(255, 86, 162, 73),
+                        shadows: [Shadow(color: Colors.black, blurRadius: 15)],
+                        color: const Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15.sp,
                       ),
                     ),
@@ -69,7 +76,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                   ],
                 ),
               ),
-              Expanded(child: AchievementsList()), // Make AchievementsList take up the remaining space
+              Expanded(child: AchievementsList()),
               Footer(
                 height: 40,
               ),
@@ -79,7 +86,8 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
             top: 43.h,
             right: 30.w,
             child: Close_Button(screenType: ScreenType.news,),
-          ),        ],
+          ),
+        ],
       ),
     );
   }
