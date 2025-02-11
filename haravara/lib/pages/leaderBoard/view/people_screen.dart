@@ -55,64 +55,10 @@ class LeaderBoardScreen extends ConsumerWidget {
                         offset: Offset(0, 0),
                         blurRadius: 40.0,
                         color: Colors.black,
-
-                // Display the chosen level name from the levels list
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      10.horizontalSpace,
-                      Positioned(
-                        top: -25,
-                        left: -10,
-                        child: Container(
-                          width: 0.35.sw,
-                          height: 0.35.sw,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Original PNG Image
-                              Image.asset(
-                                levels[chosenLevel - 1].badgeImage,
-                                width: 120,
-                                height: 120,
-                                fit: BoxFit.contain,
-                              ),
-                            ],
-                          ),
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              const BoxShadow(
-                                offset: Offset(0, 0),
-                                blurRadius: 40.0,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                            ],
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                        ),
                       ),
-                      Container(
-                        width: 0.55.sw,
-                        padding: EdgeInsets.only(top: 10),
-                        child: Text(
-                          levels[chosenLevel - 1].name,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.titanOne(
-                            fontSize: 21.sp,
-                            color: const Color.fromARGB(255, 255, 255, 255),
-                            fontWeight: FontWeight.w500,
-                            shadows: [
-                              const Shadow(
-                                offset: Offset(0, 0),
-                                blurRadius: 40.0,
-                                color: Colors.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      15.horizontalSpace,
-                    ]),
+                    ],
+                  ),
+                ),
                 10.verticalSpace,
                 _buildBody(usersAsync, ref),
                 SizedBox(height: 40.h), // Space for footer
@@ -129,26 +75,6 @@ class LeaderBoardScreen extends ConsumerWidget {
             top: 43.h,
             right: 30.w,
             child: Close_Button(),
-
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                width: 36.w,
-                height: 36.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50.0),
-                  color: Colors.transparent,
-                ),
-                child: Image.asset(
-                  'assets/menu-icons/backbutton.png',
-                  width: 36.w,
-                  height: 36.h,
-                ),
-              ),
-            ),
-
           ),
         ],
       ),
@@ -168,9 +94,9 @@ class LeaderBoardScreen extends ConsumerWidget {
         if (filteredUsers.isEmpty) {
           return Center(
             child: Text(
-              'Nikto tu ešte nie je',
+              'Nikto tu nie je',
               style: GoogleFonts.titanOne(
-                fontSize: 18.sp,
+                fontSize: 24.sp,
                 color: Colors.white,
                 shadows: [
                   const Shadow(
@@ -263,7 +189,7 @@ class LeaderBoardScreen extends ConsumerWidget {
               Text(
                 item.stampsNumber.toString(),
                 style: GoogleFonts.titanOne(
-                  fontSize: 18.sp,
+                  fontSize: 20.sp,
                   color: Colors.white,
                   shadows: [
                     const Shadow(
