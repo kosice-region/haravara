@@ -13,8 +13,8 @@ class RedirectButton extends ConsumerWidget {
   final int imageHeight;
   final int right;
   final int bottom;
-  ScreenType? screenToRoute;
-  String? webRoute;
+  final ScreenType? screenToRoute;
+  final String? webRoute;
 
   RedirectButton({
     Key? key,
@@ -112,10 +112,10 @@ class RedirectButton extends ConsumerWidget {
                     }
                     var currentScreen = ref.watch(routerProvider);
                     if (currentScreen != screenToRoute) {
-                      ref
-                          .read(routerProvider.notifier)
-                          .changeScreen(screenToRoute!);
-                      ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+
+                      ref.read(routerProvider.notifier).changeScreen(screenToRoute!);
+                      ScreenRouter().routeToNextScreen(
+
                         context,
                         ScreenRouter().getScreenWidget(screenToRoute!),
                       );

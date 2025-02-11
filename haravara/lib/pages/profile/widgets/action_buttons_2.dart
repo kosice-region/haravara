@@ -50,10 +50,10 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
               shadowColor: Colors.black.withOpacity(0.3),
             ),
             onPressed: () {
-              ref
-                  .read(routerProvider.notifier)
-                  .changeScreen(ScreenType.bugreport);
-              ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+
+              ref.read(routerProvider.notifier).changeScreen(ScreenType.bugreport);
+              ScreenRouter().routeToNextScreen(
+
                 context,
                 ScreenRouter().getScreenWidget(ScreenType.bugreport),
               );

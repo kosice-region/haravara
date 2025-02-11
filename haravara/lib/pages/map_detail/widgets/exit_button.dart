@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,9 +22,8 @@ class ExitButton extends ConsumerWidget {
           color: Colors.black,
         ),
         onPressed: () {
-          log('123');
           ref.read(pickedPlaceProvider.notifier).resetPlace();
-          ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+          ScreenRouter().routeToNextScreen(
               context, ScreenRouter().getScreenWidget(ScreenType.map));
         },
       ),

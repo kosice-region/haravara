@@ -281,6 +281,6 @@ void routeToNextScreen(context, ScreenType screenToRoute, WidgetRef ref) {
     return;
   }
   ref.read(routerProvider.notifier).changeScreen(screenToRoute);
-  ScreenRouter().routeToNextScreenWithoutAllowingRouteBackWithoutAnimation(
+  ScreenRouter().routeToNextScreen(
       context, ScreenRouter().getScreenWidget(screenToRoute));
 }

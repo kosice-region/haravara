@@ -14,7 +14,7 @@ class ReportIcon extends ConsumerWidget{
     return  IconButton(
         onPressed: () {
           ref.read(routerProvider.notifier).changeScreen(ScreenType.bugreport);
-          ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+          ScreenRouter().routeToNextScreen(
               context,
               ScreenRouter().getScreenWidget(ScreenType.bugreport)
           );

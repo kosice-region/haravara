@@ -192,7 +192,7 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
     ref.invalidate(userInfoProvider);
     await DatabaseService().clearRichedPlaces();
     await DatabaseService().clearUserAllAvatarsFromDatabase();
-    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+    ScreenRouter().routeToNextScreen(
         context, ScreenRouter().getScreenWidget(ScreenType.auth));
   }
 }

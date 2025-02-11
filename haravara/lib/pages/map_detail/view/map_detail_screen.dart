@@ -175,7 +175,7 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     ref.read(routerProvider.notifier).changeScreen(ScreenType.compass);
     String id = pickedLocation.id!;
     ref.read(pickedPlaceProvider.notifier).setNewPlace(id);
-    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+    ScreenRouter().routeToNextScreen(
         context, ScreenRouter().getScreenWidget(ScreenType.compass));
   }
 

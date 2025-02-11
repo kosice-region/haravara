@@ -249,4 +249,18 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           );
         });
   }
+
+  Future<void> handleLogout(WidgetRef ref, BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    ref.read(loginNotifierProvider.notifier).logout();
+    ref.read(collectedPlacesProvider.notifier).deleteAllPlaces();
+    await ref.read(userInfoProvider.notifier).clear();
+    ref.invalidate(loginNotifierProvider);
+    ref.invalidate(userInfoProvider);
+    await DatabaseService().clearRichedPlaces();
+    await DatabaseService().clearUserAllAvatarsFromDatabase();
+    ScreenRouter().routeToNextScreen(
+        context, ScreenRouter().getScreenWidget(ScreenType.auth));
+  }
+
 }

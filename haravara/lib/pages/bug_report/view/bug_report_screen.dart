@@ -75,7 +75,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
     showSnackBar(context, "Ďakujeme za váš report");
     ref.read(routerProvider.notifier).changeScreen(ScreenType.profile);
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(context,
-        ScreenRouter().getScreenWidget(ScreenType.profile));
+        ScreenRouter().getScreenWidget(ScreenType.news));
   }
 
   late List<XFile> images = [] ;
