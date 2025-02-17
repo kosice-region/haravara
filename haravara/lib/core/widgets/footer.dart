@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
-import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 
 class Footer extends ConsumerWidget {
   Footer({
@@ -90,7 +89,7 @@ class Footer extends ConsumerWidget {
                   constraints: const BoxConstraints(),
                   iconSize: 34.0,
                   onPressed: () {
-                    routeToNextScreen(context, ScreenType.profile, ref);
+                    routeToNextScreenWithoutAnimation(context, ScreenType.profile, ref);
                   },
                   icon: ClipOval(
                     child: Image.file(
@@ -118,31 +117,24 @@ class Footer extends ConsumerWidget {
         constraints: const BoxConstraints(),
         icon: Image.asset(asset, fit: BoxFit.contain),
         onPressed: () {
-          routeToNextScreen(context, screen, ref);
+          routeToNextScreenWithoutAnimation(context, screen, ref);
         },
       ),
     );
   }
 
-  void routeToNextScreen(
+  void routeToNextScreenWithoutAnimation(
       BuildContext context, ScreenType screenToRoute, WidgetRef ref) {
     final currentScreen = ref.watch(routerProvider);
 
-    // If the current screen is already the target, do nothing.
+    // If already on the target screen, do nothing.
     if (currentScreen == screenToRoute) return;
-
-    // Special handling if the current screen is the menu.
-    if (currentScreen == ScreenType.menu) {
-      ref.read(routerProvider.notifier).changeScreen(screenToRoute);
-      ScreenRouter().routeToNextScreen(
-          context, ScreenRouter().getScreenWidget(screenToRoute));
-      Navigator.of(context).pop();
-      return;
-    }
 
     // Default routing to the new screen.
     ref.read(routerProvider.notifier).changeScreen(screenToRoute);
-    ScreenRouter().routeToNextScreen(
-        context, ScreenRouter().getScreenWidget(screenToRoute));
+    ScreenRouter().routeToNextScreenWithoutAnimation(
+      context,
+      ScreenRouter().getScreenWidget(screenToRoute),
+    );
   }
 }
