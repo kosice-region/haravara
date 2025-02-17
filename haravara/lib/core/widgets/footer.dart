@@ -22,7 +22,7 @@ class Footer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       width: double.infinity,
-      height: 50.h, // Footer height remains fixed
+      height: 50.h, 
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -37,7 +37,7 @@ class Footer extends ConsumerWidget {
       ),
       child: Row(
         mainAxisAlignment:
-            MainAxisAlignment.spaceEvenly, // Evenly distribute icons
+            MainAxisAlignment.spaceEvenly, 
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Hamburger Menu
@@ -64,7 +64,7 @@ class Footer extends ConsumerWidget {
             ref,
             'assets/home_button.png',
             ScreenType.news,
-            size: 36.w, // Bigger size
+            size: 36.w,
           ),
 
           // Right icon - Map
@@ -76,13 +76,13 @@ class Footer extends ConsumerWidget {
             size: 40.w,
           ),
 
-          // Profile Icon - Same size as Peciatka and Map
+          // Profile Icon 
           Consumer(
             builder: (context, ref, child) {
               final currentAvatar =
                   ref.watch(avatarsProvider).getCurrentAvatar();
               return SizedBox(
-                width: 36.w, // Increased size to match others
+                width: 36.w, 
                 height: 36.h,
                 child: IconButton(
                   padding: EdgeInsets.zero,
@@ -127,10 +127,8 @@ class Footer extends ConsumerWidget {
       BuildContext context, ScreenType screenToRoute, WidgetRef ref) {
     final currentScreen = ref.watch(routerProvider);
 
-    // If already on the target screen, do nothing.
     if (currentScreen == screenToRoute) return;
 
-    // Default routing to the new screen.
     ref.read(routerProvider.notifier).changeScreen(screenToRoute);
     ScreenRouter().routeToNextScreenWithoutAnimation(
       context,
