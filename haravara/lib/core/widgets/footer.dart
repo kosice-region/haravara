@@ -37,31 +37,17 @@ class Footer extends ConsumerWidget {
         ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Evenly distribute icons
+        mainAxisAlignment:
+            MainAxisAlignment.spaceEvenly, // Evenly distribute icons
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Hamburger Menu
-          GestureDetector(
-            onTap: () {
-              if (showMenu) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => HeaderMenu()),
-                );
-              }
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(width: 30.w, height: 3.h, color: Colors.black),
-                  SizedBox(height: 7.h),
-                  Container(width: 30.w, height: 3.h, color: Colors.black),
-                  SizedBox(height: 7.h),
-                  Container(width: 30.w, height: 3.h, color: Colors.black),
-                ],
-              ),
-            ),
+          _footerIcon(
+            context,
+            ref,
+            'assets/menu.png',
+            ScreenType.menu,
+            size: 28.w,
           ),
 
           // Left icon - Peciatka
@@ -94,7 +80,8 @@ class Footer extends ConsumerWidget {
           // Profile Icon - Same size as Peciatka and Map
           Consumer(
             builder: (context, ref, child) {
-              final currentAvatar = ref.watch(avatarsProvider).getCurrentAvatar();
+              final currentAvatar =
+                  ref.watch(avatarsProvider).getCurrentAvatar();
               return SizedBox(
                 width: 36.w, // Increased size to match others
                 height: 36.h,
@@ -120,7 +107,9 @@ class Footer extends ConsumerWidget {
     );
   }
 
-  Widget _footerIcon(BuildContext context, WidgetRef ref, String asset, ScreenType screen, {double size = 30}) {
+  Widget _footerIcon(
+      BuildContext context, WidgetRef ref, String asset, ScreenType screen,
+      {double size = 30}) {
     return SizedBox(
       width: size,
       height: size,
@@ -135,17 +124,25 @@ class Footer extends ConsumerWidget {
     );
   }
 
-  void routeToNextScreen(BuildContext context, ScreenType screenToRoute, WidgetRef ref) {
+  void routeToNextScreen(
+      BuildContext context, ScreenType screenToRoute, WidgetRef ref) {
     final currentScreen = ref.watch(routerProvider);
-    if (currentScreen == ScreenType.menu && currentScreen != screenToRoute) {
+
+    // If the current screen is already the target, do nothing.
+    if (currentScreen == screenToRoute) return;
+
+    // Special handling if the current screen is the menu.
+    if (currentScreen == ScreenType.menu) {
       ref.read(routerProvider.notifier).changeScreen(screenToRoute);
-      ScreenRouter().routeToNextScreen(
+      ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
           context, ScreenRouter().getScreenWidget(screenToRoute));
       Navigator.of(context).pop();
       return;
     }
+
+    // Default routing to the new screen without allowing route back.
     ref.read(routerProvider.notifier).changeScreen(screenToRoute);
-    ScreenRouter().routeToNextScreen(
+    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
         context, ScreenRouter().getScreenWidget(screenToRoute));
   }
 }

@@ -86,3 +86,4 @@ final collectedPlacesProvider =
     StreamProvider.family<List<String>, String>((ref, userId) {
   return DatabaseService().loadCollectedPlaceIdsStream(userId);
 });
+
