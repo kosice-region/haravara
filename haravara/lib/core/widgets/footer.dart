@@ -134,15 +134,15 @@ class Footer extends ConsumerWidget {
     // Special handling if the current screen is the menu.
     if (currentScreen == ScreenType.menu) {
       ref.read(routerProvider.notifier).changeScreen(screenToRoute);
-      ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+      ScreenRouter().routeToNextScreen(
           context, ScreenRouter().getScreenWidget(screenToRoute));
       Navigator.of(context).pop();
       return;
     }
 
-    // Default routing to the new screen without allowing route back.
+    // Default routing to the new screen.
     ref.read(routerProvider.notifier).changeScreen(screenToRoute);
-    ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+    ScreenRouter().routeToNextScreen(
         context, ScreenRouter().getScreenWidget(screenToRoute));
   }
 }
