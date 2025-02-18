@@ -105,9 +105,8 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     precacheImage(const AssetImage('assets/places-map.jpg'), context);
     ScreenUtil.init(context, designSize: const Size(255, 516));
     return PopScope(
-      onPopInvokedWithResult: (bool didPop, Object? result) {
+      onPopInvoked: (bool didPop) {
         _pickedPlaceNotifier.resetPlace();
-        return;
       },
       child: Scaffold(
         body: Stack(
@@ -125,8 +124,10 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                   setState(() {
                     print(
                         '${details.globalPosition.dx}, ${details.globalPosition.dy}');
-                    tapPositions.add(Offset(
-                        details.globalPosition.dx, details.globalPosition.dy));
+                    tapPositions.add(
+                      Offset(
+                          details.globalPosition.dx, details.globalPosition.dy),
+                    );
                   });
                 },
                 child: Consumer(
@@ -163,7 +164,7 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
             Positioned(
               top: 43.h,
               right: 30.w,
-              child: Close_Button(screenType: ScreenType.map,),
+              child: Close_Button(screenType: ScreenType.map),
             ),
           ],
         ),

@@ -85,6 +85,8 @@ dependencies:
   firebase_auth: ^4.7.6
   diacritic: ^0.1.2
   firebase_dynamic_links: ^5.0.0
+  package_info_plus: ^8.2.1
+  flutter_dotenv: ^5.2.1
 
 
 dev_dependencies:
