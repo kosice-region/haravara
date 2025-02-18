@@ -27,7 +27,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
     'assets/backgrounds/background.jpg',
   ];
 
-
+  bool _isLoading = false;
   var isButtonDisabled = false;
   final List<String> imagePaths = [];
   var _enteredTitle = '';
@@ -41,7 +41,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _expectedController = TextEditingController();
 
-  
+
 
 
   void _submitAndValidate() async {
@@ -72,6 +72,10 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
     _enteredTitle = _titleController.text.trim();
     _enteredDescription = _descriptionController.text.trim();
     _enteredExpected = _expectedController.text.trim();
+
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
 
     await sendReport(_enteredTitle, _enteredDescription,_enteredExpected,images,context,ref);
     showSnackBar(context, "Ďakujeme za váš report");
@@ -295,13 +299,13 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
                             4.h.verticalSpace,
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white
-                              ),
-                              onPressed: () {
-                                _submitAndValidate();
-                              },
-                              child: const Text('Nahlásiť problém'),
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white),
+                              onPressed:
+                              _isLoading ? null : () => _submitAndValidate(),
+                              child: _isLoading
+                                  ? CircularProgressIndicator() // Show loading indicator
+                                  : const Text('Nahlásiť problém'),
                             ),
                           ],
                         ),
