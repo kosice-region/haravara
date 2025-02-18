@@ -1,0 +1,42 @@
+name: Deploy Flutter App
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.x.x'
+
+    - name: Get Release Version
+      id: get_version
+      run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+
+    - name: Inject Version into pubspec.yaml
+      run: |
+        sed -i "s/version:.*/version: ${VERSION#v}+1/" pubspec.yaml
+
+    - name: Create .env File with Version
+      run: echo "APP_VERSION=${VERSION#v}" > .env
+
+    - name: Install Dependencies
+      run: flutter pub get
+
+    - name: Build APK
+      run: flutter build apk --release
+
+    - name: Upload APK as an Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-release
+        path: build/app/outputs/flutter-apk/app-release.apk
