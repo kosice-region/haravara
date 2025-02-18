@@ -11,10 +11,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 Future<void> sendReport(String title,String description,String expected,List<XFile> images,context,WidgetRef ref) async {
+
   final uploadTasks = <Future>[];
-  log("posiela sa");
+  String time = DateTime.now().day.toString() +"-"+ DateTime.now().month.toString() +"-"+ DateTime.now().year.toString();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? userId = prefs.getString('id');
+  String? userId = prefs.getString('email');
 
 
   final newBugKey = FirebaseDatabase.instance.ref('/bugReports').push().key;
@@ -40,8 +41,10 @@ Future<void> sendReport(String title,String description,String expected,List<XFi
     'images': "images/bug-reports/$newBugKey/",
     'description': description,
     'expected': expected,
+    'date': time,
     'timestamp': ServerValue.timestamp,
     'solved': false,
+
   };
 
     FirebaseDatabase.instance.ref('/bugReports/'+newBugKey!).update(postData);

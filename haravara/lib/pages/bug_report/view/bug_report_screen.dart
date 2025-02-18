@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,16 +45,19 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
 
 
   void _submitAndValidate() async {
-    log("stane sa");
+
+    if(isButtonDisabled){
+      return;
+    }
     isButtonDisabled = true;
     FocusManager.instance.primaryFocus?.unfocus();
-    if (_titleController.text.isEmpty ) {
+    if (_titleController.text.trim().isEmpty ) {
       showSnackBar(context, 'Prosím, zadajte titul reportu');
       isButtonDisabled = false;
       return;
     }
 
-    if (_descriptionController.text.isEmpty) {
+    if (_descriptionController.text.trim().isEmpty) {
       showSnackBar(context, 'Prosim, zadajte popis reportu');
       isButtonDisabled = false;
       return;
@@ -67,9 +69,9 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
       return;
     }
 
-    _enteredTitle = _descriptionController.text;
-    _enteredDescription = _titleController.text;
-    _enteredExpected = _expectedController.text;
+    _enteredTitle = _titleController.text.trim();
+    _enteredDescription = _descriptionController.text.trim();
+    _enteredExpected = _expectedController.text.trim();
 
     await sendReport(_enteredTitle, _enteredDescription,_enteredExpected,images,context,ref);
     showSnackBar(context, "Ďakujeme za váš report");
@@ -165,7 +167,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
                                 suffixIcon: Padding(
                                   padding: const EdgeInsets.only(left: 12.0),
                                   child: Text(
-                                    '${_titleController.text.length}/50',
+                                    '${_titleController.text.trim().length}/50',
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                 ),
@@ -252,7 +254,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
                                 suffixIcon: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
-                                    '${_descriptionController.text.length}/500',
+                                    '${_descriptionController.text.trim().length}/500',
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                 ),
@@ -279,7 +281,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
                                 suffixIcon: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
-                                    '${_expectedController.text.length}/500',
+                                    '${_expectedController.text.trim().length}/500',
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                 ),
@@ -315,6 +317,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
     );
   }
 }
+
 
 
 
