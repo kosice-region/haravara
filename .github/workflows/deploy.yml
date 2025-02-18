@@ -13,11 +13,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Debug: Check Current Directory
-      run: |
-        echo "Current Directory: $(pwd)"
-        ls -la
-
     - name: Move to Flutter Project Directory
       run: cd haravara && ls -la
 
