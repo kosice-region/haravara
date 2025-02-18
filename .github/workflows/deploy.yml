@@ -13,11 +13,16 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
+    - name: Debug: Check Working Directory
+      run: |
+        echo "Current Directory: $(pwd)"
+        ls -la
+
     - name: Ensure Working Directory Contains Flutter Project
       working-directory: haravara
       run: |
         if [ ! -f "pubspec.yaml" ]; then
-          echo "❌ pubspec.yaml NOT found in /haravara! Listing available files:"
+          echo "pubspec.yaml NOT found in /haravara! Listing available files:"
           ls -la
           exit 1
         fi
