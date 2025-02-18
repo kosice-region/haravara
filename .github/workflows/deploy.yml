@@ -13,6 +13,23 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
+    - name: Debug: Check Current Directory
+      run: |
+        echo "Current Directory: $(pwd)"
+        ls -la
+
+    - name: Move to Flutter Project Directory
+      run: cd haravara && ls -la
+
+    - name: Ensure Working Directory Contains Flutter Project
+      run: |
+        cd haravara
+        if [ ! -f "pubspec.yaml" ]; then
+          echo "pubspec.yaml NOT found in /haravara! Listing available files:"
+          ls -la
+          exit 1
+        fi
+
     - name: Install Flutter
       uses: subosito/flutter-action@v2
       with:
@@ -20,23 +37,32 @@ jobs:
 
     - name: Get Release Version
       id: get_version
-      run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+      run: |
+        cd haravara
+        echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
     - name: Inject Version into pubspec.yaml
       run: |
+        cd haravara
         sed -i "s/version:.*/version: ${VERSION#v}+1/" pubspec.yaml
 
     - name: Create .env File with Version
-      run: echo "APP_VERSION=${VERSION#v}" > .env
+      run: |
+        cd haravara
+        echo "APP_VERSION=${VERSION#v}" > .env
 
     - name: Install Dependencies
-      run: flutter pub get
+      run: |
+        cd haravara
+        flutter pub get
 
     - name: Build APK
-      run: flutter build apk --release
+      run: |
+        cd haravara
+        flutter build apk --release
 
     - name: Upload APK as an Artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-release
-        path: build/app/outputs/flutter-apk/app-release.apk
+        path: haravara/build/app/outputs/flutter-apk/app-release.apk
