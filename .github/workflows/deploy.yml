@@ -33,7 +33,8 @@ jobs:
 
     - name: Inject Version into pubspec.yaml
       working-directory: haravara
-      run: sed -i "s/version:.*/version: ${VERSION#v}+1/" pubspec.yaml
+      run: sed -i "s/^version:.*/version: ${VERSION#v}+1/" pubspec.yaml
+
 
     - name: Create .env File with Version
       working-directory: haravara
