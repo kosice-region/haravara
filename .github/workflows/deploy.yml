@@ -13,14 +13,11 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Move to Flutter Project Directory
-      run: cd haravara && ls -la
-
     - name: Ensure Working Directory Contains Flutter Project
+      working-directory: haravara
       run: |
-        cd haravara
         if [ ! -f "pubspec.yaml" ]; then
-          echo "pubspec.yaml NOT found in /haravara! Listing available files:"
+          echo "❌ pubspec.yaml NOT found in /haravara! Listing available files:"
           ls -la
           exit 1
         fi
@@ -31,42 +28,37 @@ jobs:
         flutter-version: '3.22.1'
 
     - name: Get Release Version
-      id: get_version
-      run: |
-        cd haravara
-        echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+      working-directory: haravara
+      run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
     - name: Inject Version into pubspec.yaml
-      run: |
-        cd haravara
-        sed -i "s/version:.*/version: ${VERSION#v}+1/" pubspec.yaml
+      working-directory: haravara
+      run: sed -i "s/version:.*/version: ${VERSION#v}+1/" pubspec.yaml
 
     - name: Create .env File with Version
-      run: |
-        cd haravara
-        echo "APP_VERSION=${VERSION#v}" > .env
+      working-directory: haravara
+      run: echo "APP_VERSION=${VERSION#v}" > .env
 
     - name: Install Dependencies
-      run: |
-        cd haravara
-        flutter pub get
+      working-directory: haravara
+      run: flutter pub get
 
-        - name: Install Gradle 7.5
+    - name: Install Gradle 7.5
       run: |
         sudo apt-get update
         sudo apt-get install -y unzip
         wget https://services.gradle.org/distributions/gradle-7.5-bin.zip
-        mkdir /home/runner/gradle
+        mkdir -p /home/runner/gradle
         unzip -d /home/runner/gradle gradle-7.5-bin.zip
-        echo "export PATH=/home/runner/gradle/gradle-7.5/bin:\$PATH" >> $GITHUB_ENV
+        echo "export PATH=/home/runner/gradle/gradle-7.5/bin:$PATH" >> $GITHUB_ENV
+        source $GITHUB_ENV  # Apply the new PATH immediately
 
     - name: Verify Gradle Version
       run: gradle -v
 
     - name: Build APK
-      run: |
-        cd haravara
-        flutter build apk --release
+      working-directory: haravara
+      run: flutter build apk --release
 
     - name: Upload APK as an Artifact
       uses: actions/upload-artifact@v4
