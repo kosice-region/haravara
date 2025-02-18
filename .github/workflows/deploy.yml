@@ -28,13 +28,16 @@ jobs:
         flutter-version: '3.22.1'
 
     - name: Get Release Version
+      id: get_version
       working-directory: haravara
-      run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+      run: |
+        VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "Extracted version: $VERSION"
 
     - name: Inject Version into pubspec.yaml
       working-directory: haravara
-      run: sed -i "s/^version:.*/version: ${VERSION#v}+1/" pubspec.yaml
-
+      run: sed -i "s/version:.*/version: ${VERSION#v}+1/" pubspec.yaml
 
     - name: Create .env File with Version
       working-directory: haravara
