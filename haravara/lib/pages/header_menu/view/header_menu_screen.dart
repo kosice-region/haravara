@@ -42,15 +42,6 @@ class HeaderMenu extends ConsumerWidget {
                   ),
                 ),
                 RedirectButton(
-                  title: 'PÁTRAČKA',
-                  imagePath: 'assets/menu-icons/loop.png',
-                  imageWidth: 43,
-                  imageHeight: 43,
-                  right: 170,
-                  bottom: 8,
-                  screenToRoute: ScreenType.news,
-                ),
-                RedirectButton(
                   title: 'ROZPRÁVKY',
                   imagePath: 'assets/menu-icons/headphones.png',
                   imageWidth: 53,
@@ -106,7 +97,7 @@ class HeaderMenu extends ConsumerWidget {
                 ),
                 RedirectButton(
                   title: 'O APLIKÁCII',
-                  imagePath: 'assets/menu-icons/questions.png',
+                  imagePath: 'assets/menu-icons/loop.png',
                   imageWidth: 50,
                   imageHeight: 50,
                   right: 166,

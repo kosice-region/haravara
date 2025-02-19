@@ -41,6 +41,7 @@ class Footer extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Hamburger Menu
+
           _footerIcon(
             context,
             ref,
@@ -48,6 +49,7 @@ class Footer extends ConsumerWidget {
             ScreenType.menu,
             size: 28.w,
           ),
+
 
           // Left icon - Peciatka
           _footerIcon(

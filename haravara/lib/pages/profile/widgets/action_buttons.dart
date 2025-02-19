@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +8,6 @@ import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/pages/map_detail/providers/places_provider.dart';
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
-
 import '../../auth/services/auth_screen_service.dart';
 import 'widgets.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
@@ -30,10 +28,15 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   late String userId;
   String selectedCity = '';
 
+
   Future<bool> _updateUsername() async {
 
     if (newUsername.isEmpty || newUsername == "") {
       return true;
+    }
+    if(newUsername.length < 3){
+      showSnackBar(context, 'Meno musí obsahovať aspoň 3 znaky');
+      return false;
     }
     if (await DBrep.isUserNameUsed(newUsername)) {
       showSnackBar(context, 'Toto meno už niekto používa');
@@ -171,6 +174,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                   width: 200,
                   child: TextField(
                     autofocus: true,
+                    maxLength: 20,
                     onChanged: (value) {
                       setState(() {
                         newUsername = value;
@@ -228,7 +232,6 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                 onPressed: () async {
 
                   if (await _updateUsername()) {
-
                     _updateUserLocation();
                     Navigator.of(context).pop();
                   }
