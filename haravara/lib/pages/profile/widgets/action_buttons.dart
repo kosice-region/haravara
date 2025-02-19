@@ -9,7 +9,6 @@ import 'package:haravara/core/repositories/database_repository.dart';
 import 'package:haravara/core/services/database_service.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/pages/map_detail/providers/places_provider.dart';
-import 'package:haravara/pages/map_detail/providers/collected_places_provider.dart' as collected;
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
 
@@ -73,7 +72,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
         return level.badgeImage;
       }
     }
-    return 'assets/badges/empty.png'; // Default fallback badge
+    return 'assets/badges/empty.png'; 
   }
 
   @override
@@ -143,7 +142,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                 boxShadow: [BoxShadow(color: Colors.white, blurRadius: 30)],
               ),
               child: Image.asset(
-                badgeImage, // Correct badge image based on user's stamps
+                badgeImage, 
                 width: 50.w,
                 height: 50.h,
                 fit: BoxFit.contain,
@@ -253,18 +252,4 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           );
         });
   }
-
-  Future<void> handleLogout(WidgetRef ref, BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    ref.read(loginNotifierProvider.notifier).logout();
-    ref.read(collected.collectedPlacesProvider.notifier).deleteAllPlaces();
-    await ref.read(userInfoProvider.notifier).clear();
-    ref.invalidate(loginNotifierProvider);
-    ref.invalidate(userInfoProvider);
-    await DatabaseService().clearRichedPlaces();
-    await DatabaseService().clearUserAllAvatarsFromDatabase();
-    ScreenRouter().routeToNextScreen(
-        context, ScreenRouter().getScreenWidget(ScreenType.auth));
-  }
-
 }
