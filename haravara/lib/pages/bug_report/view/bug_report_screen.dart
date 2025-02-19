@@ -89,7 +89,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
   bool picked = false;
 
   Future getImageFromGallery() async {
-    final pickedFiles = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFiles = await picker.pickImage(source: ImageSource.gallery,imageQuality: 10);
 
     setState(() {
       if (pickedFiles != null) {
@@ -304,7 +304,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
                               onPressed:
                               _isLoading ? null : () => _submitAndValidate(),
                               child: _isLoading
-                                  ? CircularProgressIndicator() // Show loading indicator
+                                  ? CircularProgressIndicator()
                                   : const Text('Nahlásiť problém'),
                             ),
                           ],
