@@ -30,7 +30,6 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
 
 
   Future<bool> _updateUsername() async {
-
     if (newUsername.isEmpty || newUsername == "") {
       return true;
     }
@@ -230,7 +229,6 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ),
               ElevatedButton(
                 onPressed: () async {
-
                   if (await _updateUsername()) {
                     _updateUserLocation();
                     Navigator.of(context).pop();

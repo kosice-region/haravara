@@ -165,6 +165,13 @@ class AuthService {
 
   Future<void> handleRegistrationOrLogin(
       String email, WidgetRef ref, BuildContext context) async {
+    final isAdmin = await DatabaseService().isAdmin(email);
+    log('Admin check result for $email: $isAdmin');
+    if (isAdmin) {
+      routeToAdminScreen();
+      return;
+    }
+
     final userId = await findUserByEmail(email);
 
     log('$userId');
@@ -298,6 +305,23 @@ class AuthService {
           builder: (context) => ScreenRouter().getScreenWidget(ScreenType.news),
         ),
       );
+    });
+  }
+
+  void routeToAdminScreen() {
+    Future.doWhile(() async {
+      await Future.delayed(Duration(milliseconds: 200));
+      if (navigatorKey.currentState == null) {
+        return true;
+      }
+      log('Navigating to Admin Screen...');
+      navigatorKey.currentState!.pushReplacement(
+        MaterialPageRoute(
+          builder: (context) =>
+              ScreenRouter().getScreenWidget(ScreenType.admin),
+        ),
+      );
+      return false;
     });
   }
 }
