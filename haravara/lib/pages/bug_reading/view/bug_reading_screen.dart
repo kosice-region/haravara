@@ -116,11 +116,11 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
         });
       }
     } catch (e) {
-      print("Error loading images for report $reportId: $e");
+      print("Chyba pri načítaní hlásení o chybách: $e");
       if (_expandedReportId == reportId) {
         setState(() {
           imagePaths = [];
-          _errorMessage = "Failed to load images for this report.";
+          _errorMessage = "Chyba pri načítaní hlásení o chybách: $e";
         });
       }
     }
@@ -136,9 +136,10 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
         await _bugReportService.hideBugReport(reportId);
       }else if (action == "close"){
         await _bugReportService.markBugReportAsSolved(reportId);
-        await _bugReportService.markBugReportAsSolved(reportId);
-      }else if(action == "progress"){
+      }else if (action == "progress"){
         await _bugReportService.progressBugReport(reportId);
+      }else if (action == "show"){
+        await _bugReportService.showBugReport(reportId);
       }
 
       await _loadBugReports();
@@ -200,7 +201,7 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
 
   Widget _buildReportList() {
     if (_bugReports.isEmpty) {
-      return Center(child: Text("Nenašli sa nahlasenia."));
+      return Center(child: Text("Nenašli sa žiadne hlásenia."));
     }
 
     bool showLoadMore = _bugReports.length >= _reportsLimit;
@@ -267,7 +268,7 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                             child: Text(report.title),
                           ),
                           4.h.verticalSpace,
-                          const Text('Nahraté fotky problému'),
+                          const Text('Nahraté fotografie problému'),
                           _buildImageGrid(report.id),
                           4.h.verticalSpace,
                           const Text('Čo sa stalo?'),
@@ -294,7 +295,7 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                             child: Text(report.author),
                           ),
                           4.h.verticalSpace,
-                          const Text('Datum Nahlasenia'),
+                          const Text('Dátum nahlásenia'),
                           Container(
                             padding: EdgeInsets.all(8.0),
                             color: Colors.black12,
@@ -312,21 +313,28 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                                       backgroundColor: Colors.greenAccent,
                                       foregroundColor: Colors.white),
                                   onPressed: () => _progressProblem(report.id, "close"),
-                                  child: const Text('Zavri problem'),
+                                  child: const Text('Vyriešené'),
                                 )
                                     : ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.orangeAccent,
                                       foregroundColor: Colors.white),
                                   onPressed: () => _progressProblem(report.id, "progress"),
-                                  child: const Text('Oznac problem'),
+                                  child: const Text('Vyriešiť'),
                                 ),
                               ],
+                              !report.hidden ?
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue, foregroundColor: Colors.white),
                                 onPressed: () => _progressProblem(report.id, "hide"),
-                                child: const Text('Schovaj problem'),
+                                child: const Text('Skryť problém'),
+                              )
+                              :ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue, foregroundColor: Colors.white),
+                                onPressed: () => _progressProblem(report.id, "show"),
+                                child: const Text('Ukazať problém'),
                               ),
                             ],
                           )
@@ -402,23 +410,23 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                     items: [
                       DropdownMenuItem(
                         value: BugReportStatus.all,
-                        child: Text("All"),
+                        child: Text("Všetky"),
                       ),
                       DropdownMenuItem(
                         value: BugReportStatus.unsolved,
-                        child: Text("Unsolved"),
+                        child: Text("Nevyriešené"),
                       ),
                       DropdownMenuItem(
                         value: BugReportStatus.solved,
-                        child: Text("Solved"),
+                        child: Text("Vyriešené"),
                       ),
                       DropdownMenuItem(
                         value: BugReportStatus.inProgress,
-                        child: Text("InProgress"),
+                        child: Text("V procese"),
                       ),
                       DropdownMenuItem(
                         value: BugReportStatus.hidden,
-                        child: Text("Hidden"),
+                        child: Text("Skryté"),
                       ),
                     ],
                     underline: SizedBox(),
@@ -447,11 +455,11 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                     items: [
                       DropdownMenuItem(
                         value: SortOption.newest,
-                        child: Text("Newest"),
+                        child: Text("Najnovšie"),
                       ),
                       DropdownMenuItem(
                         value: SortOption.oldest,
-                        child: Text("Oldest"),
+                        child: Text("Najstaršie"),
                       ),
                     ],
                     underline: SizedBox(),
