@@ -66,7 +66,7 @@ jobs:
 
     - name: Build APK
       run: |
-        cd haravara
+        cd haravara/android
         ./gradlew assembleRelease
 
     - name: Upload APK as an Artifact
