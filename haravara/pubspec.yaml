@@ -187,6 +187,7 @@ flutter:
     - assets/company-logo/
     - assets/home_button.png
     - assets/badges/
+    - assets/menu.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
