@@ -27,14 +27,15 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
     'assets/backgrounds/background.jpg',
   ];
 
-  var isButtonDisabled = false;
+  bool currentVersion = true;
+  bool isButtonDisabled = false;
   List<String> imagePaths = [];
   List<BugReport> _bugReports = [];
   bool _isLoading = true;
   String? _errorMessage;
   int titleLength = 20;
   String? _expandedReportId;
-  int _reportsLimit = 20;
+  int _reportsLimit = 30;
   SortOption _currentSortOption = SortOption.newest;
   BugReportStatus _currentStatusFilter = BugReportStatus.all;
 
@@ -245,7 +246,7 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  report.title.length <= titleLength?  report.title  :report.title.substring(0, titleLength) + "...",
+                                  report.title.length <= titleLength?  report.title  :report.title.substring(0, titleLength) + "..." ,
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -301,6 +302,14 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                             color: Colors.black12,
                             width: double.infinity,
                             child: Text(report.date.toString()),
+                          ),
+                          4.h.verticalSpace,
+                          const Text('Verzia Nahlasenia'),
+                          Container(
+                            padding: EdgeInsets.all(8.0),
+                            color: Colors.black12,
+                            width: double.infinity,
+                            child: Text(report.version),
                           ),
                           4.h.verticalSpace,
                           Row(
@@ -370,7 +379,7 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: Colors.grey,
+          color: Colors.white,
         ),
         child: Column(
           children: [
@@ -394,7 +403,7 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.0),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.grey[350],
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: DropdownButton<BugReportStatus>(
@@ -430,7 +439,7 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                       ),
                     ],
                     underline: SizedBox(),
-                    dropdownColor: Colors.white,
+                    dropdownColor: Colors.grey[350],
                     icon: Icon(Icons.arrow_drop_down, color: Colors.black),
                   ),
                 ),
@@ -439,7 +448,7 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.0),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.grey[350],
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: DropdownButton<SortOption>(
@@ -463,10 +472,19 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                       ),
                     ],
                     underline: SizedBox(),
-                    dropdownColor: Colors.white,
+                    dropdownColor: Colors.grey[350],
                     icon: Icon(Icons.arrow_drop_down, color: Colors.black),
                   ),
                 ),
+                // Checkbox(
+                //   value: currentVersion,
+                //   onChanged: (bool? newValue) {
+                //     setState(() {
+                //       currentVersion = newValue?? false;
+                //       _loadBugReports();
+                //     });
+                //   },
+                // )
               ],
             ),
 

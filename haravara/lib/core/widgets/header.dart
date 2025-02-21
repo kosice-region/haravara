@@ -53,7 +53,7 @@ class _HeaderState extends ConsumerState<Header> {
                         Image(
                           image: const AssetImage('assets/logo-haravara.png'),
                           fit: BoxFit.cover,
-                          width: 91.94.w,
+                          width: 100.w,
                           height: 64.h,
                         ),
                       if (widget.backButton)

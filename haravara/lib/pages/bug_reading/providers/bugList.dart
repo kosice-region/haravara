@@ -14,6 +14,7 @@ class BugReport {
   String title;
   bool hidden;
   bool inProgress;
+  String version;
 
   BugReport({
     required this.id,
@@ -27,6 +28,7 @@ class BugReport {
     required this.title,
     this.hidden = false,
     this.inProgress = false,
+    this.version = ""
   });
 
   factory BugReport.fromMap(String id, Map<Object?, Object?>? data) {
@@ -41,7 +43,8 @@ class BugReport {
       title: (data?['title'] as String?) ?? '',
       hidden: (data?['hidden'] as bool?) ?? false,
       inProgress: (data?['inProgress'] as bool?) ?? false,
-      date: (data?['date']as String?) ?? ''
+      date: (data?['date']as String?) ?? '',
+      version: (data?['appVersion']as String?) ?? '0.0.0'
     );
   }
 }
