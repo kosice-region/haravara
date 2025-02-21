@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +27,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
     'assets/backgrounds/background.jpg',
   ];
 
-
+  bool _isLoading = false;
   var isButtonDisabled = false;
   final List<String> imagePaths = [];
   var _enteredTitle = '';
@@ -42,20 +41,23 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _expectedController = TextEditingController();
 
-  
+
 
 
   void _submitAndValidate() async {
-    log("stane sa");
+
+    if(isButtonDisabled){
+      return;
+    }
     isButtonDisabled = true;
     FocusManager.instance.primaryFocus?.unfocus();
-    if (_titleController.text.isEmpty ) {
+    if (_titleController.text.trim().isEmpty ) {
       showSnackBar(context, 'Prosím, zadajte titul reportu');
       isButtonDisabled = false;
       return;
     }
 
-    if (_descriptionController.text.isEmpty) {
+    if (_descriptionController.text.trim().isEmpty) {
       showSnackBar(context, 'Prosim, zadajte popis reportu');
       isButtonDisabled = false;
       return;
@@ -67,9 +69,13 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
       return;
     }
 
-    _enteredTitle = _descriptionController.text;
-    _enteredDescription = _titleController.text;
-    _enteredExpected = _expectedController.text;
+    _enteredTitle = _titleController.text.trim();
+    _enteredDescription = _descriptionController.text.trim();
+    _enteredExpected = _expectedController.text.trim();
+
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
 
     await sendReport(_enteredTitle, _enteredDescription,_enteredExpected,images,context,ref);
     showSnackBar(context, "Ďakujeme za váš report");
@@ -83,7 +89,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
   bool picked = false;
 
   Future getImageFromGallery() async {
-    final pickedFiles = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFiles = await picker.pickImage(source: ImageSource.gallery,imageQuality: 10);
 
     setState(() {
       if (pickedFiles != null) {
@@ -165,7 +171,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
                                 suffixIcon: Padding(
                                   padding: const EdgeInsets.only(left: 12.0),
                                   child: Text(
-                                    '${_titleController.text.length}/50',
+                                    '${_titleController.text.trim().length}/50',
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                 ),
@@ -252,7 +258,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
                                 suffixIcon: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
-                                    '${_descriptionController.text.length}/500',
+                                    '${_descriptionController.text.trim().length}/500',
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                 ),
@@ -279,7 +285,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
                                 suffixIcon: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
-                                    '${_expectedController.text.length}/500',
+                                    '${_expectedController.text.trim().length}/500',
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                 ),
@@ -293,13 +299,13 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
                             4.h.verticalSpace,
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white
-                              ),
-                              onPressed: () {
-                                _submitAndValidate();
-                              },
-                              child: const Text('Nahlásiť problém'),
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white),
+                              onPressed:
+                              _isLoading ? null : () => _submitAndValidate(),
+                              child: _isLoading
+                                  ? CircularProgressIndicator()
+                                  : const Text('Nahlásiť problém'),
                             ),
                           ],
                         ),
@@ -315,6 +321,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
     );
   }
 }
+
 
 
 

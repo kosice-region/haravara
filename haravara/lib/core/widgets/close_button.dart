@@ -16,7 +16,7 @@ class Close_Button extends ConsumerWidget {
       onTap: () {
         if (screenType != null) {
           ref.read(routerProvider.notifier).changeScreen(screenType!);
-          ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
+          ScreenRouter().routeToNextScreen(
               context, ScreenRouter().getScreenWidget(screenType!));
         } else {
           Navigator.of(context).pop();

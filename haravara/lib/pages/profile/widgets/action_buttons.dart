@@ -1,18 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:haravara/core/providers/login_provider.dart';
-import 'package:haravara/core/providers/preferences_provider.dart';
 import 'package:haravara/core/repositories/database_repository.dart';
 import 'package:haravara/core/services/database_service.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/pages/map_detail/providers/places_provider.dart';
-import 'package:haravara/pages/map_detail/providers/collected_places_provider.dart' as collected;
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
-
 import '../../auth/services/auth_screen_service.dart';
 import 'widgets.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
@@ -33,10 +28,15 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   late String userId;
   String selectedCity = '';
 
+
   Future<bool> _updateUsername() async {
 
     if (newUsername.isEmpty || newUsername == "") {
       return true;
+    }
+    if(newUsername.length < 3){
+      showSnackBar(context, 'Meno musí obsahovať aspoň 3 znaky');
+      return false;
     }
     if (await DBrep.isUserNameUsed(newUsername)) {
       showSnackBar(context, 'Toto meno už niekto používa');
@@ -73,7 +73,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
         return level.badgeImage;
       }
     }
-    return 'assets/badges/empty.png'; // Default fallback badge
+    return 'assets/badges/empty.png'; 
   }
 
   @override
@@ -143,7 +143,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                 boxShadow: [BoxShadow(color: Colors.white, blurRadius: 30)],
               ),
               child: Image.asset(
-                badgeImage, // Correct badge image based on user's stamps
+                badgeImage, 
                 width: 50.w,
                 height: 50.h,
                 fit: BoxFit.contain,
@@ -174,6 +174,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                   width: 200,
                   child: TextField(
                     autofocus: true,
+                    maxLength: 20,
                     onChanged: (value) {
                       setState(() {
                         newUsername = value;
@@ -231,7 +232,6 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                 onPressed: () async {
 
                   if (await _updateUsername()) {
-
                     _updateUserLocation();
                     Navigator.of(context).pop();
                   }
@@ -253,18 +253,4 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           );
         });
   }
-
-  Future<void> handleLogout(WidgetRef ref, BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    ref.read(loginNotifierProvider.notifier).logout();
-    ref.read(collected.collectedPlacesProvider.notifier).deleteAllPlaces();
-    await ref.read(userInfoProvider.notifier).clear();
-    ref.invalidate(loginNotifierProvider);
-    ref.invalidate(userInfoProvider);
-    await DatabaseService().clearRichedPlaces();
-    await DatabaseService().clearUserAllAvatarsFromDatabase();
-    ScreenRouter().routeToNextScreen(
-        context, ScreenRouter().getScreenWidget(ScreenType.auth));
-  }
-
 }

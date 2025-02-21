@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:haravara/pages/bug_reading/view/bug_reading_screen.dart';
 import 'package:haravara/pages/bug_report/view/bug_report_screen.dart';
 import 'package:haravara/pages/admin/view/screens/admin_screen.dart';
 import 'package:haravara/pages/reward_menu/view/reward_menu_screen.dart';
 import 'package:haravara/pages/header_menu/header_menu.dart';
 import 'package:haravara/pages/info/view/info_screen.dart';
-import 'package:haravara/pages/leaderBoard/leaderBoard.dart';
 import 'package:haravara/pages/leaderBoardLevels/leaderBoardLevels.dart';
 import 'package:haravara/pages/map_detail/map_detail.dart';
 import 'package:haravara/pages/news/news.dart';
@@ -38,7 +38,8 @@ enum ScreenType {
   rewardDetails,
   admin,
   leaderBoard,
-  leaderBoardLevels
+  leaderBoardLevels,
+  bugread,
 }
 
 Map screenTypeToWidget = <ScreenType, Widget>{
@@ -58,6 +59,7 @@ Map screenTypeToWidget = <ScreenType, Widget>{
   ScreenType.rewardMenu: RewardScreen(),
   ScreenType.admin: AdminScreen(),
   ScreenType.leaderBoardLevels: const LeaderBoardLevelsScreen(),
+  ScreenType.bugread: const BugReadingScreen(),
 };
 
 class RouterNotifier extends StateNotifier<ScreenType> {
