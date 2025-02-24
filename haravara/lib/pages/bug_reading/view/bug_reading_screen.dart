@@ -304,7 +304,7 @@ class _BugReadingState extends ConsumerState<BugReadingScreen> {
                             child: Text(report.date.toString()),
                           ),
                           4.h.verticalSpace,
-                          const Text('Verzia Nahlasenia'),
+                          const Text('Verzia nahlásenia'),
                           Container(
                             padding: EdgeInsets.all(8.0),
                             color: Colors.black12,
