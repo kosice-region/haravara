@@ -77,8 +77,15 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       isButtonDisabled = false;
       return;
     }
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', _enteredEmail);
+    await prefs.setString('username', _enteredUsername);
+    await prefs.setString('location', selectedLocation);
+    await prefs.setBool('isFamily', isFamily);
+    await prefs.setInt('childrenCount', int.tryParse(childrenCount) ?? -1);
+    await prefs.setBool('rememberPhone', rememberPhone);
+
     await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
     int? children = int.tryParse(childrenCount) ?? -1;
     await ref.read(userInfoProvider.notifier).updateCountOfChildren(children);
@@ -90,7 +97,9 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     ref.read(authNotifierProvider.notifier).setLocation(selectedLocation);
     ref.read(authNotifierProvider.notifier).toggleFamilyState(isFamily);
     ref.read(authNotifierProvider.notifier).toggleRememberState(rememberPhone);
+
     await authService.sendSignInWithEmailLink(_enteredEmail);
+
     isButtonDisabled = false;
     showSnackBar(
       context,
