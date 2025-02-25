@@ -40,6 +40,7 @@ class AuthRepository {
     String username = user.username;
     final newUserNameRef = database.ref('usernames/$id');
     newUserNameRef.set(username);
+    await updateUserName(username, id);
 
     log('Storing in userHashes: $base64Email -> $id');
     await usersHashesRef.child(base64Email).set(id);
@@ -99,7 +100,7 @@ class AuthRepository {
   Future<void> updateUserName(String username, String userId) async {
     Map<String, dynamic> updatedData = {
       'username': username,
-      'updated_at': ServerValue.timestamp,
+      'updated_at': DateTime.now().toIso8601String(),
     };
     await usersRef.child(userId).update(updatedData);
     final newUserNameRef = database.ref('usernames/$userId');
