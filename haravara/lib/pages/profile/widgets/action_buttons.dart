@@ -29,8 +29,13 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   String selectedCity = '';
 
   Future<bool> _updateUsername() async {
-    if (newUsername.isEmpty) return true;
-
+    if (newUsername.isEmpty || newUsername == "") {
+      return true;
+    }
+    if (newUsername.length < 3) {
+      showSnackBar(context, 'Meno musí obsahovať aspoň 3 znaky');
+      return false;
+    }
     if (await DBrep.isUserNameUsed(newUsername)) {
       showSnackBar(context, 'Toto meno už niekto používa');
       return false;
