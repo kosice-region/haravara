@@ -131,8 +131,8 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
 
           // Positioned Badge Image
           Positioned(
-            right: -5.w,
-            bottom: 35.h,
+            top: -30.h, // ✅ Keeps badge at the same level
+            right: -10.w, // ✅ Anchors it to the right side
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
