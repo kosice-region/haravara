@@ -28,13 +28,11 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   late String userId;
   String selectedCity = '';
 
-
   Future<bool> _updateUsername() async {
-
     if (newUsername.isEmpty || newUsername == "") {
       return true;
     }
-    if(newUsername.length < 3){
+    if (newUsername.length < 3) {
       showSnackBar(context, 'Meno musí obsahovať aspoň 3 znaky');
       return false;
     }
@@ -73,7 +71,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
         return level.badgeImage;
       }
     }
-    return 'assets/badges/empty.png'; 
+    return 'assets/badges/empty.png';
   }
 
   @override
@@ -140,10 +138,12 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
-                boxShadow: [BoxShadow(color: Colors.white, blurRadius: 30)],
+                boxShadow: userStamps >= 5
+                    ? [BoxShadow(color: Colors.white, blurRadius: 30)]
+                    : [],
               ),
               child: Image.asset(
-                badgeImage, 
+                badgeImage,
                 width: 50.w,
                 height: 50.h,
                 fit: BoxFit.contain,
@@ -230,7 +230,6 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ),
               ElevatedButton(
                 onPressed: () async {
-
                   if (await _updateUsername()) {
                     _updateUserLocation();
                     Navigator.of(context).pop();
