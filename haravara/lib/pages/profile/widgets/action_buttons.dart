@@ -29,19 +29,17 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   String selectedCity = '';
 
   Future<bool> _updateUsername() async {
-    if (newUsername.isEmpty || newUsername == "") {
-      return true;
-    }
-    if (newUsername.length < 3) {
-      showSnackBar(context, 'Meno musí obsahovať aspoň 3 znaky');
-      return false;
-    }
+    if (newUsername.isEmpty) return true;
+
     if (await DBrep.isUserNameUsed(newUsername)) {
       showSnackBar(context, 'Toto meno už niekto používa');
       return false;
     } else {
       await authRepository.updateUserName(newUsername, userId);
       await ref.read(userInfoProvider.notifier).updateUsername(newUsername);
+
+      ref.invalidate(usersNotifierProvider);
+
       return true;
     }
   }
@@ -84,17 +82,17 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
         ref.watch(avatarsProvider).getAllUserIdsAndAvatarLocations();
     final usersAsync = ref.watch(usersNotifierProvider(usersAvatars));
 
-    // Find current user based on ID
+    final String currentUsername = ref.watch(userInfoProvider).username;
+
     final PersonsItem? currentUser = usersAsync.when(
       data: (users) => users.firstWhere(
-        (user) => user.personsName == username,
+        (user) => user.personsName == currentUsername,
         orElse: () =>
             PersonsItem(personsName: '', stampsNumber: 0, profileIcon: ''),
       ),
       loading: () => null,
       error: (_, __) => null,
     );
-
     final int userStamps = currentUser?.stampsNumber ?? 0;
     // final int userStamps = 30; //Uncomment it if you test each variant
     final String badgeImage = getBadgeImageForUser(userStamps);
