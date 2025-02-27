@@ -26,7 +26,8 @@ class FormRow extends StatelessWidget {
         keyboardType: inputType,
         textCapitalization: TextCapitalization.none,
         style: GoogleFonts.titanOne(
-            color: Colors.white, fontWeight: FontWeight.bold),
+          color: Colors.white,
+        ),
         decoration: InputDecoration(
           label: focusNode.hasFocus || controller.text.isNotEmpty
               ? null
