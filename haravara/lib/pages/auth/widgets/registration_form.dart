@@ -71,7 +71,8 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     log('REGISTRATION - Start registration process');
     final userId = await authService.findUserByEmail(_enteredEmail);
 
-    final userNameUsed = await databaseRepository.isUserNameUsed(_enteredUsername);
+    final userNameUsed =
+        await databaseRepository.isUserNameUsed(_enteredUsername);
     if (userId.isNotEmpty) {
       showSnackBar(context, 'Tento e-mail už existuje');
       isButtonDisabled = false;
@@ -82,13 +83,19 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       isButtonDisabled = false;
       return;
     }
-    if (userNameUsed){
+    if (userNameUsed) {
       showSnackBar(context, "Toto meno už niekto použiva");
       isButtonDisabled = false;
       return;
     }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', _enteredEmail);
+    await prefs.setString('username', _enteredUsername);
+    await prefs.setString('location', selectedLocation);
+    await prefs.setBool('isFamily', isFamily);
+    await prefs.setInt('childrenCount', int.tryParse(childrenCount) ?? -1);
+    await prefs.setBool('rememberPhone', rememberPhone);
+
     await ref.read(userInfoProvider.notifier).updateProfileType(isFamily);
     int? children = int.tryParse(childrenCount) ?? -1;
     await ref.read(userInfoProvider.notifier).updateCountOfChildren(children);
@@ -100,7 +107,9 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     ref.read(authNotifierProvider.notifier).setLocation(selectedLocation);
     ref.read(authNotifierProvider.notifier).toggleFamilyState(isFamily);
     ref.read(authNotifierProvider.notifier).toggleRememberState(rememberPhone);
+
     await authService.sendSignInWithEmailLink(_enteredEmail);
+
     isButtonDisabled = false;
     showSnackBar(
       context,
