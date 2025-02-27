@@ -28,12 +28,11 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   late String userId;
   String selectedCity = '';
 
-
   Future<bool> _updateUsername() async {
     if (newUsername.isEmpty || newUsername == "") {
       return true;
     }
-    if(newUsername.length < 3){
+    if (newUsername.length < 3) {
       showSnackBar(context, 'Meno musí obsahovať aspoň 3 znaky');
       return false;
     }
@@ -43,6 +42,9 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
     } else {
       await authRepository.updateUserName(newUsername, userId);
       await ref.read(userInfoProvider.notifier).updateUsername(newUsername);
+
+      ref.invalidate(usersNotifierProvider);
+
       return true;
     }
   }
@@ -72,7 +74,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
         return level.badgeImage;
       }
     }
-    return 'assets/badges/empty.png'; 
+    return 'assets/badges/empty.png';
   }
 
   @override
@@ -85,17 +87,17 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
         ref.watch(avatarsProvider).getAllUserIdsAndAvatarLocations();
     final usersAsync = ref.watch(usersNotifierProvider(usersAvatars));
 
-    // Find current user based on ID
+    final String currentUsername = ref.watch(userInfoProvider).username;
+
     final PersonsItem? currentUser = usersAsync.when(
       data: (users) => users.firstWhere(
-        (user) => user.personsName == username,
+        (user) => user.personsName == currentUsername,
         orElse: () =>
             PersonsItem(personsName: '', stampsNumber: 0, profileIcon: ''),
       ),
       loading: () => null,
       error: (_, __) => null,
     );
-
     final int userStamps = currentUser?.stampsNumber ?? 0;
     // final int userStamps = 30; //Uncomment it if you test each variant
     final String badgeImage = getBadgeImageForUser(userStamps);
@@ -134,15 +136,17 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
 
           // Positioned Badge Image
           Positioned(
-            right: -5.w,
-            bottom: 35.h,
+            top: -25.h,
+            right: -10.w,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
-                boxShadow: [BoxShadow(color: Colors.white, blurRadius: 30)],
+                boxShadow: userStamps >= 5
+                    ? [BoxShadow(color: Colors.white, blurRadius: 30)]
+                    : [],
               ),
               child: Image.asset(
-                badgeImage, 
+                badgeImage,
                 width: 50.w,
                 height: 50.h,
                 fit: BoxFit.contain,
