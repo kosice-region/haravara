@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:haravara/core/repositories/database_repository.dart';
 import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:haravara/core/providers/preferences_provider.dart';
@@ -24,6 +25,8 @@ class RegistrationForm extends ConsumerStatefulWidget {
 }
 
 class _RegistrationFormState extends ConsumerState<RegistrationForm> {
+  final DatabaseRepository databaseRepository = DatabaseRepository();
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
@@ -67,6 +70,8 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
   Future<void> _handleRegistration() async {
     log('REGISTRATION - Start registration process');
     final userId = await authService.findUserByEmail(_enteredEmail);
+
+    final userNameUsed = await databaseRepository.isUserNameUsed(_enteredUsername);
     if (userId.isNotEmpty) {
       showSnackBar(context, 'Tento e-mail už existuje');
       isButtonDisabled = false;
@@ -74,6 +79,11 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     }
     if (selectedLocation.isEmpty) {
       showSnackBar(context, 'Zadajte prosím lokaciu');
+      isButtonDisabled = false;
+      return;
+    }
+    if (userNameUsed){
+      showSnackBar(context, "Toto meno už niekto použiva");
       isButtonDisabled = false;
       return;
     }
