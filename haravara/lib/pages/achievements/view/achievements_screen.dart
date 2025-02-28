@@ -61,7 +61,7 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
                     const Header(showMenu: true),
                     10.verticalSpace,
                     Text(
-                      'MoJE PEČIATKY',
+                      'MOJE PEČIATKY',
                       style: GoogleFonts.titanOne(
                         shadows: [Shadow(color: Colors.black, blurRadius: 15)],
                         color: const Color.fromARGB(255, 255, 255, 255),
