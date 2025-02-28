@@ -1,10 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:haravara/core/providers/login_provider.dart';
-import 'package:haravara/core/providers/preferences_provider.dart';
 import 'package:haravara/core/repositories/database_repository.dart';
 import 'package:haravara/core/services/database_service.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
@@ -33,9 +30,12 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   String selectedCity = '';
 
   Future<bool> _updateUsername() async {
-
     if (newUsername.isEmpty || newUsername == "") {
       return true;
+    }
+    if (newUsername.length < 3) {
+      showSnackBar(context, 'Meno musí obsahovať aspoň 3 znaky');
+      return false;
     }
     if (await DBrep.isUserNameUsed(newUsername)) {
       showSnackBar(context, 'Toto meno už niekto používa');
@@ -43,6 +43,9 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
     } else {
       await authRepository.updateUserName(newUsername, userId);
       await ref.read(userInfoProvider.notifier).updateUsername(newUsername);
+
+      ref.invalidate(usersNotifierProvider);
+
       return true;
     }
   }
@@ -72,7 +75,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
         return level.badgeImage;
       }
     }
-    return 'assets/badges/empty.png'; // Default fallback badge
+    return 'assets/badges/empty.png';
   }
 
   @override
@@ -85,17 +88,17 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
         ref.watch(avatarsProvider).getAllUserIdsAndAvatarLocations();
     final usersAsync = ref.watch(usersNotifierProvider(usersAvatars));
 
-    // Find current user based on ID
+    final String currentUsername = ref.watch(userInfoProvider).username;
+
     final PersonsItem? currentUser = usersAsync.when(
       data: (users) => users.firstWhere(
-        (user) => user.personsName == username,
+        (user) => user.personsName == currentUsername,
         orElse: () =>
             PersonsItem(personsName: '', stampsNumber: 0, profileIcon: ''),
       ),
       loading: () => null,
       error: (_, __) => null,
     );
-
     final int userStamps = currentUser?.stampsNumber ?? 0;
     // final int userStamps = 30; //Uncomment it if you test each variant
     final String badgeImage = getBadgeImageForUser(userStamps);
@@ -134,15 +137,17 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
 
           // Positioned Badge Image
           Positioned(
-            right: -5.w,
-            bottom: 35.h,
+            top: -25.h,
+            right: -10.w,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
-                boxShadow: [BoxShadow(color: Colors.white, blurRadius: 30)],
+                boxShadow: userStamps >= 5
+                    ? [BoxShadow(color: Colors.white, blurRadius: 30)]
+                    : [],
               ),
               child: Image.asset(
-                badgeImage, // Correct badge image based on user's stamps
+                badgeImage,
                 width: 50.w,
                 height: 50.h,
                 fit: BoxFit.contain,
@@ -173,6 +178,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
                   width: 200,
                   child: TextField(
                     autofocus: true,
+                    maxLength: 20,
                     onChanged: (value) {
                       setState(() {
                         newUsername = value;
@@ -228,9 +234,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ),
               ElevatedButton(
                 onPressed: () async {
-
                   if (await _updateUsername()) {
-
                     _updateUserLocation();
                     Navigator.of(context).pop();
                   }
@@ -252,7 +256,4 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
           );
         });
   }
-
-  
-
 }

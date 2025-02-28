@@ -159,7 +159,6 @@ class _LocationFieldState extends State<LocationField> {
         textCapitalization: TextCapitalization.none,
         style: GoogleFonts.titanOne(
           color: Colors.white,
-          fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
           hintText: "ODKIAĽ SI?",

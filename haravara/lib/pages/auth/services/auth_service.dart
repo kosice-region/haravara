@@ -165,19 +165,24 @@ class AuthService {
 
   Future<void> handleRegistrationOrLogin(
       String email, WidgetRef ref, BuildContext context) async {
-    final userId = await findUserByEmail(email);
+    final prefs = await SharedPreferences.getInstance();
+    final isAdmin = await DatabaseService().isAdmin(email);
+    log('Admin check result for $email: $isAdmin');
+    if (isAdmin) {
+      routeToAdminScreen();
+      return;
+    }
 
+    final userId = await findUserByEmail(email);
     log('$userId');
 
     if (userId.isNotEmpty) {
       log('userId.isNotEmpty so logging in');
       await loginUserByEmail(
           email, ref.read(authNotifierProvider).isNeedToRemeber);
-
       await fetchUserDataAndUpdateProviders(userId, ref);
 
       final authState = ref.read(authNotifierProvider);
-
       log('LOGIN - enteredUsername: ${authState.enteredUsername}');
       log('LOGIN - enteredEmail: ${authState.enteredEmail}');
       log('LOGIN - userId: $userId');
@@ -193,8 +198,6 @@ class AuthService {
           );
 
       ref.read(userInfoProvider.notifier).build();
-
-      log('USER INFO PROVIDER - updating username: ${authState.enteredUsername}');
       ref
           .read(userInfoProvider.notifier)
           .updateUsername(authState.enteredUsername!);
@@ -202,38 +205,62 @@ class AuthService {
       log('navigating to ScreenType.news');
       routeToNewsScreen();
     } else {
-      final authState = ref.read(authNotifierProvider);
+      final storedEmail = prefs.getString('email');
+      if (storedEmail == email) {
+        final storedUsername = prefs.getString('username') ?? '';
+        final storedLocation = prefs.getString('location') ?? '';
+        final storedIsFamily = prefs.getBool('isFamily') ?? false;
+        final storedChildren = prefs.getInt('childrenCount') ?? -1;
+        final storedRememberPhone = prefs.getBool('rememberPhone') ?? false;
 
-      log('REGISTER - enteredUsername: ${authState.enteredUsername}');
-      log('REGISTER - enteredEmail: ${authState.enteredEmail}');
-      log('REGISTER - userId: $userId');
-      log('REGISTER - children: ${authState.children ?? -1}');
-      log('REGISTER - location: ${authState.location ?? ''}');
+        ref
+            .read(authNotifierProvider.notifier)
+            .setEnteredUsername(storedUsername);
+        ref.read(authNotifierProvider.notifier).setEnteredEmail(email);
+        ref
+            .read(authNotifierProvider.notifier)
+            .setEnteredChildren(storedChildren);
+        ref.read(authNotifierProvider.notifier).setLocation(storedLocation);
+        ref
+            .read(authNotifierProvider.notifier)
+            .toggleFamilyState(storedIsFamily);
+        ref
+            .read(authNotifierProvider.notifier)
+            .toggleRememberState(storedRememberPhone);
 
-      final user = await registerUserByEmail(
-        email,
-        authState.enteredUsername!,
-        authState.isFamily,
-        authState.children ?? -1,
-        authState.location ?? '',
-        authState.isNeedToRemeber,
-      );
+        log('REGISTER - Restored data from SharedPreferences');
+        log('REGISTER - enteredUsername: $storedUsername');
+        log('REGISTER - enteredEmail: $email');
+        log('REGISTER - children: $storedChildren');
+        log('REGISTER - location: $storedLocation');
 
-      ref.read(loginNotifierProvider.notifier).login(
-            authState.enteredUsername!,
-            authState.enteredEmail!,
-            user.id!,
-            authState.children ?? -1,
-            authState.location ?? '',
-          );
+        final user = await registerUserByEmail(
+          email,
+          storedUsername,
+          storedIsFamily,
+          storedChildren,
+          storedLocation,
+          storedRememberPhone,
+        );
 
-      ref.read(userInfoProvider.notifier).build();
-      ref
-          .read(userInfoProvider.notifier)
-          .updateUsername(authState.enteredUsername!);
+        ref.read(loginNotifierProvider.notifier).login(
+              storedUsername,
+              email,
+              user.id!,
+              storedChildren,
+              storedLocation,
+            );
 
-      log('navigating to ScreenType.news');
-      routeToNewsScreen();
+        ref.read(userInfoProvider.notifier).build();
+        ref.read(userInfoProvider.notifier).updateUsername(storedUsername);
+
+        await prefs.clear();
+
+        log('navigating to ScreenType.news');
+        routeToNewsScreen();
+      } else {
+        log('No stored data found for $email, treating as new registration');
+      }
     }
   }
 
@@ -298,6 +325,23 @@ class AuthService {
           builder: (context) => ScreenRouter().getScreenWidget(ScreenType.news),
         ),
       );
+    });
+  }
+
+  void routeToAdminScreen() {
+    Future.doWhile(() async {
+      await Future.delayed(Duration(milliseconds: 200));
+      if (navigatorKey.currentState == null) {
+        return true;
+      }
+      log('Navigating to Admin Screen...');
+      navigatorKey.currentState!.pushReplacement(
+        MaterialPageRoute(
+          builder: (context) =>
+              ScreenRouter().getScreenWidget(ScreenType.admin),
+        ),
+      );
+      return false;
     });
   }
 }
