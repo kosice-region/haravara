@@ -8,11 +8,12 @@ import 'package:haravara/pages/auth/repositories/auth_repository.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/pages/profile/service/profile_service.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:haravara/core/providers/preferences_provider.dart';
 import 'package:haravara/core/services/database_service.dart';
 import 'package:haravara/pages/auth/models/user.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 final AuthRepository authRepository = AuthRepository();
 
@@ -24,7 +25,6 @@ class AvatarWidget extends ConsumerStatefulWidget {
 
 class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
   late List<UserAvatar> avatars;
-  final PageController _pageController = PageController();
   final _currentPageNotifier = ValueNotifier<int>(0);
   final ImagePicker _picker = ImagePicker();
   late String userId;
@@ -51,20 +51,16 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
   Widget build(BuildContext context) {
     double deviceHeight = MediaQuery.of(context).size.height;
 
-    double containerHeight = 220.h;
-    double imageHeight = 100.h;
+    double imageSize = 100.h;
 
     if (deviceHeight < 850) {
-      containerHeight = 220.h;
-      imageHeight = 100.h;
+      imageSize = 100.h;
     }
     if (deviceHeight < 700) {
-      containerHeight = 190.h;
-      imageHeight = 100.h;
+      imageSize = 100.h;
     }
     if (deviceHeight < 650) {
-      containerHeight = 190.h;
-      imageHeight = 100.h;
+      imageSize = 100.h;
     }
 
     UserAvatar avatar = ref.watch(avatarsProvider.notifier).getCurrentAvatar();
@@ -73,88 +69,168 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
       onTap: () {
         _showAvatarDialog(context, ref);
       },
-      child: ClipOval(
-        child: avatar.location != null && File(avatar.location!).existsSync()
-            ? Image.file(
-                File(avatar.location!),
-                height: imageHeight,
-                width: imageHeight,
-                fit: BoxFit.fill,
-              )
-            : Image.asset(
-                'assets/avatars/kasko.png',
-                height: imageHeight,
-                width: imageHeight,
-                fit: BoxFit.fill,
-              ),
+      child: Container(
+        width: imageSize,
+        height: imageSize,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+        ),
+        child: ClipOval(
+          child: avatar.location != null && File(avatar.location!).existsSync()
+              ? Image.file(
+                  File(avatar.location!),
+                  width: imageSize,
+                  height: imageSize,
+                  fit: BoxFit.cover,
+                )
+              : Image.asset(
+                  'assets/avatars/kasko.png',
+                  width: imageSize,
+                  height: imageSize,
+                  fit: BoxFit.cover,
+                ),
+        ),
       ),
     );
   }
 
-  _updateUserProfile(UserAvatar userAvatar) async {
-    ref.read(avatarsProvider.notifier).updateAvatar(userAvatar.id!);
-    String userProfileType =
-        ref.watch(userInfoProvider).isFamily ? 'family' : 'individual';
-    int children = ref.watch(userInfoProvider).children;
-    String location = ref.watch(userInfoProvider).location;
-    await authRepository.updateUserProfile(
-        userId, userAvatar.id!, userProfileType, location, children);
+  Future<void> _updateUserProfile(UserAvatar userAvatar) async {
+    try {
+      ref.read(avatarsProvider.notifier).updateAvatar(userAvatar.id!);
+      String userProfileType =
+          ref.watch(userInfoProvider).isFamily ? 'family' : 'individual';
+      int children = ref.watch(userInfoProvider).children;
+      String location = ref.watch(userInfoProvider).location;
+      await authRepository.updateUserProfile(
+          userId, userAvatar.id!, userProfileType, location, children);
+    } catch (e) {
+      log('Error updating user profile: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update profile: $e')),
+      );
+    }
   }
 
   void _showAvatarDialog(BuildContext context, WidgetRef ref) async {
     avatars = ref.watch(avatarsProvider).avatars;
 
+    UserAvatar currentAvatar =
+        ref.watch(avatarsProvider.notifier).getCurrentAvatar();
+    int initialPage =
+        avatars.indexWhere((avatar) => avatar.id == currentAvatar.id);
+    if (initialPage == -1) initialPage = 0;
+
+    final PageController pageController =
+        PageController(initialPage: initialPage);
+    _currentPageNotifier.value = initialPage;
+
     Future<void> _pickImage() async {
-      final isPermissionCameraGranted = await requestPermissionCamera();
-      final isPermissionMediaGranted = await requestPermissionCamera();
-      log('is permission granted $isPermissionCameraGranted');
+      try {
+        final isPermissionCameraGranted = await requestPermissionCamera();
+        final isPermissionMediaGranted = await requestPermissionCamera();
+        log('is permission granted: $isPermissionCameraGranted, $isPermissionMediaGranted');
+        log('Opening image picker...');
+        final XFile? image =
+            await _picker.pickImage(source: ImageSource.gallery);
+        if (image == null) {
+          log('No image selected');
+          return;
+        }
+        log('Image picked: ${image.path}');
+        final CroppedFile? croppedImage = await ImageCropper().cropImage(
+          sourcePath: image.path,
+          aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: 'Crop Image',
+              toolbarColor: Colors.deepPurple,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.square,
+              lockAspectRatio: true,
+            ),
+            IOSUiSettings(
+              title: 'Crop Image',
+              aspectRatioLockEnabled: true,
+            ),
+          ],
+        );
+        if (croppedImage == null) {
+          log('Image cropping cancelled');
+          return;
+        }
+        log('Image cropped: ${croppedImage.path}');
 
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-      if (image == null) {
-        return;
+        final compressedFile = await FlutterImageCompress.compressAndGetFile(
+          croppedImage.path,
+          "${croppedImage.path}_compressed.jpg",
+          quality: 85,
+          minWidth: 512,
+          minHeight: 512,
+        );
+
+        if (compressedFile == null) {
+          log('Image compression failed');
+          return;
+        }
+
+        log('Image compressed: ${compressedFile.path}');
+        final imageId = DateTime.now().millisecondsSinceEpoch.toString();
+        await DatabaseService()
+            .uploadAvatar(XFile(compressedFile.path), userId, imageId);
+        final newAvatar = UserAvatar(
+            id: imageId, location: compressedFile.path, isDefaultAvatar: false);
+        ref.read(avatarsProvider.notifier).addAvatar(newAvatar);
+        await _updateUserProfile(newAvatar);
+        log('Avatar updated successfully');
+        Navigator.of(context).pop();
+      } catch (e) {
+        log('Error in _pickImage: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to upload image: $e')),
+        );
       }
-
-      final imageId = DateTime.now().millisecondsSinceEpoch.toString();
-      await DatabaseService().uploadAvatar(image, userId, imageId);
-      final newAvatar =
-          UserAvatar(id: imageId, location: image.path, isDefaultAvatar: false);
-      ref.read(avatarsProvider.notifier).addAvatar(newAvatar);
-      _updateUserProfile(newAvatar);
-      Navigator.of(context).pop();
     }
 
     Future<void> _deleteImage(UserAvatar avatar) async {
-      if (avatar.isDefaultAvatar! == 1) {
-        return;
-      }
-      await DatabaseService().deleteAvatar(userId, avatar.id!);
-      ref.read(avatarsProvider.notifier).deleteAvatar(avatar);
-      avatars = ref.watch(avatarsProvider).avatars;
-      setState(() {
-        avatars = avatars.where((a) => a.id != avatar.id).toList();
-      });
-      if (ref.watch(avatarsProvider.notifier).getCurrentAvatar() ==
-          avatar.location!) {
-        _updateUserProfile(avatars[0]);
+      try {
+        if (avatar.isDefaultAvatar! == 1) {
+          return;
+        }
+        await DatabaseService().deleteAvatar(userId, avatar.id!);
+        ref.read(avatarsProvider.notifier).deleteAvatar(avatar);
+        avatars = ref.watch(avatarsProvider).avatars;
+        setState(() {
+          avatars = avatars.where((a) => a.id != avatar.id).toList();
+        });
+        if (ref.watch(avatarsProvider.notifier).getCurrentAvatar().location ==
+            avatar.location) {
+          await _updateUserProfile(avatars[0]);
+        }
+      } catch (e) {
+        log('Error deleting image: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete image: $e')),
+        );
       }
     }
 
-    double pageViewHeight = MediaQuery.of(context).size.height < 700 ? 170.h : 150.h;
+    double pageViewHeight =
+        MediaQuery.of(context).size.height < 700 ? 170.h : 150.h;
 
-    showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Vyber si profilovku'),
+          title: const Text('Vyber si profilovku'),
           content: SizedBox(
             width: 400.w,
-            height: 200.h,
+            height: 220.h,
             child: Column(
               children: [
                 SizedBox(
                   height: pageViewHeight,
                   child: PageView.builder(
-                    controller: _pageController,
+                    controller: pageController,
                     scrollDirection: Axis.horizontal,
                     itemCount: avatars.length + 1,
                     itemBuilder: (context, index) {
@@ -162,13 +238,13 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
                         return GestureDetector(
                           onTap: _pickImage,
                           child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 10),
-                            child: Icon(Icons.add_a_photo, size: 100),
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            child: const Icon(Icons.add_a_photo, size: 100),
                           ),
                         );
                       } else {
                         return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: GestureDetector(
                             onTap: () {
                               _updateUserProfile(avatars[index]);
@@ -202,20 +278,42 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SmoothPageIndicator(
-                    controller: _pageController,
-                    count: avatars.length + 1,
-                    effect: SlideEffect(
-                      spacing: 8.0,
-                      radius: 4.0,
-                      dotWidth: 20.0,
-                      dotHeight: 8.0,
-                      paintStyle: PaintingStyle.fill,
-                      strokeWidth: 1.5,
-                      dotColor: Colors.grey,
-                      activeDotColor: const Color.fromRGBO(205, 19, 175, 1),
+                  child: Center(
+                    child: SmoothPageIndicator(
+                      controller: pageController,
+                      count: avatars.length + 1,
+                      effect: const ExpandingDotsEffect(
+                        spacing: 6.0,
+                        dotWidth: 10.0,
+                        dotHeight: 10.0,
+                        expansionFactor: 1.5,
+                        dotColor: Colors.grey,
+                        activeDotColor: Color.fromRGBO(205, 19, 175, 1),
+                      ),
                     ),
                   ),
+                ),
+                ValueListenableBuilder<int>(
+                  valueListenable: _currentPageNotifier,
+                  builder: (context, currentPage, child) {
+                    if (currentPage >= avatars.length ||
+                        (currentPage < avatars.length &&
+                            avatars[currentPage].isDefaultAvatar == true)) {
+                      return const SizedBox(height: 10);
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: IconButton(
+                        onPressed: () async {
+                          await _deleteImage(avatars[currentPage]);
+                          Navigator.of(context).pop();
+                          _showAvatarDialog(context, ref);
+                        },
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        iconSize: 24,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
