@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/core/repositories/database_repository.dart';
-import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:haravara/core/providers/preferences_provider.dart';
 import 'package:haravara/pages/auth/services/auth_service.dart';
@@ -128,9 +127,11 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     await authService.sendSignInWithEmailLink(_enteredEmail);
 
     isButtonDisabled = false;
-    showSnackBar(
-      context,
-      'E-mailový odkaz bol odoslaný. Pre dokončenie registrácie skontrolujte svoj e-mail.',
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Popup(title:'Úspech',content: 'E-mailový odkaz bol odoslaný. Pre dokončenie registrácie skontrolujte svoj e-mail.',);
+      },
     );
   }
 
