@@ -113,7 +113,6 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
 
   void _showAvatarDialog(BuildContext context, WidgetRef ref) async {
     avatars = ref.watch(avatarsProvider).avatars;
-
     UserAvatar currentAvatar =
         ref.watch(avatarsProvider.notifier).getCurrentAvatar();
     int initialPage =
@@ -129,14 +128,9 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
         final isPermissionCameraGranted = await requestPermissionCamera();
         final isPermissionMediaGranted = await requestPermissionCamera();
         log('is permission granted: $isPermissionCameraGranted, $isPermissionMediaGranted');
-        log('Opening image picker...');
         final XFile? image =
             await _picker.pickImage(source: ImageSource.gallery);
-        if (image == null) {
-          log('No image selected');
-          return;
-        }
-        log('Image picked: ${image.path}');
+        if (image == null) return;
         final CroppedFile? croppedImage = await ImageCropper().cropImage(
           sourcePath: image.path,
           aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
@@ -166,12 +160,7 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
             ),
           ],
         );
-        if (croppedImage == null) {
-          log('Image cropping cancelled');
-          return;
-        }
-        log('Image cropped: ${croppedImage.path}');
-
+        if (croppedImage == null) return;
         final compressedFile = await FlutterImageCompress.compressAndGetFile(
           croppedImage.path,
           "${croppedImage.path}_compressed.jpg",
@@ -179,13 +168,7 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
           minWidth: 512,
           minHeight: 512,
         );
-
-        if (compressedFile == null) {
-          log('Image compression failed');
-          return;
-        }
-
-        log('Image compressed: ${compressedFile.path}');
+        if (compressedFile == null) return;
         final imageId = DateTime.now().millisecondsSinceEpoch.toString();
         await DatabaseService()
             .uploadAvatar(XFile(compressedFile.path), userId, imageId);
@@ -193,10 +176,8 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
             id: imageId, location: compressedFile.path, isDefaultAvatar: false);
         ref.read(avatarsProvider.notifier).addAvatar(newAvatar);
         await _updateUserProfile(newAvatar);
-        log('Avatar updated successfully');
         Navigator.of(context).pop();
       } catch (e) {
-        log('Error in _pickImage: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to upload image: $e')),
         );
@@ -205,9 +186,7 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
 
     Future<void> _deleteImage(UserAvatar avatar) async {
       try {
-        if (avatar.isDefaultAvatar! == 1) {
-          return;
-        }
+        if (avatar.isDefaultAvatar! == 1) return;
         await DatabaseService().deleteAvatar(userId, avatar.id!);
         ref.read(avatarsProvider.notifier).deleteAvatar(avatar);
         avatars = ref.watch(avatarsProvider).avatars;
@@ -219,7 +198,6 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
           await _updateUserProfile(avatars[0]);
         }
       } catch (e) {
-        log('Error deleting image: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to delete image: $e')),
         );
@@ -236,98 +214,104 @@ class _AvatarWidgetState extends ConsumerState<AvatarWidget> {
           title: const Text('Vyber si profilovku'),
           content: SizedBox(
             width: 400.w,
-            height: 220.h,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: pageViewHeight,
-                  child: PageView.builder(
-                    controller: pageController,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: avatars.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index == avatars.length) {
-                        return GestureDetector(
-                          onTap: _pickImage,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 10),
-                            child: const Icon(Icons.add_a_photo, size: 100),
-                          ),
-                        );
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: GestureDetector(
-                            onTap: () {
-                              _updateUserProfile(avatars[index]);
-                              Navigator.of(context).pop();
-                            },
-                            child: ClipOval(
-                              child: avatars[index].location != null &&
-                                      File(avatars[index].location!)
-                                          .existsSync()
-                                  ? Image.file(
-                                      File(avatars[index].location!),
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.asset(
-                                      'assets/avatars/kasko.png',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    onPageChanged: (index) {
-                      _currentPageNotifier.value = index;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: SmoothPageIndicator(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: pageViewHeight,
+                    child: PageView.builder(
                       controller: pageController,
-                      count: avatars.length + 1,
-                      effect: const ExpandingDotsEffect(
-                        spacing: 6.0,
-                        dotWidth: 10.0,
-                        dotHeight: 10.0,
-                        expansionFactor: 1.5,
-                        dotColor: Colors.grey,
-                        activeDotColor: Color.fromRGBO(205, 19, 175, 1),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: avatars.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == avatars.length) {
+                          return GestureDetector(
+                            onTap: _pickImage,
+                            child: Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: const Icon(Icons.add_a_photo, size: 100),
+                            ),
+                          );
+                        } else {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: GestureDetector(
+                              onTap: () {
+                                _updateUserProfile(avatars[index]);
+                                Navigator.of(context).pop();
+                              },
+                              child: ClipOval(
+                                child: avatars[index].location != null &&
+                                        File(avatars[index].location!)
+                                            .existsSync()
+                                    ? Image.file(
+                                        File(avatars[index].location!),
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.asset(
+                                        'assets/avatars/kasko.png',
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      onPageChanged: (index) {
+                        _currentPageNotifier.value = index;
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: SmoothPageIndicator(
+                        controller: pageController,
+                        count: avatars.length + 1,
+                        effect: const ExpandingDotsEffect(
+                          spacing: 6.0,
+                          dotWidth: 10.0,
+                          dotHeight: 10.0,
+                          expansionFactor: 1.5,
+                          dotColor: Colors.grey,
+                          activeDotColor: Color.fromRGBO(205, 19, 175, 1),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                ValueListenableBuilder<int>(
-                  valueListenable: _currentPageNotifier,
-                  builder: (context, currentPage, child) {
-                    if (currentPage >= avatars.length ||
-                        (currentPage < avatars.length &&
-                            avatars[currentPage].isDefaultAvatar == true)) {
-                      return const SizedBox(height: 10);
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: IconButton(
-                        onPressed: () async {
-                          await _deleteImage(avatars[currentPage]);
-                          Navigator.of(context).pop();
-                          _showAvatarDialog(context, ref);
-                        },
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        iconSize: 24,
-                      ),
-                    );
-                  },
-                ),
-              ],
+                  ValueListenableBuilder<int>(
+                    valueListenable: _currentPageNotifier,
+                    builder: (context, currentPage, child) {
+                      if (currentPage >= avatars.length ||
+                          (currentPage < avatars.length &&
+                              avatars[currentPage].isDefaultAvatar == true)) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 4.0, bottom: 8.0),
+                          child: SizedBox(height: 48),
+                        );
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 4.0, bottom: 8.0),
+                        child: IconButton(
+                          onPressed: () async {
+                            await _deleteImage(avatars[currentPage]);
+                            Navigator.of(context).pop();
+                            _showAvatarDialog(context, ref);
+                          },
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          iconSize: 24,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         );
