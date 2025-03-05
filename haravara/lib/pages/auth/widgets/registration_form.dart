@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/core/repositories/database_repository.dart';
-import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:haravara/core/providers/preferences_provider.dart';
 import 'package:haravara/pages/auth/services/auth_service.dart';
@@ -11,6 +10,8 @@ import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/pages/web_view/view/web_view_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+
+import '../../../core/widgets/Popup.dart';
 
 var uuid = const Uuid();
 final authService = AuthService();
@@ -74,17 +75,32 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     final userNameUsed =
         await databaseRepository.isUserNameUsed(_enteredUsername);
     if (userId.isNotEmpty) {
-      showSnackBar(context, 'Tento e-mail už existuje');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Error',content: 'Tento e-mail už existuje',);
+        },
+      );
       isButtonDisabled = false;
       return;
     }
     if (selectedLocation.isEmpty) {
-      showSnackBar(context, 'Zadajte prosím lokaciu');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Chýbajuce dáta',content: 'Zadajte prosím lokaciu',);
+        },
+      );
       isButtonDisabled = false;
       return;
     }
     if (userNameUsed) {
-      showSnackBar(context, "Toto meno už niekto použiva");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Error',content: 'Toto meno už niekto použiva',);
+        },
+      );
       isButtonDisabled = false;
       return;
     }
@@ -111,9 +127,11 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     await authService.sendSignInWithEmailLink(_enteredEmail);
 
     isButtonDisabled = false;
-    showSnackBar(
-      context,
-      'E-mailový odkaz bol odoslaný. Pre dokončenie registrácie skontrolujte svoj e-mail.',
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Popup(title:'Úspech',content: 'E-mailový odkaz bol odoslaný. Pre dokončenie registrácie skontrolujte svoj e-mail.',);
+      },
     );
   }
 
@@ -121,21 +139,34 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     isButtonDisabled = true;
     FocusManager.instance.primaryFocus?.unfocus();
     if (!_acceptGDPR) {
-      showSnackBar(
-          context, 'Musíte súhlasiť so spracovaním osobných údajov (GDPR).');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Chýbajuce dáta',content: 'Musíte súhlasiť so spracovaním osobných údajov (GDPR).',);
+        },
+      );
       isButtonDisabled = false;
       return;
     }
     if (_emailController.text.isEmpty ||
         !_emailController.text.contains('@') ||
         _emailController.text == 'const User Exist') {
-      showSnackBar(context,
-          'Prosím, zadajte platnú e-mailovú adresu alebo užívateľ existuje');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Chýbajuce dáta',content: 'Prosím, zadajte platnú e-mailovú adresu alebo užívateľ existuje',);
+        },
+      );
       isButtonDisabled = false;
       return;
     }
     if (_usernameController.text.isEmpty) {
-      showSnackBar(context, 'Meno nesmie byť prázdne');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Chýbajuce dáta',content: 'Meno nesmie byť prázdne',);
+        },
+      );
       isButtonDisabled = false;
       return;
     }

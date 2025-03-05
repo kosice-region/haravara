@@ -6,12 +6,13 @@ import 'package:haravara/core/widgets/close_button.dart';
 import 'package:haravara/pages/bug_report/services/send_report.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/core/widgets/footer.dart';
+import 'package:haravara/core/widgets/Popup.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+
 import '../../../router/router.dart';
 import '../../../router/screen_router.dart';
-import '../../auth/services/auth_screen_service.dart';
 
 final imagePathsProvider = StateProvider<List<String>>((ref) => []);
 
@@ -52,19 +53,34 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
     isButtonDisabled = true;
     FocusManager.instance.primaryFocus?.unfocus();
     if (_titleController.text.trim().isEmpty ) {
-      showSnackBar(context, 'Prosím, zadajte titul reportu');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Chýbajuce dáta',content: 'Prosím, zadajte titul reportu',);
+        },
+      );
       isButtonDisabled = false;
       return;
     }
 
     if (_descriptionController.text.trim().isEmpty) {
-      showSnackBar(context, 'Prosim, zadajte popis reportu');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Chýbajuce dáta',content: 'Prosim, zadajte popis reportu',);
+        },
+      );
       isButtonDisabled = false;
       return;
     }
 
     if(images.isEmpty){
-      showSnackBar(context, 'Prosim, pridajte fotku');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Chýbajuce dáta',content: 'Prosim, pridajte fotku',);
+        },
+      );
       isButtonDisabled = false;
       return;
     }
@@ -78,7 +94,13 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
     });
 
     await sendReport(_enteredTitle, _enteredDescription,_enteredExpected,images,context,ref);
-    showSnackBar(context, "Ďakujeme za váš report");
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Popup(title:'Bug report',content: 'Ďakujeme za váš report',);
+      },
+    );
     ref.read(routerProvider.notifier).changeScreen(ScreenType.profile);
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(context,
         ScreenRouter().getScreenWidget(ScreenType.news));

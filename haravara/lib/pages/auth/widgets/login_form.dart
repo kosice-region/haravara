@@ -2,10 +2,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haravara/pages/auth/services/auth_screen_service.dart';
 import 'package:haravara/pages/auth/widgets/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/widgets/Popup.dart';
 import '../services/auth_service.dart';
 
 final loginauthService = AuthService();
@@ -85,8 +85,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   void _submitAndValidate() async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (_emailController.text.isEmpty || !_emailController.text.contains('@')) {
-      showSnackBar(context,
-          'Prosím, zadajte platnú e-mailovú adresu alebo užívateľ existuje');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Error',content: 'Prosím, zadajte platnú e-mailovú adresu alebo užívateľ existuje',);
+        },
+      );
       return;
     }
     _enteredEmail = _emailController.text;
@@ -96,7 +100,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   Future<void> _handleLogin() async {
     final userId = await loginauthService.findUserByEmail(_enteredEmail);
     if (userId.isEmpty || userId.compareTo('null') == 0) {
-      showSnackBar(context, 'Nemôžeme nájsť váš e-mail, radšej sa registrujte');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Error',content: 'Nemôžeme nájsť váš e-mail, radšej sa registrujte',);
+        },
+      );
       isButtonDisabled = false;
       return;
     }
@@ -109,7 +118,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     await loginauthService.sendSignInWithEmailLink(_enteredEmail);
 
     isButtonDisabled = false;
-    showSnackBar(context,
-        'E-mailový odkaz bol odoslaný. Pre dokončenie prihlásenia skontrolujte svoj e-mail.');
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Popup(title:'Úspech',content: 'E-mailový odkaz bol odoslaný. Pre dokončenie prihlásenia skontrolujte svoj e-mail.',);
+      },
+    );
   }
 }

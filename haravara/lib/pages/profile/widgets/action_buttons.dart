@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/core/repositories/database_repository.dart';
-import 'package:haravara/core/services/database_service.dart';
+
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/pages/map_detail/providers/places_provider.dart';
-import 'package:haravara/router/router.dart';
-import 'package:haravara/router/screen_router.dart';
 
-import '../../auth/services/auth_screen_service.dart';
+
+import '../../../core/widgets/Popup.dart';
+
 import 'widgets.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 import 'package:haravara/pages/leaderBoard/providers/userList.dart';
@@ -34,11 +34,21 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
       return true;
     }
     if (newUsername.length < 3) {
-      showSnackBar(context, 'Meno musí obsahovať aspoň 3 znaky');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Error',content: 'Meno musí obsahovať aspoň 3 znaky',);
+        },
+      );
       return false;
     }
     if (await DBrep.isUserNameUsed(newUsername)) {
-      showSnackBar(context, 'Toto meno už niekto používa');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Error',content: 'Toto meno už niekto používa',);
+        },
+      );
       return false;
     } else {
       await authRepository.updateUserName(newUsername, userId);

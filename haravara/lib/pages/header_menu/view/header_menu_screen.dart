@@ -42,6 +42,15 @@ class HeaderMenu extends ConsumerWidget {
                   ),
                 ),
                 RedirectButton(
+                  title: 'BUG REPORT',
+                  imagePath: 'assets/menu-icons/loop.png',
+                  imageWidth: 43,
+                  imageHeight: 43,
+                  right: 170,
+                  bottom: 8,
+                  screenToRoute: ScreenType.bugreport,
+                ),
+                RedirectButton(
                   title: 'ROZPRÁVKY',
                   imagePath: 'assets/menu-icons/headphones.png',
                   imageWidth: 53,
@@ -97,7 +106,7 @@ class HeaderMenu extends ConsumerWidget {
                 ),
                 RedirectButton(
                   title: 'O APLIKÁCII',
-                  imagePath: 'assets/menu-icons/loop.png',
+                  imagePath: 'assets/menu-icons/questions.png',
                   imageWidth: 50,
                   imageHeight: 50,
                   right: 166,

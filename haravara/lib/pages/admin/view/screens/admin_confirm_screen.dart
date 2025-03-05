@@ -5,6 +5,8 @@ import 'package:haravara/pages/admin/view/screens/admin_approved_screen.dart';
 import 'package:haravara/pages/admin/view/screens/admin_menu_screen.dart';
 import 'package:haravara/pages/reward_menu/service/reward_service.dart';
 
+import '../../../../core/widgets/Popup.dart';
+
 class AdminConfirm extends StatelessWidget {
   final String username;
   final String userId;
@@ -40,8 +42,11 @@ class AdminConfirm extends StatelessWidget {
       );
     } catch (e) {
       print("Error claiming reward: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to claim reward. Please try again.")),
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Popup(title:'Error',content: 'Failed to claim reward. Please try again.',);
+        },
       );
     }
   }
