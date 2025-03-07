@@ -69,10 +69,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
               ),
             ],
           ),
+          SizedBox(height: 5.h),
           ConfirmButton(
             text: 'PRIHLÁS SA',
             onPressed: isButtonDisabled ? () {} : _submitAndValidate,
           ),
+          SizedBox(height: 10.h),
           SwitchMode(
             text: 'Nie si ešte prihlásený? ZAREGISTRUJ SA!',
             onPressed: widget.toggleMode,
@@ -88,7 +90,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Popup(title:'Error',content: 'Prosím, zadajte platnú e-mailovú adresu alebo užívateľ existuje',);
+          return Popup(
+            title: 'Error',
+            content:
+                'Prosím, zadajte platnú e-mailovú adresu alebo užívateľ existuje',
+          );
         },
       );
       return;
@@ -103,7 +109,10 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Popup(title:'Error',content: 'Nemôžeme nájsť váš e-mail, radšej sa registrujte',);
+          return Popup(
+            title: 'Error',
+            content: 'Nemôžeme nájsť váš e-mail, radšej sa registrujte',
+          );
         },
       );
       isButtonDisabled = false;
@@ -121,7 +130,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Popup(title:'Úspech',content: 'E-mailový odkaz bol odoslaný. Pre dokončenie prihlásenia skontrolujte svoj e-mail.',);
+        return Popup(
+          title: 'Úspech',
+          content:
+              'E-mailový odkaz bol odoslaný. Pre dokončenie prihlásenia skontrolujte svoj e-mail.',
+        );
       },
     );
   }
