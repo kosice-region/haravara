@@ -10,6 +10,8 @@ import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/pages/reward_menu/model/reward_model.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 
+import '../../../core/widgets/close_button.dart';
+
 class PrizesScreen extends ConsumerStatefulWidget {
   const PrizesScreen({Key? key}) : super(key: key);
 
@@ -125,6 +127,11 @@ class _PrizesScreenState extends ConsumerState<PrizesScreen> {
             left: 0,
             right: 0,
             child: const Header(),
+          ),
+          Positioned(
+            top: 43.h,
+            right: 30.w,
+            child: Close_Button(),
           ),
           Positioned(
             top: 120.h,
