@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 Future<void> sendReport(String title, String description, String expected,
-    List<XFile> images, context, WidgetRef ref) async {
+    List<XFile>? images, context, WidgetRef ref) async {
   String appVersion = await getAppVersion();
 
   final uploadTasks = <Future>[];
@@ -19,18 +19,21 @@ Future<void> sendReport(String title, String description, String expected,
   String? userId = prefs.getString('email');
 
   final newBugKey = FirebaseDatabase.instance.ref('/bugReports').push().key;
-  for (var image in images) {
-    final imageId = DateTime.now().millisecondsSinceEpoch.toString();
+  if(images != null){
+    for (var image in images) {
+      final imageId = DateTime.now().millisecondsSinceEpoch.toString();
 
-    uploadTasks.add(FirebaseStorage.instance
-        .ref('images/bug-reports/$newBugKey/$imageId.jpg')
-        .putFile(File(image.path)));
+      uploadTasks.add(FirebaseStorage.instance
+          .ref('images/bug-reports/$newBugKey/$imageId.jpg')
+          .putFile(File(image.path)));
+    }
+    try {
+      await Future.wait(uploadTasks);
+    } on FirebaseException catch (e) {
+      log('error while adding image $e');
+    }
   }
-  try {
-    await Future.wait(uploadTasks);
-  } on FirebaseException catch (e) {
-    log('error while adding image $e');
-  }
+
 
   final postData = {
     'author': userId,

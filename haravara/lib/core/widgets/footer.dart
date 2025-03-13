@@ -84,7 +84,7 @@ class Footer extends ConsumerWidget {
               final currentAvatar =
                   ref.watch(avatarsProvider).getCurrentAvatar();
               return SizedBox(
-                width: 36.w, 
+                width: 36.w,
                 height: 36.h,
                 child: IconButton(
                   padding: EdgeInsets.zero,
@@ -95,6 +95,8 @@ class Footer extends ConsumerWidget {
                   },
                   icon: ClipOval(
                     child: Image.file(
+                      width: 52,
+                      height: 52,
                       File(currentAvatar.location!),
                       fit: BoxFit.cover,
                     ),
