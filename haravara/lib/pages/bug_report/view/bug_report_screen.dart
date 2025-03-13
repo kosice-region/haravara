@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +10,6 @@ import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/core/widgets/Popup.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 import '../../../router/router.dart';
 import '../../../router/screen_router.dart';
@@ -32,7 +32,6 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
   var isButtonDisabled = false;
   final List<String> imagePaths = [];
   var _enteredTitle = '';
-
   var _enteredExpected = '';
   var _enteredDescription = '';
   final FocusNode _titleFocusNode = FocusNode();
@@ -107,8 +106,7 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
       await sendReport(_enteredTitle, _enteredDescription, _enteredExpected,
           images, context, ref);
       log('Report submission completed successfully', name: 'BugReport');
-
-      showDialog(
+      await showDialog(
         context: context,
         builder: (BuildContext context) {
           return Popup(
