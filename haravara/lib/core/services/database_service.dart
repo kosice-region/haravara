@@ -174,17 +174,29 @@ class DatabaseService {
   }
 
   Future<void> uploadAvatar(XFile avatar, String userId, String imageId) async {
-    File image = File(avatar.path);
-    await databaseRepository.uploadUserAvatar(image, userId, imageId);
-    final db = await _getDatabase();
-    await db.insert(
-      'avatars',
-      {
-        'id': imageId,
-        'location_path': '${avatar.path}',
-        'isDefaultAvatar': 0,
-      },
-    );
+    try {
+      File image = File(avatar.path);
+      final storageRef = FirebaseStorage.instance
+          .ref('images/users-avatars/$userId/$imageId.jpg');
+      final metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+      );
+      await storageRef.putFile(image, metadata);
+      log('Avatar uploaded to: ${storageRef.fullPath}');
+
+      final db = await _getDatabase();
+      await db.insert(
+        'avatars',
+        {
+          'id': imageId,
+          'location_path': avatar.path,
+          'isDefaultAvatar': 0,
+        },
+      );
+    } catch (e) {
+      log('Error uploading avatar: $e');
+      rethrow;
+    }
   }
 
   Future<void> deleteAvatar(String userId, String imageId) async {
