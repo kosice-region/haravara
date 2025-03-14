@@ -78,7 +78,10 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Popup(title:'Error',content: 'Tento e-mail už existuje',);
+          return Popup(
+            title: 'Error',
+            content: 'Tento e-mail už existuje',
+          );
         },
       );
       isButtonDisabled = false;
@@ -88,7 +91,10 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Popup(title:'Chýbajuce dáta',content: 'Zadajte prosím lokaciu',);
+          return Popup(
+            title: 'Chýbajuce dáta',
+            content: 'Zadajte prosím lokaciu',
+          );
         },
       );
       isButtonDisabled = false;
@@ -98,7 +104,10 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Popup(title:'Error',content: 'Toto meno už niekto použiva',);
+          return Popup(
+            title: 'Error',
+            content: 'Toto meno už niekto použiva',
+          );
         },
       );
       isButtonDisabled = false;
@@ -130,7 +139,11 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Popup(title:'Úspech',content: 'E-mailový odkaz bol odoslaný. Pre dokončenie registrácie skontrolujte svoj e-mail.',);
+        return Popup(
+          title: 'Úspech',
+          content:
+              'E-mailový odkaz bol odoslaný. Pre dokončenie registrácie skontrolujte svoj e-mail.',
+        );
       },
     );
   }
@@ -142,7 +155,10 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Popup(title:'Chýbajuce dáta',content: 'Musíte súhlasiť so spracovaním osobných údajov (GDPR).',);
+          return Popup(
+            title: 'Chýbajuce dáta',
+            content: 'Musíte súhlasiť so spracovaním osobných údajov (GDPR).',
+          );
         },
       );
       isButtonDisabled = false;
@@ -154,7 +170,11 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Popup(title:'Chýbajuce dáta',content: 'Prosím, zadajte platnú e-mailovú adresu alebo užívateľ existuje',);
+          return Popup(
+            title: 'Chýbajuce dáta',
+            content:
+                'Prosím, zadajte platnú e-mailovú adresu alebo užívateľ existuje',
+          );
         },
       );
       isButtonDisabled = false;
@@ -164,7 +184,10 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Popup(title:'Chýbajuce dáta',content: 'Meno nesmie byť prázdne',);
+          return Popup(
+            title: 'Chýbajuce dáta',
+            content: 'Meno nesmie byť prázdne',
+          );
         },
       );
       isButtonDisabled = false;
@@ -249,6 +272,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                   text: 'REGISTRÁCIA',
                   onPressed: isButtonDisabled ? () {} : _submitAndValidate,
                 ),
+                SizedBox(height: 10.h),
                 SwitchMode(
                   text: "Máte už konto? Prihlás sa.",
                   onPressed: widget.toggleMode,
