@@ -7,8 +7,6 @@ import 'package:haravara/pages/map_detail/services/map_service.dart';
 import 'package:haravara/pages/map_detail/services/screen_service.dart';
 import 'package:haravara/pages/map_detail/widgets/local_button.dart';
 import 'package:haravara/pages/web_view/view/web_view_container.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:haravara/router/router.dart';
 
 class PreviewBottomSheet extends StatelessWidget {
   final BuildContext context;
@@ -30,7 +28,6 @@ class PreviewBottomSheet extends StatelessWidget {
     String lengthOfDescription = pickedLocation.detail.description;
     String lengthOfTitle = pickedLocation.name;
 
-    // Calculate the size of the text
     Size textSize = calculateTextSize(
       chooseBetterStringToCalculate(lengthOfTitle, lengthOfDescription),
       textStyle,
@@ -79,8 +76,7 @@ class PreviewBottomSheet extends StatelessWidget {
                 8.verticalSpace,
                 GestureDetector(
                   onTap: () {
-                    // Open the web view if the URL is valid
-                    String url = pickedLocation.detail.description; // Assuming this is a URL
+                    String url = pickedLocation.detail.description;
                     if (Uri.tryParse(url)?.hasScheme == true) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -88,7 +84,6 @@ class PreviewBottomSheet extends StatelessWidget {
                         ),
                       );
                     } else {
-                      // Handle invalid URL case here
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Invalid URL')),
                       );
