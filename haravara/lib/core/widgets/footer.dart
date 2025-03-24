@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 import 'package:haravara/router/router.dart';
 import 'package:haravara/router/screen_router.dart';
+import '../../pages/header_menu/view/header_menu_screen.dart';
 
 class Footer extends ConsumerWidget {
   Footer({
@@ -42,12 +43,27 @@ class Footer extends ConsumerWidget {
         children: [
           // Hamburger Menu
 
-          _footerIcon(
-            context,
-            ref,
-            'assets/menu.png',
-            ScreenType.menu,
-            size: 28.w,
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: Image.asset(
+              'assets/menu.png',
+              fit: BoxFit.contain,
+              scale: 20,
+            ),
+            onPressed: () {
+              if (ModalRoute.of(context)!.settings.name == '/headerMenu') {
+                return;
+              }
+
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => HeaderMenu(),
+                  settings: const RouteSettings(
+                      name: '/headerMenu'),
+                ),
+              );
+            },
           ),
 
 
