@@ -19,18 +19,27 @@ class SwitchMode extends StatefulWidget {
 class _SwitchModeState extends State<SwitchMode> {
   @override
   Widget build(BuildContext context) {
-    String text = widget.text;
-    return TextButton(
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: GoogleFonts.titanOne(
-          fontSize: 10.sp,
-          color: Color.fromARGB(255, 255, 221, 0),
-          fontWeight: FontWeight.w500,
+    String formattedText = widget.text;
+    if (widget.text.contains("ZAREGISTRUJ SA")) {
+      formattedText =
+          widget.text.replaceFirst("ZAREGISTRUJ SA", "\nZAREGISTRUJ SA");
+    }
+    return IntrinsicWidth(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          textStyle: GoogleFonts.titanOne(fontSize: 9.sp),
+          foregroundColor: Colors.white,
+          backgroundColor: const Color.fromARGB(255, 46, 204, 113),
+          side: const BorderSide(color: Colors.white, width: 3),
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+        ),
+        onPressed: widget.onPressed,
+        child: Text(
+          formattedText,
+          textAlign: TextAlign.center,
+          softWrap: true,
         ),
       ),
-      onPressed: widget.onPressed,
     );
   }
 }
