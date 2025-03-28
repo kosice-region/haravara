@@ -62,8 +62,8 @@ class PreviewBottomSheet extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   8.verticalSpace,
-                  GestureDetector(
-                    onTap: () {
+                  ElevatedButton.icon(
+                    onPressed: () {
                       String url = pickedLocation.detail.description;
                       if (Uri.tryParse(url)?.hasScheme == true) {
                         Navigator.of(context).push(
@@ -77,15 +77,21 @@ class PreviewBottomSheet extends StatelessWidget {
                         );
                       }
                     },
-                    child: Text(
+                    icon: Icon(Icons.info, color: Colors.white, size: 16.sp),
+                    label: Text(
                       'Klikni pre informácie',
                       style: GoogleFonts.titanOne(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
-                        color: const Color.fromARGB(255, 33, 173, 4),
+                        color: Colors.white,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 33, 173, 4),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
                     ),
                   ),
                 ],
