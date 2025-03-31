@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:confetti/confetti.dart';
 import 'dart:math';
+import 'package:vibration/vibration.dart';
 
 class CongratulationsDialog extends StatefulWidget {
   final String pickedPlaceName;
@@ -24,7 +25,15 @@ class _CongratulationsDialogState extends State<CongratulationsDialog> {
         ConfettiController(duration: const Duration(seconds: 2));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _confettiController.play();
+      _triggerVibration();
     });
+  }
+
+  Future<void> _triggerVibration() async {
+    bool? hasVibrator = await Vibration.hasVibrator();
+    if (hasVibrator == true) {
+      Vibration.vibrate(duration: 500);
+    }
   }
 
   @override
