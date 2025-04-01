@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,6 +14,8 @@ import '../map_detail.dart';
 
 class MapDetailScreen extends ConsumerStatefulWidget {
   const MapDetailScreen({Key? key}) : super(key: key);
+
+  static String? _activeInstanceId;
 
   @override
   ConsumerState<MapDetailScreen> createState() => _MapDetailScreenState();
@@ -30,73 +33,95 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
   double targetLng = 0;
 
   late final PickedPlaceNotifier _pickedPlaceNotifier;
+  bool _isPreviewShown = false;
+  late StreamSubscription<dynamic> _eventBusSubscription;
+  final String _instanceId = UniqueKey().toString();
 
   @override
   void initState() {
     super.initState();
+    MapDetailScreen._activeInstanceId = _instanceId;
     _pickedPlaceNotifier = ref.read(pickedPlaceProvider.notifier);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final selectedPlace = ref.read(pickedPlaceProvider);
-
-      if (selectedPlace.placeId != 'null' && selectedPlace.centerOnPlace) {
-        Place pickedLocation = ref
-            .read(placesProvider)
-            .firstWhere((place) => place.id == selectedPlace.placeId);
-
-        Offset targetPosition = Offset(
-          pickedLocation.geoData.primary.pixelCoordinates[0],
-          pickedLocation.geoData.primary.pixelCoordinates[1],
-        );
-
-        _controller.value = setInitialTransformation(
-          0.6,
-          Offset(
-            -targetPosition.dx + MediaQuery.of(context).size.width / 2,
-            -targetPosition.dy + MediaQuery.of(context).size.height / 2,
-          ),
-        );
-      } else {
-        const double initialScale = 0.23;
-        const Offset initialPosition = Offset(-2970.0, 10.0);
-        _controller.value =
-            setInitialTransformation(initialScale, initialPosition);
-      }
+      _initializeMapPosition();
+      _handleInitialPreview();
     });
 
-    eventBus.on<String>().listen((tappedMarker) {
-      if (tappedMarker != null && mounted) {
-        setState(() {
-          pickedLocation = ref
-              .read(placesProvider)
-              .firstWhere((place) => place.id == tappedMarker);
-          isMarkerPicked = true;
-        });
-        if (mounted) {
-          showPreview(context, pickedLocation, routeToCompassScreen);
+    _eventBusSubscription = eventBus.on<String>().listen((tappedMarker) {
+      if (tappedMarker != null &&
+          mounted &&
+          !_isPreviewShown &&
+          MapDetailScreen._activeInstanceId == _instanceId) {
+        if (tappedMarker is String) {
+          _showPreviewForMarker(tappedMarker);
         }
-      }
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final selectedPlace = ref.read(pickedPlaceProvider);
-      if (selectedPlace.placeId != 'null' && selectedPlace.showPreview) {
-        setState(() {
-          pickedLocation = ref
-              .read(placesProvider)
-              .firstWhere((place) => place.id == selectedPlace.placeId);
-          isMarkerPicked = true;
-        });
-        if (mounted) {
-          showPreview(context, pickedLocation, routeToCompassScreen);
-        }
-        _pickedPlaceNotifier.resetPreview();
       }
     });
   }
 
+  void _initializeMapPosition() {
+    final selectedPlace = ref.read(pickedPlaceProvider);
+
+    if (selectedPlace.placeId != 'null' && selectedPlace.centerOnPlace) {
+      pickedLocation = ref
+          .read(placesProvider)
+          .firstWhere((place) => place.id == selectedPlace.placeId);
+
+      Offset targetPosition = Offset(
+        pickedLocation.geoData.primary.pixelCoordinates[0],
+        pickedLocation.geoData.primary.pixelCoordinates[1],
+      );
+
+      _controller.value = setInitialTransformation(
+        0.6,
+        Offset(
+          -targetPosition.dx + MediaQuery.of(context).size.width / 2,
+          -targetPosition.dy + MediaQuery.of(context).size.height / 2,
+        ),
+      );
+    } else {
+      const double initialScale = 0.23;
+      const Offset initialPosition = Offset(-2970.0, 10.0);
+      _controller.value =
+          setInitialTransformation(initialScale, initialPosition);
+    }
+  }
+
+  void _handleInitialPreview() {
+    final selectedPlace = ref.read(pickedPlaceProvider);
+    if (selectedPlace.placeId != 'null' &&
+        selectedPlace.showPreview &&
+        !_isPreviewShown) {
+      pickedLocation = ref
+          .read(placesProvider)
+          .firstWhere((place) => place.id == selectedPlace.placeId);
+      isMarkerPicked = true;
+      _showPreview(pickedLocation);
+      _pickedPlaceNotifier.resetPreview();
+    }
+  }
+
+  void _showPreviewForMarker(String tappedMarker) {
+    setState(() {
+      pickedLocation = ref
+          .read(placesProvider)
+          .firstWhere((place) => place.id == tappedMarker);
+      isMarkerPicked = true;
+    });
+    _showPreview(pickedLocation);
+  }
+
   @override
   void dispose() {
+    _eventBusSubscription.cancel();
+    _controller.dispose();
+    if (_isPreviewShown && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+    if (MapDetailScreen._activeInstanceId == _instanceId) {
+      MapDetailScreen._activeInstanceId = null;
+    }
     super.dispose();
   }
 
@@ -107,6 +132,9 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     return PopScope(
       onPopInvoked: (bool didPop) {
         _pickedPlaceNotifier.resetPlace();
+        if (_isPreviewShown && Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
       },
       child: Scaffold(
         body: Stack(
@@ -122,12 +150,8 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
               child: GestureDetector(
                 onTapUp: (details) {
                   setState(() {
-                    print(
-                        '${details.globalPosition.dx}, ${details.globalPosition.dy}');
-                    tapPositions.add(
-                      Offset(
-                          details.globalPosition.dx, details.globalPosition.dy),
-                    );
+                    tapPositions.add(Offset(
+                        details.globalPosition.dx, details.globalPosition.dy));
                   });
                 },
                 child: Consumer(
@@ -164,7 +188,10 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
             Positioned(
               top: 43.h,
               right: 30.w,
-              child: Close_Button(screenType: ScreenType.map),
+              child: Close_Button(
+                screenType: ScreenType.map,
+                shouldPop: true,
+              ),
             ),
           ],
         ),
@@ -176,21 +203,34 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     ref.read(routerProvider.notifier).changeScreen(ScreenType.compass);
     String id = pickedLocation.id!;
     ref.read(pickedPlaceProvider.notifier).setNewPlace(id);
+    if (_isPreviewShown && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
     ScreenRouter().routeToNextScreen(
         context, ScreenRouter().getScreenWidget(ScreenType.compass));
   }
 
-  Future<dynamic> showPreview(BuildContext context, Place pickedLocation,
-      Function routeToCompassScreen) {
-    return showModalBottomSheet(
+  void _showPreview(Place location) {
+    if (_isPreviewShown && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+    _isPreviewShown = true;
+    showModalBottomSheet(
       context: context,
+      isDismissible: true,
       builder: (context) {
         return PreviewBottomSheet(
           context: context,
-          pickedLocation: pickedLocation,
+          pickedLocation: location,
           routeToCompassScreen: routeToCompassScreen,
         );
       },
-    );
+    ).whenComplete(() {
+      if (mounted) {
+        setState(() {
+          _isPreviewShown = false;
+        });
+      }
+    });
   }
 }

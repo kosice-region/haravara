@@ -45,24 +45,24 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
         automaticallyImplyLeading: false,
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 10.0.w), // Add some right padding
+            padding: EdgeInsets.only(right: 10.0.w),
             child: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(Icons.close,size:15.dg)),
+                icon: Icon(Icons.close, size: 15.dg)),
           ),
         ],
         title: Text(
           'Zoznam pečiatok',
           style: GoogleFonts.titanOne(
-      color: Colors.white, 
-    ),
+            color: Colors.white,
+          ),
         ),
         backgroundColor: Colors.green,
         iconTheme: IconThemeData(
-    color: Colors.white,
-  ),
+          color: Colors.white,
+        ),
       ),
       body: Stack(
         children: [
@@ -96,7 +96,7 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
                     focusedBorder: borderStyle,
                   ),
                   style: GoogleFonts.titanOne(
-                    color: Colors.white, 
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -106,7 +106,7 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
                   error: (err, stack) => Center(
                     child: Text(
                       'Error: $err',
-                      style: TextStyle(color: Colors.white), 
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                   data: (places) {
@@ -131,7 +131,7 @@ class _PlacesListScreenState extends ConsumerState<PlacesListScreen> {
                             title: Text(
                               '$placeOrder. ${place.name}',
                               style: GoogleFonts.titanOne(
-                                color: Colors.white, 
+                                color: Colors.white,
                                 fontSize: 16.0,
                               ),
                             ),
