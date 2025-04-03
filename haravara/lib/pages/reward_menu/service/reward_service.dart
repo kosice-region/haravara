@@ -26,7 +26,7 @@ class RewardService {
     'Haravara batôžtek s prekvapením': Color(0xFF9260A8),
     'Haravara pršiplášť': Color(0xFFE65F33),
     'Haravara kompas': Color(0xFF4CAF50),
-    'Haravara ďalekohľad': Color(0xFF0F8CE4),
+    'Haravara ďalekohľad': Color(0xFF108EE6),
   };
 
   Future<Map<String, RewardInfo>> fetchRewardsFromDatabase() async {
