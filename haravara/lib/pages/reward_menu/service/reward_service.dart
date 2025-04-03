@@ -8,12 +8,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class RewardInfo {
   final String name;
   final int requiredStamps;
-  final Color color;
+  final int color;
+  final String text;
 
   const RewardInfo({
     required this.name,
     required this.requiredStamps,
     required this.color,
+    required this.text,
   });
 }
 
@@ -24,7 +26,7 @@ class RewardService {
     'Haravara batôžtek s prekvapením': Color(0xFF9260A8),
     'Haravara pršiplášť': Color(0xFFE65F33),
     'Haravara kompas': Color(0xFF4CAF50),
-    'Haravara ďalekohľad': Colors.blue,
+    'Haravara ďalekohľad': Color(0xFF0F8CE4),
   };
 
   Future<Map<String, RewardInfo>> fetchRewardsFromDatabase() async {
@@ -37,7 +39,8 @@ class RewardService {
       RewardInfo(
         name: value['name'],
         requiredStamps: value['requiredStamps'],
-        color: rewardColors[value['name']] ?? Colors.grey,
+        color: value['color'] ,
+        text: value['text'],
       ),
     ));
   }
@@ -68,6 +71,8 @@ class RewardService {
             isUnlocked: false,
             isClaimed: true,
             rewardKey: rewardKey,
+            text:info.text,
+            color:info.color,
           ),
         );
         continue;
@@ -99,6 +104,8 @@ class RewardService {
           isUnlocked: isUnlocked,
           isClaimed: false,
           rewardKey: rewardKey,
+          text:info.text,
+          color:info.color
         ),
       );
     }
@@ -158,4 +165,7 @@ class RewardService {
     await prefs.setString(localKey, newCode);
     return newCode;
   }
+
+
+
 }

@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/reward_menu/model/reward_model.dart';
 import 'package:haravara/pages/reward_menu/service/reward_service.dart';
-import 'package:haravara/pages/auth/models/user.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -19,7 +18,6 @@ class AdminActualRewardsScreen extends ConsumerStatefulWidget {
 }
 
 class _AdminRewardsHelperScreenState extends ConsumerState<AdminActualRewardsScreen> {
-  final RewardService _rewardService = RewardService();
   List<Reward> rewards = [];
   Map<String, RewardInfo> rewardDefinitions = {};
 
@@ -41,7 +39,8 @@ class _AdminRewardsHelperScreenState extends ConsumerState<AdminActualRewardsScr
           RewardInfo(
               name: value['name'],
               requiredStamps: value['requiredStamps'],
-              color: RewardService.rewardColors[value['name']] ?? Colors.grey,
+              color: value['color'],
+              text: value['text'],
           )));
       setState(() {}); 
     }
@@ -60,7 +59,8 @@ class _AdminRewardsHelperScreenState extends ConsumerState<AdminActualRewardsScr
             RewardInfo(
                 name: value['name'],
                 requiredStamps: value['requiredStamps'],
-                color: RewardService.rewardColors[value['name']] ?? Colors.grey,
+                color: value['color'],
+              text: value['text'],
             )));
 
         final definitionsJson = jsonEncode(rewardDefinitions.map((key, info) => MapEntry(
@@ -166,7 +166,7 @@ class _AdminRewardsHelperScreenState extends ConsumerState<AdminActualRewardsScr
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 14.w),
       decoration: BoxDecoration(
-        color: info.color,
+        color: Color(info.color),
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: Colors.white, width: 3),
       ),

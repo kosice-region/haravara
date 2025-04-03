@@ -4,6 +4,8 @@ class Reward {
   final bool isUnlocked;
   final bool isClaimed;
   final String rewardKey;
+  final String text;
+  final int color;
 
   Reward({
     required this.prize,
@@ -11,5 +13,7 @@ class Reward {
     required this.isUnlocked,
     required this.isClaimed,
     required this.rewardKey,
+    required this.text,
+    required this.color,
   });
 }
