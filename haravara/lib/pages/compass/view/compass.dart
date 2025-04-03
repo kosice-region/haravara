@@ -63,16 +63,15 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
   }
 
   void _setPickedPlace() {
-  final pickedPlaceState = ref.watch(pickedPlaceProvider);
-  String id = pickedPlaceState.placeId;
+    final pickedPlaceState = ref.watch(pickedPlaceProvider);
+    String id = pickedPlaceState.placeId;
 
-  if (id != 'null') {
-    pickedPlace = ref.watch(placesProvider.notifier).getPlaceById(id);
-    targetLat = pickedPlace.geoData.primary.coordinates[0];
-    targetLng = pickedPlace.geoData.primary.coordinates[1];
+    if (id != 'null') {
+      pickedPlace = ref.watch(placesProvider.notifier).getPlaceById(id);
+      targetLat = pickedPlace.geoData.primary.coordinates[0];
+      targetLng = pickedPlace.geoData.primary.coordinates[1];
+    }
   }
-}
-
 
   void _initializeCompass() {
     compassSubscription = FlutterCompass.events!.listen((event) {
@@ -126,7 +125,6 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
           BackgroundImage(
             image: 'assets/backgrounds/background_clouds.png',
           ),
-          // Center the compass within the Stack
           Center(
             child: Container(
               width: 230.w,
@@ -138,7 +136,7 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
               ),
               child: Stack(
                 children: [
-                  BuildCompass(), // This should be the rotating compass image
+                  BuildCompass(),
                   Center(
                     child: Transform.rotate(
                       angle: (direction * (math.pi / 180)),
@@ -154,12 +152,13 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
               ),
             ),
           ),
-
-          // Keep Positioned for the Close_Button and Distance
           Positioned(
             top: 43.h,
             right: 30.w,
-            child: Close_Button(screenType: ScreenType.detailMap,),
+            child: Close_Button(
+              screenType: ScreenType.detailMap,
+              shouldPop: true,
+            ),
           ),
           Distance(
             distanceToTarget: this.distanceToTarget,
