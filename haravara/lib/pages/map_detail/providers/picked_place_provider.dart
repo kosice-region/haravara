@@ -8,12 +8,17 @@ class PickedPlaceNotifier extends StateNotifier<PickedPlaceState> {
   final SharedPreferences pref;
 
   void setNewPlace(String placeId, {bool centerOnPlace = false}) {
-    state = PickedPlaceState(placeId: placeId, showPreview: true, centerOnPlace: centerOnPlace);
+    state = PickedPlaceState(
+        placeId: placeId, showPreview: true, centerOnPlace: centerOnPlace);
     pref.setString('curPlaceId', placeId);
   }
 
   void resetPreview() {
     state = state.copyWith(showPreview: false);
+  }
+
+  void resetCenter() {
+    state = state.copyWith(centerOnPlace: false);
   }
 
   void resetPlace() {
@@ -22,7 +27,8 @@ class PickedPlaceNotifier extends StateNotifier<PickedPlaceState> {
   }
 }
 
-final pickedPlaceProvider = StateNotifierProvider<PickedPlaceNotifier, PickedPlaceState>((ref) {
+final pickedPlaceProvider =
+    StateNotifierProvider<PickedPlaceNotifier, PickedPlaceState>((ref) {
   final SharedPreferences pref = ref.read(sharedPreferencesProvider);
   return PickedPlaceNotifier(pref);
 });
@@ -32,9 +38,13 @@ class PickedPlaceState {
   final bool showPreview;
   final bool centerOnPlace;
 
-  PickedPlaceState({this.placeId = 'null', this.showPreview = false, this.centerOnPlace = false});
+  PickedPlaceState(
+      {this.placeId = 'null',
+      this.showPreview = false,
+      this.centerOnPlace = false});
 
-  PickedPlaceState copyWith({String? placeId, bool? showPreview, bool? centerOnPlace}) {
+  PickedPlaceState copyWith(
+      {String? placeId, bool? showPreview, bool? centerOnPlace}) {
     return PickedPlaceState(
       placeId: placeId ?? this.placeId,
       showPreview: showPreview ?? this.showPreview,
@@ -42,4 +52,3 @@ class PickedPlaceState {
     );
   }
 }
-
