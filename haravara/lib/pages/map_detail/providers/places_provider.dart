@@ -1,3 +1,6 @@
+
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/core/services/database_service.dart';
 import 'package:haravara/core/models/place.dart';
@@ -24,6 +27,7 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
     List<Place> uncollectedPlaces =
         state.where((place) => !place.isReached).toList();
 
+    log(sortForward.toString());
     if (sortForward) {
       return [...collectedPlaces, ...uncollectedPlaces];
     } else {
