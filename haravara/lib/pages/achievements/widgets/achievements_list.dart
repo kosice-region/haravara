@@ -19,7 +19,7 @@ class _AchievementsListState extends ConsumerState<AchievementsList> {
     final selectedValueView = ref.watch(settingsProvider).getCurrentValueView();
     final places = ref
         .watch(placesProvider.notifier)
-        .getSortedPlacesForward(selectedValueSort == 'Otvorene');
+        .getSortedPlacesForward(selectedValueSort == 'Získané');
     return Expanded(
       child: GridView.count(
         crossAxisCount: selectedValueView == 'Menej' ? 2 : 3,
