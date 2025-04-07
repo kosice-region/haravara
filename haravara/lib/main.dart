@@ -43,9 +43,9 @@ void main() async {
       ],
       debug: true);
 
-  if (!await AwesomeNotifications().isNotificationAllowed()) {
-    await AwesomeNotifications().requestPermissionToSendNotifications();
-  }
+  // if (!await AwesomeNotifications().isNotificationAllowed()) {
+  //   await AwesomeNotifications().requestPermissionToSendNotifications();
+  // }
 
   final prefs = await SharedPreferences.getInstance();
 
