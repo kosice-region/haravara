@@ -117,8 +117,9 @@ class _RewardScreenState extends ConsumerState<RewardScreen> {
               )
           : null,
       style: ElevatedButton.styleFrom(
+        disabledBackgroundColor: reward.isClaimed ? Colors.grey : Color(0x000000),
         fixedSize: Size(160.w, 40.h),
-        backgroundColor: isButtonEnabled ? color : Colors.grey,
+        backgroundColor: isButtonEnabled ? color : color,
         side: const BorderSide(color: Colors.white, width: 4),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
