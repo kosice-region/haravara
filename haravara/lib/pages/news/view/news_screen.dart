@@ -12,6 +12,9 @@ import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/pages/reward_menu/model/reward_model.dart';
 import 'package:haravara/pages/reward_menu/service/reward_service.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../core/widgets/Popup.dart';
 
 class NewsScreen extends ConsumerStatefulWidget {
   const NewsScreen({Key? key}) : super(key: key);
@@ -37,6 +40,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
   void initState() {
     super.initState();
     initPlaces();
+    _checkFirstRun();
   }
 
   Future<void> initPlaces() async {
@@ -44,6 +48,25 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     await databaseService.getCollectedPlacesByUser(user.id);
     final places = await databaseService.loadPlaces();
     ref.read(placesProvider.notifier).addPlaces(places);
+  }
+
+
+  Future<void> _checkFirstRun() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool _seen = (prefs.getBool('firstStart') ?? false);
+
+    if (!_seen) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Popup(title:'NOVÁ VERZIA APLIKACIE',content: 'Opravené chyby:\n•	Pridaná možnosť reportovať chyby v menu.\n•	Reportovanie chýb teraz funguje spoľahlivo (predtým fungovalo len občas).\n•	Prehľadnejší text pri prihlasovaní a registrácii.\n•	Dlaždice v sekcii “Moje pečiatky” sa už neprekrývajú.\n\nChyby, na ktorých pracujeme:\n•	Profilová ikonka občas mizne, čo znemožňuje prístup do profilu.',);
+          },
+        );
+      }
+      await prefs.setBool('firstStart', true);
+    }
+
   }
 
   @override
@@ -222,7 +245,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
           ),
           Positioned(
             bottom: 0.h,
-            left: 100,
+            left: 150,
             right: 0,
             child: Align(
               alignment: Alignment.center,
@@ -237,6 +260,35 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                 ),
                 child: Text(
                   'IDEM PÁTRAŤ',
+                  style: GoogleFonts.titanOne(
+                      fontSize: 9.sp,
+                      color: const Color.fromARGB(255, 255, 255, 255)),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0.h,
+            left: 0,
+            right: 180,
+            child: Align(
+              alignment: Alignment.center,
+              child: ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Popup(title:'NOVÁ VERZIA APLIKACIE',content: 'Opravené chyby:\n•	Pridaná možnosť reportovať chyby v menu.\n•	Reportovanie chýb teraz funguje spoľahlivo (predtým fungovalo len občas).\n•	Prehľadnejší text pri prihlasovaní a registrácii.\n•	Dlaždice v sekcii “Moje pečiatky” sa už neprekrývajú.\n\nChyby, na ktorých pracujeme:\n•	Profilová ikonka občas mizne, čo znemožňuje prístup do profilu.',);
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(80.w, 35.h),
+                  backgroundColor: const Color.fromARGB(255, 60, 210, 90),
+                  side: BorderSide(color: Colors.white, width: 4),
+                ),
+                child: Text(
+                  'ZMENY',
                   style: GoogleFonts.titanOne(
                       fontSize: 9.sp,
                       color: const Color.fromARGB(255, 255, 255, 255)),

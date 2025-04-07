@@ -23,7 +23,9 @@ class _AchievementsListState extends ConsumerState<AchievementsList> {
     return Expanded(
       child: GridView.count(
         crossAxisCount: selectedValueView == 'Menej' ? 2 : 3,
-        childAspectRatio: 5 / (selectedValueView == 'Menej' ? 4.5.h : 5.5.h),
+        childAspectRatio: 5 / (selectedValueView == 'Menej' ? 5.h : 5.5.h),
+
+
         children: [
           for (final place in places)
             Achievement(

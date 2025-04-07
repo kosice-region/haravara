@@ -18,6 +18,7 @@ Future<void> sendReport(
 ) async {
   log('Starting sendReport...', name: 'BugReport');
 
+
   String appVersion = await getAppVersion();
   log('App version: $appVersion', name: 'BugReport');
 
@@ -71,6 +72,7 @@ Future<void> sendReport(
         name: 'BugReport', error: e);
     throw e;
   }
+
 
   final postData = {
     'author': userId,

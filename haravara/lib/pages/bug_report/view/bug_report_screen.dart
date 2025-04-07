@@ -78,20 +78,6 @@ class _BugReportScreenState extends ConsumerState<BugReportScreen> {
       return;
     }
 
-    if (images.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Popup(
-            title: 'Chýbajuce dáta',
-            content: 'Prosim, pridajte fotku',
-          );
-        },
-      );
-      isButtonDisabled = false;
-      return;
-    }
-
     _enteredTitle = _titleController.text.trim();
     _enteredDescription = _descriptionController.text.trim();
     _enteredExpected = _expectedController.text.trim();

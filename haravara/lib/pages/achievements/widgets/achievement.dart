@@ -73,7 +73,7 @@ class _AchievementState extends ConsumerState<Achievement> {
             5.verticalSpace,
             Container(
               width: isSizeTwo ? 120.w : 80.w,
-              height: isSizeTwo ? 40.h : 40.h,
+              height: isSizeTwo ? 50.h : 40.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15.r),
                 color: const Color(0xFF1666B1),
@@ -89,6 +89,7 @@ class _AchievementState extends ConsumerState<Achievement> {
                     ),
                     maxLines: 5,
                     textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
