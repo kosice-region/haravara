@@ -35,7 +35,6 @@ class InfoScreen extends StatelessWidget {
           Column(
             children: [
               const Header(),
-
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Align(
@@ -50,64 +49,68 @@ class InfoScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Card(
-                      color: Colors.white54,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(18.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              'Vaša obľúbená zberateľská súťaž pokračuje so starými pravidlami, ale v novom formáte. '
-                              'Dreveným pečiatkam je koniec, vďaka spolupráci s Kaškovými kamarátmi z DT IT Solutions Slovakia ste práve vstúpili '
-                              'do novej, farebnej a veselej aplikácie Haravara pátračka! Pečiatky odteraz môžete zbierať hravo v mobile, kde na vás '
-                              'okrem miest s ukrytými pečiatkami čaká aj vlastný zberateľský profil a rebríček všetkých pátračov, v ktorom si prehľadne '
-                              'môžete sledovať svoje skóre. Registrujte sa ako pátrač jednotlivec alebo ako celá rodina, vydajte sa pátrať po pečiatkach '
-                              'dobrého ducha Kaška a súťažte o vecné ceny, ako aj zážitky v kraji!',
-                              style: GoogleFonts.titanOne(
-                                fontSize: 10.sp,
-                                color: Colors.black87,
+                child: Scrollbar(
+                  thumbVisibility: true,
+                  thickness: 6,
+                  radius: const Radius.circular(10),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Card(
+                        color: Colors.white54,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                'Vaša obľúbená zberateľská súťaž pokračuje so starými pravidlami, ale v novom formáte. '
+                                'Dreveným pečiatkam je koniec, vďaka spolupráci s Kaškovými kamarátmi z DT IT Solutions Slovakia ste práve vstúpili '
+                                'do novej, farebnej a veselej aplikácie Haravara pátračka! Pečiatky odteraz môžete zbierať hravo v mobile, kde na vás '
+                                'okrem miest s ukrytými pečiatkami čaká aj vlastný zberateľský profil a rebríček všetkých pátračov, v ktorom si prehľadne '
+                                'môžete sledovať svoje skóre. Registrujte sa ako pátrač jednotlivec alebo ako celá rodina, vydajte sa pátrať po pečiatkach '
+                                'dobrého ducha Kaška a súťažte o vecné ceny, ako aj zážitky v kraji!',
+                                style: GoogleFonts.titanOne(
+                                  fontSize: 10.sp,
+                                  color: Colors.black87,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.justify,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  width: 60.w,
-                                  height: 60.h,
-                                  child: Image.asset(
-                                    'assets/company-logo/KSK_logo_hor_ver.png',
-                                    fit: BoxFit.contain,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    width: 60.w,
+                                    height: 60.h,
+                                    child: Image.asset(
+                                      'assets/company-logo/KSK_logo_hor_ver.png',
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
-                                ),
-                                Container(
-                                  width: 80.w,
-                                  height: 80.h,
-                                  child: Image.asset(
-                                    'assets/company-logo/KRT_bw_sk-removebg.png',
-                                    fit: BoxFit.contain,
+                                  Container(
+                                    width: 80.w,
+                                    height: 80.h,
+                                    child: Image.asset(
+                                      'assets/company-logo/KRT_bw_sk-removebg.png',
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
-                                ),
-                                Container(
-                                  width: 30.w,
-                                  height: 30.h,
-                                  child: Image.asset(
-                                    imageAssets[4],
-                                    fit: BoxFit.contain,
+                                  Container(
+                                    width: 30.w,
+                                    height: 30.h,
+                                    child: Image.asset(
+                                      imageAssets[4],
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
