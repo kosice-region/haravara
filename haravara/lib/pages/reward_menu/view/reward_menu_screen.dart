@@ -35,9 +35,10 @@ class _RewardScreenState extends ConsumerState<RewardScreen> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
-    final collectedPlacesAsyncValue = ref.watch(collectedPlacesProvider(userId));
+    var collectedPlacesAsyncValue =  ref.watch(collectedPlacesProvider(userId));
     return collectedPlacesAsyncValue.when(
       data: (collectedPlaceIds) {
+
         final collectedStamps = collectedPlaceIds.length;
         return FutureBuilder<List<Reward>>(
           future: rewardService.generateUserRewards(ref.read(userInfoProvider), collectedStamps),
