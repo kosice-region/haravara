@@ -13,6 +13,8 @@ class CheckButton extends StatefulWidget {
     this.hasClickablePart = false,
     this.clickableText = '',
     this.onClickableTextTap,
+    this.secondClickableText = '',
+    this.onSecondClickableTextTap,
   }) : super(key: key);
 
   final bool value;
@@ -21,6 +23,8 @@ class CheckButton extends StatefulWidget {
   final bool hasClickablePart;
   final String clickableText;
   final VoidCallback? onClickableTextTap;
+  final String secondClickableText;
+  final VoidCallback? onSecondClickableTextTap;
 
   @override
   State<CheckButton> createState() => _CheckButtonState();
@@ -32,9 +36,9 @@ class _CheckButtonState extends State<CheckButton> {
     bool isChecked = widget.value;
 
     return SizedBox(
-      width: 190.w,
       height: 25.h,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Checkbox(
             shape: RoundedRectangleBorder(
@@ -47,46 +51,68 @@ class _CheckButtonState extends State<CheckButton> {
               widget.onChanged(value!);
             },
           ),
-          if (!widget.hasClickablePart) ...[
-            Text(
-              widget.text,
-              style: GoogleFonts.titanOne(
-                color: Colors.white,
-                fontWeight: FontWeight.w300,
-                fontSize: 11.sp,
-              ),
-            ),
-          ] else ...[
-            RichText(
-              text: TextSpan(
-                style: GoogleFonts.titanOne(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w300,
-                  fontSize: 11.sp,
-                ),
-                children: [
-                  TextSpan(
-                    text: '${widget.text} ',
-                  ),
-                  TextSpan(
-                    text: widget.clickableText,
+          Expanded(
+            child: widget.hasClickablePart
+                ? RichText(
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                    text: TextSpan(
+                      style: GoogleFonts.titanOne(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 11.sp,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: '${widget.text} ',
+                        ),
+                        TextSpan(
+                          text: widget.clickableText,
+                          style: GoogleFonts.titanOne(
+                            color: Color.fromARGB(255, 255, 221, 0),
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.w300,
+                            fontSize: 11.sp,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              if (widget.onClickableTextTap != null) {
+                                widget.onClickableTextTap!();
+                              }
+                            },
+                        ),
+                        if (widget.secondClickableText.isNotEmpty) ...[
+                          TextSpan(
+                            text: ' a ',
+                          ),
+                          TextSpan(
+                            text: widget.secondClickableText,
+                            style: GoogleFonts.titanOne(
+                              color: Color.fromARGB(255, 255, 221, 0),
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 11.sp,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                if (widget.onSecondClickableTextTap != null) {
+                                  widget.onSecondClickableTextTap!();
+                                }
+                              },
+                          ),
+                        ],
+                      ],
+                    ),
+                  )
+                : Text(
+                    widget.text,
                     style: GoogleFonts.titanOne(
-                      color: Color.fromARGB(255, 255, 221, 0),
-                      decoration: TextDecoration.underline,
+                      color: Colors.white,
                       fontWeight: FontWeight.w300,
                       fontSize: 11.sp,
                     ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        if (widget.onClickableTextTap != null) {
-                          widget.onClickableTextTap!();
-                        }
-                      },
                   ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ],
       ),
     );
