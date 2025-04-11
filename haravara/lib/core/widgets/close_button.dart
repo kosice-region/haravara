@@ -6,18 +6,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Close_Button extends ConsumerWidget {
   final ScreenType? screenType;
+  final bool shouldPop;
 
-  Close_Button({this.screenType});
+  Close_Button({this.screenType, this.shouldPop = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    precacheImage(const AssetImage('assets/menu-icons/backbutton.png'), context);
+    precacheImage(
+        const AssetImage('assets/menu-icons/backbutton.png'), context);
     return GestureDetector(
       onTap: () {
         if (screenType != null) {
           ref.read(routerProvider.notifier).changeScreen(screenType!);
-          ScreenRouter().routeToNextScreen(
-              context, ScreenRouter().getScreenWidget(screenType!));
+          if (shouldPop) {
+            Navigator.of(context).pop();
+          } else {
+            ScreenRouter().routeToNextScreen(
+                context, ScreenRouter().getScreenWidget(screenType!));
+          }
         } else {
           Navigator.of(context).pop();
         }

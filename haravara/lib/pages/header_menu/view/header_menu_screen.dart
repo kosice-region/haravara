@@ -31,8 +31,8 @@ class HeaderMenu extends ConsumerWidget {
             width: double.infinity,
             alignment: Alignment.center,
           ),
-             Positioned.fill(child:
-             ListView(
+          Positioned.fill(
+            child: ListView(
               children: <Widget>[
                 Align(
                   alignment: Alignment.topRight,
@@ -40,15 +40,6 @@ class HeaderMenu extends ConsumerWidget {
                     padding: EdgeInsets.only(top: 18.h, right: 30.w),
                     child: Close_Button(),
                   ),
-                ),
-                RedirectButton(
-                  title: 'BUG REPORT',
-                  imagePath: 'assets/menu-icons/loop.png',
-                  imageWidth: 43,
-                  imageHeight: 43,
-                  right: 170,
-                  bottom: 8,
-                  screenToRoute: ScreenType.bugreport,
                 ),
                 RedirectButton(
                   title: 'ROZPRÁVKY',
@@ -106,14 +97,13 @@ class HeaderMenu extends ConsumerWidget {
                 ),
                 RedirectButton(
                   title: 'O APLIKÁCII',
-                  imagePath: 'assets/menu-icons/questions.png',
-                  imageWidth: 50,
-                  imageHeight: 50,
-                  right: 166,
+                  imagePath: 'assets/menu-icons/loop.png',
+                  imageWidth: 43,
+                  imageHeight: 43,
+                  right: 170,
                   bottom: 8,
                   screenToRoute: ScreenType.info,
                 ),
-
               ],
             ),
           ),
