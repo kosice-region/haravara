@@ -213,7 +213,7 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                           ),
                         ),
                         content: const Text(
-                          'Google maps pomôžu s navigáciou na cestách. V teréne sa prosím orientuj lokálnym značením.\nKlikní na ZAMERAJ MA a aplikácia ti napovie, ako ďaleko si od miesta pečiatky.',
+                          'Google maps pomôžu s navigáciou na cestách. V teréne sa prosím orientuj lokálnym značením.\nKlikní na "Už som tu!" a aplikácia ti napovie, ako ďaleko si od miesta pečiatky.',
                           style: TextStyle(
                           color: Colors.white,
                           fontSize: 18.0, // Adjusted line height for smaller gap
@@ -262,92 +262,91 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
     if (_isPreviewShown && Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }
-    _isPreviewShown = true; // Kamenec - ce1687bb-df1e-4c5c-b539-7e6094e692e1 Velaty - c81f4329-8b49-4a01-8a73-9da4d42f1b6f
+    _isPreviewShown = true;
 
-    // Add info on how to get there based on specific IDs
-    if (location.id == 'ce1687bb-df1e-4c5c-b539-7e6094e692e1') {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        builder: (context) {
-        return AlertDialog(
-          backgroundColor: const Color.fromARGB(255, 224, 186, 60),
-          title: const Text(
-          'Info: Kamenec',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 25.0,
-            fontWeight: FontWeight.bold,
-          ),
-          ),
-          content: const Text(
-          'Follow the trail markers to reach the destination.',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.0,
-          ),
-          ),
-          actions: [
-          TextButton(
-            child: const Text(
-            'OK',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
-            ),
-            onPressed: () {
-            Navigator.of(context).pop();
-            },
-          ),
-          ],
-        );
-        },
-      );
-      });
-    } else if (location.id == 'c81f4329-8b49-4a01-8a73-9da4d42f1b6f') {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        builder: (context) {
-        return AlertDialog(
-          backgroundColor: const Color.fromARGB(255, 224, 186, 60),
-          title: const Text(
-          'Info: Velaty',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 25.0,
-            fontWeight: FontWeight.bold,
-          ),
-          ),
-          content: const Text(
-          'Use the local signs to navigate to the spot.',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.0,
-          ),
-          ),
-          actions: [
-          TextButton(
-            child: const Text(
-            'OK',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
-            ),
-            onPressed: () {
-            Navigator.of(context).pop();
-            },
-          ),
-          ],
-        );
-        },
-      );
-      });
-    }
+    // if (location.id == 'ce1687bb-df1e-4c5c-b539-7e6094e692e1') {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) {
+    //     return AlertDialog(
+    //       backgroundColor: const Color.fromARGB(255, 224, 186, 60),
+    //       title: const Text(
+    //       'Info: Kamenec',
+    //       style: TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 25.0,
+    //         fontWeight: FontWeight.bold,
+    //       ),
+    //       ),
+    //       content: const Text(
+    //       'Follow the trail markers to reach the destination.',
+    //       style: TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 18.0,
+    //       ),
+    //       ),
+    //       actions: [
+    //       TextButton(
+    //         child: const Text(
+    //         'OK',
+    //         style: TextStyle(
+    //           color: Colors.white,
+    //           fontSize: 20.0,
+    //           fontWeight: FontWeight.bold,
+    //         ),
+    //         ),
+    //         onPressed: () {
+    //         Navigator.of(context).pop();
+    //         },
+    //       ),
+    //       ],
+    //     );
+    //     },
+    //   );
+    //   });
+    // } else if (location.id == 'c81f4329-8b49-4a01-8a73-9da4d42f1b6f') {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) {
+    //     return AlertDialog(
+    //       backgroundColor: const Color.fromARGB(255, 224, 186, 60),
+    //       title: const Text(
+    //       'Info: Velaty',
+    //       style: TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 25.0,
+    //         fontWeight: FontWeight.bold,
+    //       ),
+    //       ),
+    //       content: const Text(
+    //       'Use the local signs to navigate to the spot.',
+    //       style: TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 18.0,
+    //       ),
+    //       ),
+    //       actions: [
+    //       TextButton(
+    //         child: const Text(
+    //         'OK',
+    //         style: TextStyle(
+    //           color: Colors.white,
+    //           fontSize: 20.0,
+    //           fontWeight: FontWeight.bold,
+    //         ),
+    //         ),
+    //         onPressed: () {
+    //         Navigator.of(context).pop();
+    //         },
+    //       ),
+    //       ],
+    //     );
+    //     },
+    //   );
+    //   });
+    // }
 
     showModalBottomSheet(
       context: context,
