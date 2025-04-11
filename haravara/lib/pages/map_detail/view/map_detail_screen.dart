@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -192,6 +193,53 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                 screenType: ScreenType.map,
                 shouldPop: true,
               ),
+            ),Positioned( //Info button
+              top: 35.h,
+              left: 20.w,
+              child: IconButton(
+                icon: const Icon(Icons.info_outline, color: Colors.white, size: 65.0),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                        return AlertDialog(
+                        backgroundColor: const Color.fromARGB(255, 224, 186, 60),
+                        title: const Text(
+                          'POZOR!',
+                          style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        content: const Text(
+                          'Google maps pomôžu s navigáciou na cestách. V teréne sa prosím orientuj lokálnym značením.\nKlikní na "Už som tu!" a aplikácia ti napovie, ako ďaleko si od miesta pečiatky.',
+                          style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0, // Adjusted line height for smaller gap
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                          child: const Text(
+                            'OK',
+                            style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.bold,
+                          height: 0.5,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          ),
+                        ],
+                        );
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -215,6 +263,91 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
       Navigator.of(context).pop();
     }
     _isPreviewShown = true;
+
+    // if (location.id == 'ce1687bb-df1e-4c5c-b539-7e6094e692e1') {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) {
+    //     return AlertDialog(
+    //       backgroundColor: const Color.fromARGB(255, 224, 186, 60),
+    //       title: const Text(
+    //       'Info: Kamenec',
+    //       style: TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 25.0,
+    //         fontWeight: FontWeight.bold,
+    //       ),
+    //       ),
+    //       content: const Text(
+    //       'Follow the trail markers to reach the destination.',
+    //       style: TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 18.0,
+    //       ),
+    //       ),
+    //       actions: [
+    //       TextButton(
+    //         child: const Text(
+    //         'OK',
+    //         style: TextStyle(
+    //           color: Colors.white,
+    //           fontSize: 20.0,
+    //           fontWeight: FontWeight.bold,
+    //         ),
+    //         ),
+    //         onPressed: () {
+    //         Navigator.of(context).pop();
+    //         },
+    //       ),
+    //       ],
+    //     );
+    //     },
+    //   );
+    //   });
+    // } else if (location.id == 'c81f4329-8b49-4a01-8a73-9da4d42f1b6f') {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) {
+    //     return AlertDialog(
+    //       backgroundColor: const Color.fromARGB(255, 224, 186, 60),
+    //       title: const Text(
+    //       'Info: Velaty',
+    //       style: TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 25.0,
+    //         fontWeight: FontWeight.bold,
+    //       ),
+    //       ),
+    //       content: const Text(
+    //       'Use the local signs to navigate to the spot.',
+    //       style: TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 18.0,
+    //       ),
+    //       ),
+    //       actions: [
+    //       TextButton(
+    //         child: const Text(
+    //         'OK',
+    //         style: TextStyle(
+    //           color: Colors.white,
+    //           fontSize: 20.0,
+    //           fontWeight: FontWeight.bold,
+    //         ),
+    //         ),
+    //         onPressed: () {
+    //         Navigator.of(context).pop();
+    //         },
+    //       ),
+    //       ],
+    //     );
+    //     },
+    //   );
+    //   });
+    // }
+
     showModalBottomSheet(
       context: context,
       isDismissible: true,
