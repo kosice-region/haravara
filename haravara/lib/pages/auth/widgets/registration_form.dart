@@ -37,7 +37,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
   bool isButtonDisabled = false;
   bool isFamily = false;
   bool rememberPhone = false;
-  bool _acceptGDPR = false;
+  bool _acceptGDPRandVOP = false;
   String _enteredEmail = '';
   String _enteredUsername = '';
   String childrenCount = '';
@@ -151,13 +151,14 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
   void _submitAndValidate() async {
     isButtonDisabled = true;
     FocusManager.instance.primaryFocus?.unfocus();
-    if (!_acceptGDPR) {
+    if (!_acceptGDPRandVOP) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return Popup(
             title: 'Chýbajuce dáta',
-            content: 'Musíte súhlasiť so spracovaním osobných údajov (GDPR).',
+            content:
+                'Musíte súhlasiť so spracovaním osobných údajov (GDPR) a VOP.',
           );
         },
       );
@@ -248,7 +249,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                   onChanged: _toggleIsFamily,
                 ),
                 CheckButton(
-                  value: _acceptGDPR,
+                  value: _acceptGDPRandVOP,
                   text: 'Súhlasím s',
                   clickableText: 'GDPR',
                   hasClickablePart: true,
@@ -257,13 +258,25 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                       context,
                       MaterialPageRoute(
                         builder: (ctx) => WebViewContainer(
-                            url: 'https://www.haravara.sk/gdpr/'),
+                            url:
+                                'https://docs.google.com/viewer?url=https://org.kosiceregion.com/wp-content/uploads/2025/04/GDPR-oboznamenie_Haravara_final.pdf'),
+                      ),
+                    );
+                  },
+                  secondClickableText: 'VOP',
+                  onSecondClickableTextTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (ctx) => WebViewContainer(
+                            url:
+                                'https://docs.google.com/viewer?url=https://org.kosiceregion.com/wp-content/uploads/2025/04/VOP_aplikacia-Haravara_final.pdf'),
                       ),
                     );
                   },
                   onChanged: (bool value) {
                     setState(() {
-                      _acceptGDPR = value;
+                      _acceptGDPRandVOP = value;
                     });
                   },
                 ),

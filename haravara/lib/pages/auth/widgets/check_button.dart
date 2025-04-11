@@ -13,6 +13,8 @@ class CheckButton extends StatefulWidget {
     this.hasClickablePart = false,
     this.clickableText = '',
     this.onClickableTextTap,
+    this.secondClickableText = '',
+    this.onSecondClickableTextTap,
   }) : super(key: key);
 
   final bool value;
@@ -21,6 +23,8 @@ class CheckButton extends StatefulWidget {
   final bool hasClickablePart;
   final String clickableText;
   final VoidCallback? onClickableTextTap;
+  final String secondClickableText;
+  final VoidCallback? onSecondClickableTextTap;
 
   @override
   State<CheckButton> createState() => _CheckButtonState();
@@ -83,6 +87,26 @@ class _CheckButtonState extends State<CheckButton> {
                         }
                       },
                   ),
+                  if (widget.secondClickableText.isNotEmpty) ...[
+                    TextSpan(
+                      text: ' a ',
+                    ),
+                    TextSpan(
+                      text: widget.secondClickableText,
+                      style: GoogleFonts.titanOne(
+                        color: Color.fromARGB(255, 255, 221, 0),
+                        decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 11.sp,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          if (widget.onSecondClickableTextTap != null) {
+                            widget.onSecondClickableTextTap!();
+                          }
+                        },
+                    ),
+                  ],
                 ],
               ),
             ),
