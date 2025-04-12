@@ -27,7 +27,7 @@ class _PrizesScreenState extends ConsumerState<PrizesScreen> {
     'reward1': Color(0xFF9260A8),
     'reward2': Color(0xFFE65F33),
     'reward3': Color(0xFF4CAF50),
-    'reward4': Colors.blue,
+    'reward4': Color(0xFF2196F3),
   };
 
   @override
@@ -77,6 +77,8 @@ class _PrizesScreenState extends ConsumerState<PrizesScreen> {
             isUnlocked: false,
             isClaimed: true,
             rewardKey: rewardKey,
+            text:"test2",
+            color:Colors.grey.value,
           );
 
           tempList.add({

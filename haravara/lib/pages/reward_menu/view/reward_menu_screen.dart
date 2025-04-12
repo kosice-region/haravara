@@ -35,10 +35,10 @@ class _RewardScreenState extends ConsumerState<RewardScreen> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
-    final collectedPlacesAsyncValue = ref.watch(collectedPlacesProvider(userId));
-
+    var collectedPlacesAsyncValue =  ref.watch(collectedPlacesProvider(userId));
     return collectedPlacesAsyncValue.when(
       data: (collectedPlaceIds) {
+
         final collectedStamps = collectedPlaceIds.length;
         return FutureBuilder<List<Reward>>(
           future: rewardService.generateUserRewards(ref.read(userInfoProvider), collectedStamps),
@@ -79,23 +79,11 @@ class _RewardScreenState extends ConsumerState<RewardScreen> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               SizedBox(height: 40.h),
-                              if (rewards.isNotEmpty)
-                                buildRewardButton(context, 'Prvá Cena', rewards[0], const Color(0xFF9260A8), username),
-                              if (rewards.length > 1)
-                                Padding(
-                                  padding: EdgeInsets.only(top: 20.h),
-                                  child: buildRewardButton(context, 'Druhá Cena', rewards[1], const Color(0xFFE65F33), username),
-                                ),
-                              if (rewards.length > 2)
-                                Padding(
-                                  padding: EdgeInsets.only(top: 20.h),
-                                  child: buildRewardButton(context, 'Tretia Cena', rewards[2], const Color(0xFF59B84A), username),
-                                ),
-                              if (rewards.length > 3)
-                                Padding(
-                                  padding: EdgeInsets.only(top: 20.h),
-                                  child: buildRewardButton(context, 'Štvrtá Cena', rewards[3], const Color(0xFF2AB1FF), username),
-                                ),
+                                for(var reward in rewards)
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 20.h),
+                                    child: buildRewardButton(context, reward.text, reward, Color(reward.color) , username),
+                                  ),
                             ],
                           ),
                         ),
@@ -130,8 +118,9 @@ class _RewardScreenState extends ConsumerState<RewardScreen> {
               )
           : null,
       style: ElevatedButton.styleFrom(
+        disabledBackgroundColor: reward.isClaimed ? Colors.grey : Color(0x000000),
         fixedSize: Size(160.w, 40.h),
-        backgroundColor: isButtonEnabled ? color : Colors.grey,
+        backgroundColor: isButtonEnabled ? color : color,
         side: const BorderSide(color: Colors.white, width: 4),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
