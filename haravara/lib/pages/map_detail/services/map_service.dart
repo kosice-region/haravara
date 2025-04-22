@@ -10,107 +10,62 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class MapService {
   Future<void> launchMap(BuildContext context, Place place) async {
-    if (Platform.isAndroid) {
-      final availableMaps = await mapLauncher.MapLauncher.installedMaps;
+    final availableMaps = await mapLauncher.MapLauncher.installedMaps;
 
-      final mapOptions = availableMaps.where((map) {
-        return map.mapType == mapLauncher.MapType.google ||
-            map.mapType == mapLauncher.MapType.mapyCz;
-      }).map((map) {
-        if (map.mapType == mapLauncher.MapType.google) {
-          return mapLauncher.AvailableMap(
-            mapName: 'Google Mapy',
-            mapType: map.mapType,
-            icon: map.icon,
-          );
-        } else if (map.mapType == mapLauncher.MapType.mapyCz) {
-          return mapLauncher.AvailableMap(
-            mapName: 'Mapy.cz',
-            mapType: map.mapType,
-            icon: map.icon,
-          );
-        }
-        return map;
-      }).toList();
-
-      if (mapOptions.isEmpty) {
-        log("No supported maps installed.", name: "MapService");
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Žiadne podporované mapy nie sú nainštalované')),
+    final mapOptions = availableMaps.where((map) {
+      return map.mapType == mapLauncher.MapType.google ||
+          map.mapType == mapLauncher.MapType.mapyCz ||
+          map.mapType == mapLauncher.MapType.apple;
+    }).map((map) {
+      if (map.mapType == mapLauncher.MapType.google) {
+        return mapLauncher.AvailableMap(
+          mapName: 'Google Mapy',
+          mapType: map.mapType,
+          icon: map.icon,
         );
-        return;
+      } else if (map.mapType == mapLauncher.MapType.mapyCz) {
+        return mapLauncher.AvailableMap(
+          mapName: 'Mapy.com',
+          mapType: map.mapType,
+          icon: map.icon,
+        );
+      } else if (map.mapType == mapLauncher.MapType.apple) {
+        return mapLauncher.AvailableMap(
+          mapName: 'Apple Mapy',
+          mapType: map.mapType,
+          icon: map.icon,
+        );
       }
+      return map;
+    }).toList();
 
-      if (mapOptions.length == 1) {
-        _launchSelectedMap(mapOptions.first, place);
-        return;
-      }
+    if (mapOptions.isEmpty) {
+      log("No supported maps installed.", name: "MapService");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Žiadne podporované mapy nie sú nainštalované'),
+        ),
+      );
+      return;
+    }
 
+    if (mapOptions.length == 1) {
+      _launchSelectedMap(mapOptions.first, place);
+      return;
+    }
+
+    if (Platform.isAndroid) {
       _showAndroidMapPicker(context, mapOptions, place);
     } else if (Platform.isIOS) {
-      mapLauncher.MapType selectedMap = mapLauncher.MapType.apple;
-
-      String? selected = await showCupertinoModalPopup<String>(
-        context: context,
-        builder: (BuildContext context) => CupertinoActionSheet(
-          title: const Text('Vyberte mapu'),
-          actions: <Widget>[
-            CupertinoActionSheetAction(
-              child: const Text('Google Mapy'),
-              onPressed: () => Navigator.pop(context, 'Google Mapy'),
-            ),
-            CupertinoActionSheetAction(
-              child: const Text('Mapy.cz'),
-              onPressed: () => Navigator.pop(context, 'Mapy.cz'),
-            ),
-            CupertinoActionSheetAction(
-              child: const Text('Apple Mapy'),
-              onPressed: () => Navigator.pop(context, 'Apple Mapy'),
-            ),
-          ],
-          cancelButton: CupertinoActionSheetAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.pop(context, 'Zrušiť'),
-            child: const Text('Zrušiť'),
-          ),
-        ),
-      );
-
-      if (selected == 'Google Mapy') {
-        selectedMap = mapLauncher.MapType.google;
-      } else if (selected == 'Mapy.cz') {
-        selectedMap = mapLauncher.MapType.mapyCz;
-      } else if (selected == 'Apple Mapy') {
-        selectedMap = mapLauncher.MapType.apple;
-      } else {
-        return;
-      }
-
-      bool isAvailable =
-          await mapLauncher.MapLauncher.isMapAvailable(selectedMap) ?? false;
-      if (!isAvailable) {
-        log("Selected map ($selected) is not available.", name: "MapService");
-        return;
-      }
-
-      await mapLauncher.MapLauncher.showMarker(
-        mapType: selectedMap,
-        coords: mapLauncher.Coords(
-          place.geoData.primary.coordinates[0],
-          place.geoData.primary.coordinates[1],
-        ),
-        title: place.name,
-      );
+      _showIOSMapPicker(context, mapOptions, place);
     }
   }
 
   void _showAndroidMapPicker(
-      BuildContext context, List<mapLauncher.AvailableMap> maps, Place place) {
-    for (var map in maps) {
-      log("${map.mapName} icon path: ${map.icon}", name: "MapService");
-    }
-
+    BuildContext context,
+    List<mapLauncher.AvailableMap> maps,
+    Place place,
+  ) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -135,8 +90,7 @@ class MapService {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: maps.asMap().entries.map((entry) {
-                    final map = entry.value;
+                  children: maps.map((map) {
                     final iconPath = map.icon.isNotEmpty
                         ? map.icon.replaceFirst('packages/map_launcher/', '')
                         : null;
@@ -150,7 +104,6 @@ class MapService {
                             _launchSelectedMap(map, place);
                           },
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
                                 width: 60.w,
@@ -175,12 +128,10 @@ class MapService {
                                           width: 60.w,
                                           height: 60.h,
                                           fit: BoxFit.contain,
-                                          placeholderBuilder: (context) => Icon(
-                                            Icons.map,
-                                            size: 40.sp,
-                                            color: Colors.grey,
-                                          ),
-                                          semanticsLabel: '${map.mapName} icon',
+                                          placeholderBuilder: (context) =>
+                                              Icon(Icons.map,
+                                                  size: 40.sp,
+                                                  color: Colors.grey),
                                         )
                                       : Icon(
                                           Icons.map,
@@ -195,7 +146,6 @@ class MapService {
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   color: Colors.black,
-                                  fontWeight: FontWeight.normal,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -239,10 +189,44 @@ class MapService {
     );
   }
 
+  void _showIOSMapPicker(
+    BuildContext context,
+    List<mapLauncher.AvailableMap> maps,
+    Place place,
+  ) async {
+    String? selected = await showCupertinoModalPopup<String>(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: const Text('Vyberte mapu'),
+        actions: maps.map((map) {
+          return CupertinoActionSheetAction(
+            child: Text(map.mapName),
+            onPressed: () => Navigator.pop(context, map.mapName),
+          );
+        }).toList(),
+        cancelButton: CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () => Navigator.pop(context, 'Zrušiť'),
+          child: const Text('Zrušiť'),
+        ),
+      ),
+    );
+
+    if (selected == null || selected == 'Zrušiť') return;
+
+    final selectedMap =
+        maps.firstWhere((map) => map.mapName == selected, orElse: () => maps[0]);
+
+    _launchSelectedMap(selectedMap, place);
+  }
+
   Future<void> _launchSelectedMap(
-      mapLauncher.AvailableMap map, Place place) async {
+    mapLauncher.AvailableMap map,
+    Place place,
+  ) async {
     bool isAvailable =
         await mapLauncher.MapLauncher.isMapAvailable(map.mapType) ?? false;
+
     if (!isAvailable) {
       log("${map.mapName} is not available.", name: "MapService");
       return;
