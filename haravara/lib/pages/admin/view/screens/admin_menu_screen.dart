@@ -35,19 +35,19 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
 
     double deviceHeight = MediaQuery.of(context).size.height;
     double buttonHeight = 38.h;
-    double buttonWidth = 160.w;
+    double buttonWidth = 170.w;
 
     if (deviceHeight < 850) {
       buttonHeight = 38.h;
-      buttonWidth = 160.w;
+      buttonWidth = 170.w;
     }
     if (deviceHeight < 700) {
       buttonHeight = 43.h;
-      buttonWidth = 160.w;
+      buttonWidth = 170.w;
     }
     if (deviceHeight < 650) {
       buttonHeight = 48.h;
-      buttonWidth = 160.w;
+      buttonWidth = 170.w;
     }
 
     return Scaffold(
