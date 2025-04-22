@@ -103,7 +103,7 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
                 SizedBox(height: 20.h),
                 buildResponsiveButton(
                   context,
-                  'Bug Reports',
+                  'Nahlásiť problém',
                   const Color(0xFF33C233),
                   BugReadingScreen(),
                   buttonWidth,
