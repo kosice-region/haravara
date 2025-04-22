@@ -48,6 +48,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+	<string>sznmap</string>
+		<string>szn-mapy</string>
 		<string>comgooglemaps</string>
 		<string>mapycz</string>
 		<string>baidumap</string>
