@@ -1,10 +1,12 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haravara/pages/admin/view/screens/special_rewards/provider.dart';
+
+import 'export_excel.dart';
 
 class SpecialRewardUsersScreen extends ConsumerWidget {
   final int rewardLevel;
@@ -71,6 +73,32 @@ class SpecialRewardUsersScreen extends ConsumerWidget {
                     child: Padding(
                       padding: EdgeInsets.all(8.w),
                       child: EmailList(rewardLevel: rewardLevel), 
+                    ),
+                  ),
+
+                  SizedBox(height: 15.h),
+
+                  Container(
+                    width: 210.w,
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF607DA8),
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(color: Colors.white, width: 4),
+                    ),
+                    child: Center(
+                      child: GestureDetector(
+                    onTap: () {
+                      exportDataToExcel(context,rewardLevel);
+                      },
+                        child: Text(
+                          'Export to Excel',
+                          style: GoogleFonts.titanOne(
+                          fontSize: 14.sp,
+                          color: Colors.white,
+                        )
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -145,37 +173,5 @@ class EmailList extends StatelessWidget {
         );
       },
     );
-  }
-
-  Stream<List<String>> getUserEmailsByRewardLevel(int rewardLevel) async* {
-    final DatabaseReference usersRef = FirebaseDatabase.instance.ref('users');
-    final DatabaseReference collectedPlacesRef = FirebaseDatabase.instance.ref('collectedLocationsByUsers');
-
-    final usersStream = usersRef.onValue;
-
-    await for (final userEvent in usersStream) {
-      final collectedPlacesSnapshot = await collectedPlacesRef.get();
-      final Map<dynamic, dynamic>? users = userEvent.snapshot.value as Map<dynamic, dynamic>?;
-      final Map<dynamic, dynamic>? collectedPlacesData = collectedPlacesSnapshot.value as Map<dynamic, dynamic>?;
-
-      if (users != null && collectedPlacesData != null) {
-        List<String> emails = [];
-
-        users.forEach((userId, userData) {
-          if (userData['email'] != null && collectedPlacesData.containsKey(userId)) {
-            final collectedPlaces = List.from(collectedPlacesData[userId]);
-            final collectedPlacesCount = collectedPlaces.length;
-
-            if (collectedPlacesCount >= rewardLevel) {
-              emails.add(userData['email']);
-            }
-          }
-        });
-
-        yield emails;
-      } else {
-        yield [];
-      }
-    }
   }
 }
