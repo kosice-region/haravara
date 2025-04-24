@@ -92,7 +92,7 @@ class SpecialRewardUsersScreen extends ConsumerWidget {
                       exportDataToExcel(context,rewardLevel);
                       },
                         child: Text(
-                          'Export to Excel',
+                          'Exportovať do Excelu',
                           style: GoogleFonts.titanOne(
                           fontSize: 14.sp,
                           color: Colors.white,
