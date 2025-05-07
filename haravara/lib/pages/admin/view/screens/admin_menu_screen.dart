@@ -9,6 +9,7 @@ import 'package:haravara/core/providers/login_provider.dart';
 import 'package:haravara/core/providers/preferences_provider.dart';
 import 'package:haravara/core/services/database_service.dart';
 import 'package:haravara/pages/admin/view/screens/admin_actual_rewards_screen.dart';
+import 'package:haravara/pages/admin/view/screens/admin_delete_user_screen.dart';
 import 'package:haravara/pages/admin/view/screens/special_rewards/special_reward_screen.dart';
 import 'package:haravara/pages/bug_reading/bug_reading.dart';
 import 'package:haravara/pages/map_detail/providers/collected_places_provider.dart';
@@ -106,6 +107,15 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
                   'Nahlásiť problém',
                   const Color(0xFF33C233),
                   BugReadingScreen(),
+                  buttonWidth,
+                  buttonHeight,
+                ),
+                SizedBox(height: 20.h),
+                buildResponsiveButton(
+                  context,
+                  'Odstraniť použivateľa',
+                  const Color(0xFFD50F27),
+                  AdminDeleteUserScreen(),
                   buttonWidth,
                   buttonHeight,
                 ),

@@ -124,6 +124,122 @@ class DatabaseRepository {
 
   }
 
+  Future<bool> removeUserCompletely(String userIdToRemove) async {
+    final FirebaseDatabase _database = FirebaseDatabase.instance;
+    final FirebaseStorage _storage = FirebaseStorage.instance;
+
+    // Input validation (basic check)
+    if (userIdToRemove.isEmpty) {
+      print("Error: User ID cannot be empty.");
+      return false;
+    }
+
+    print("--- WARNING: Attempting to permanently delete user: $userIdToRemove ---");
+
+    String? userEmail;
+    String? base64Email;
+
+    try {
+      // 1. Try to get the user's email first to remove hash entries
+      final userRef = _database.ref('users/$userIdToRemove');
+      final DataSnapshot userSnapshot = await userRef.get();
+
+      if (userSnapshot.exists && userSnapshot.value != null) {
+        Map<dynamic, dynamic>? userData = userSnapshot.value as Map?;
+        if (userData != null && userData.containsKey('email')) {
+          userEmail = userData['email'] as String?;
+          if (userEmail != null) {
+
+            base64Email = generateBase64(userEmail);
+            print("Found email: $userEmail, Base64: $base64Email for user $userIdToRemove");
+          } else {
+            print("User node exists for $userIdToRemove but email field is missing or null.");
+          }
+        } else {
+          print("User node exists for $userIdToRemove but email field is missing.");
+        }
+      } else {
+        print("User node 'users/$userIdToRemove' does not exist. Cannot fetch email.");
+      }
+
+      List<DatabaseReference> refsToRemove = [];
+
+      // Primary user data
+      refsToRemove.add(_database.ref('users/$userIdToRemove'));
+
+      // Username mapping
+      refsToRemove.add(_database.ref('usernames/$userIdToRemove'));
+
+      // Collected locations
+      refsToRemove.add(_database.ref('collectedLocationsByUsers/$userIdToRemove'));
+
+      // Active rewards
+      refsToRemove.add(_database.ref('userRewards/activeRewards/$userIdToRemove'));
+
+      // Claimed rewards (Optional: decide if you want to keep this history)
+      refsToRemove.add(_database.ref('userRewards/claimedRewards/$userIdToRemove'));
+
+
+      // Images
+      final ListResult result = await _storage.ref("images/users-avatars/$userIdToRemove").listAll();
+      for (final Reference ref in result.items) {
+        print("Deleting from Storage: ${ref.fullPath}");
+        await ref.delete();
+      }
+
+      // Email hash lookups (if email was found)
+      if (base64Email != null) {
+        refsToRemove.add(_database.ref('userHashes/$base64Email'));
+        refsToRemove.add(_database.ref('userIds/$base64Email'));
+      } else {
+        print("Skipping removal of userHashes/userIds for $userIdToRemove because email/base64Email could not be determined.");
+      }
+
+
+      // 3. Perform deletions
+      for (DatabaseReference ref in refsToRemove) {
+        print("Attempting to remove: ${ref.path}");
+        // Check if the node actually exists before trying to remove (optional, remove() doesn't fail if path non-existent)
+        // final checkSnapshot = await ref.get();
+        // if (checkSnapshot.exists) {
+        await ref.remove();
+        print("Removed: ${ref.path}");
+        // } else {
+        //    print("Skipped (already non-existent): ${ref.path}");
+        // }
+      }
+
+      print("--- User removal process completed for: $userIdToRemove ---");
+      return true; // Indicate success
+    } catch (e) {
+      print("--- Error removing user $userIdToRemove: $e ---");
+      // Handle the error appropriately (e.g., log it, show a message)
+      return false; // Indicate failure
+    }
+  }
+
+  Future<String> getUserIdByEmail(String email) async {
+    final usersRef = FirebaseDatabase.instance.ref('users');
+    final snapshot = await usersRef.orderByChild('email').equalTo(email).get();
+    if (snapshot.exists && snapshot.children.isNotEmpty) {
+      final userKey = snapshot.children.first.key;
+
+      if (userKey != null) {
+        return userKey;
+      } else {
+        throw Exception('Found user for email $email, but failed to retrieve user ID (key was null).');
+      }
+    } else {
+      throw Exception('User not found for email: $email');
+    }
+  }
+
+  String generateBase64(String input) {
+    Codec<String, String> stringToBase64 = utf8.fuse(base64);
+    return stringToBase64.encode(input);
+  }
+
+
   static Map<String, dynamic> decodeJsonFromSnapshot(DataSnapshot snapshot) {
     Map<dynamic, dynamic> dataFromSnapshot =
         snapshot.value as Map<dynamic, dynamic>;
@@ -132,3 +248,5 @@ class DatabaseRepository {
     return jsonToReturn;
   }
 }
+
+

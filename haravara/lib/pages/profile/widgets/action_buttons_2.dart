@@ -1,9 +1,12 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/repositories/database_repository.dart';
 import '../../../router/router.dart';
 import '../../../router/screen_router.dart';
 
@@ -163,7 +166,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
 
     if (confirm != true) return;
 
-    String input = '';
+
     final textController = TextEditingController();
 
     final confirmed = await showDialog<bool>(
@@ -173,10 +176,9 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Pre vymazanie účtu napíšte: "vymazat ucet" bez diakritiky a úvodzoviek.'),
+            Text('Pre vymazanie účtu napíšte: \n"vymazat ucet"'),
             TextField(
               controller: textController,
-              onChanged: (val) => input = val,
             ),
           ],
         ),
@@ -216,7 +218,12 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
     Navigator.pop(context); // close loading
 
     // Call logout and cleanup
-    // await handleLogout(ref, context);
+
+    final databaseRepository = DatabaseRepository();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    databaseRepository.removeUserCompletely(prefs.getString('id')!);
+    await handleLogout(ref, context);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Účet bol úspešne vymazaný')),

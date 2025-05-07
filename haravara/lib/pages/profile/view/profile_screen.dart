@@ -10,7 +10,6 @@ import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/router/router.dart';
 
 import '../../../core/widgets/close_button.dart';
-import '../../../router/router.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
