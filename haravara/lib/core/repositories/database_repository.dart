@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -127,8 +128,8 @@ class DatabaseRepository {
   Future<bool> removeUserCompletely(String userIdToRemove) async {
     final FirebaseDatabase _database = FirebaseDatabase.instance;
     final FirebaseStorage _storage = FirebaseStorage.instance;
+    final FirebaseAuth _auth = FirebaseAuth.instance;
 
-    // Input validation (basic check)
     if (userIdToRemove.isEmpty) {
       print("Error: User ID cannot be empty.");
       return false;
@@ -140,7 +141,6 @@ class DatabaseRepository {
     String? base64Email;
 
     try {
-      // 1. Try to get the user's email first to remove hash entries
       final userRef = _database.ref('users/$userIdToRemove');
       final DataSnapshot userSnapshot = await userRef.get();
 
@@ -176,7 +176,7 @@ class DatabaseRepository {
       // Active rewards
       refsToRemove.add(_database.ref('userRewards/activeRewards/$userIdToRemove'));
 
-      // Claimed rewards (Optional: decide if you want to keep this history)
+      // Claimed rewards
       refsToRemove.add(_database.ref('userRewards/claimedRewards/$userIdToRemove'));
 
 
@@ -187,7 +187,7 @@ class DatabaseRepository {
         await ref.delete();
       }
 
-      // Email hash lookups (if email was found)
+      // Email
       if (base64Email != null) {
         refsToRemove.add(_database.ref('userHashes/$base64Email'));
         refsToRemove.add(_database.ref('userIds/$base64Email'));
@@ -196,25 +196,23 @@ class DatabaseRepository {
       }
 
 
+
       // 3. Perform deletions
       for (DatabaseReference ref in refsToRemove) {
         print("Attempting to remove: ${ref.path}");
-        // Check if the node actually exists before trying to remove (optional, remove() doesn't fail if path non-existent)
-        // final checkSnapshot = await ref.get();
-        // if (checkSnapshot.exists) {
+
         await ref.remove();
+        _auth.currentUser?.delete();
+
         print("Removed: ${ref.path}");
-        // } else {
-        //    print("Skipped (already non-existent): ${ref.path}");
-        // }
+
       }
 
       print("--- User removal process completed for: $userIdToRemove ---");
-      return true; // Indicate success
+      return true;
     } catch (e) {
       print("--- Error removing user $userIdToRemove: $e ---");
-      // Handle the error appropriately (e.g., log it, show a message)
-      return false; // Indicate failure
+      return false;
     }
   }
 

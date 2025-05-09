@@ -10,6 +10,7 @@ import '../../../core/repositories/database_repository.dart';
 import '../../../router/router.dart';
 import '../../../router/screen_router.dart';
 
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:haravara/core/providers/login_provider.dart';
 import 'package:haravara/core/providers/preferences_provider.dart';
@@ -222,7 +223,7 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
     final databaseRepository = DatabaseRepository();
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    databaseRepository.removeUserCompletely(prefs.getString('id')!);
+    await databaseRepository.removeUserCompletely(prefs.getString('id')!);
     await handleLogout(ref, context);
 
     ScaffoldMessenger.of(context).showSnackBar(
