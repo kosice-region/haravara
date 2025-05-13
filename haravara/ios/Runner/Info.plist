@@ -40,7 +40,7 @@
 			<string>bundle ID</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.example.haravara</string>
+				<string>sk.kosiceregion.haravara</string>
 			</array>
 		</dict>
 	</array>
