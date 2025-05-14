@@ -11,7 +11,7 @@
       "ios": {
         "default": {
           "projectId": "haravara-30826",
-          "appId": "1:231931394475:ios:84237bb23a0874efcbfaee",
+          "appId": "1:231931394475:ios:866c1a6b57d8a934cbfaee",
           "uploadDebugSymbols": false,
           "fileOutput": "ios/Runner/GoogleService-Info.plist"
         }
@@ -21,7 +21,7 @@
           "projectId": "haravara-30826",
           "configurations": {
             "android": "1:231931394475:android:083f6ce9085e75efcbfaee",
-            "ios": "1:231931394475:ios:84237bb23a0874efcbfaee"
+            "ios": "1:231931394475:ios:866c1a6b57d8a934cbfaee"
           }
         }
       }

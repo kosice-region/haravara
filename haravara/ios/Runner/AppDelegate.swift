@@ -10,7 +10,7 @@ import flutter_background_service_ios
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     FirebaseApp.configure()
-    SwiftFlutterBackgroundServicePlugin.taskIdentifier = "com.example.haravara"
+    SwiftFlutterBackgroundServicePlugin.taskIdentifier = "sk.kosiceregion.haravara"
     GeneratedPluginRegistrant.register(with: self)
 
     if #available(iOS 10.0, *) {

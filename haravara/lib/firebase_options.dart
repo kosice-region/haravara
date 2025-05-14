@@ -70,12 +70,12 @@ class DefaultFirebaseOptions {
 
    static const FirebaseOptions ios = FirebaseOptions(
      apiKey: 'AIzaSyDKF-l9GiUZNQJYXa06kh17v0gFA1cJJGg',
-     appId: '1:231931394475:ios:84237bb23a0874efcbfaee',
+     appId: '1:231931394475:ios:866c1a6b57d8a934cbfaee',
      messagingSenderId: '231931394475',
      projectId: 'haravara-30826',
      databaseURL: 'https://haravara-30826-default-rtdb.europe-west1.firebasedatabase.app',
      storageBucket: 'haravara-30826.appspot.com',
-     iosBundleId: 'com.example.haravara',
+     iosBundleId: 'sk.kosiceregion.haravara',
    );
 
   // USING HARAVARA-TEST
