@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "haravara" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "haravara" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 sk.kosiceregion. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 sk.kosiceregion. All rights reserved." "\0"
             VALUE "OriginalFilename", "haravara.exe" "\0"
             VALUE "ProductName", "haravara" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

@@ -11,4 +11,4 @@ PRODUCT_NAME = haravara
 PRODUCT_BUNDLE_IDENTIFIER = sk.kosiceregion.haravara
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2025 sk.kosiceregion. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2023 sk.kosiceregion. All rights reserved.

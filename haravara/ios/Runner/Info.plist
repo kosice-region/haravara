@@ -8,15 +8,6 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Haravara</string>
-	<key>FirebaseDynamicLinksCustomDomains</key>
-<array>
-    <string>https://haravara.page.link</string> 
-</array>
-<key>UIApplicationExitsOnSuspend</key>
-<false/>
-<key>UILaunchStoryboardName</key>
-<string>LaunchScreen</string>
-
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -37,7 +28,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>bundle ID</string>
+			<string>Bundle id</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>sk.kosiceregion.haravara</string>
@@ -46,9 +37,13 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+		<string>https://haravara.page.link</string>
+	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-	<string>sznmap</string>
+		<string>sznmap</string>
 		<string>szn-mapy</string>
 		<string>comgooglemaps</string>
 		<string>mapycz</string>
@@ -86,6 +81,8 @@
 	<string>Used to recognize user activity information.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to allow camera</string>
+	<key>UIApplicationExitsOnSuspend</key>
+	<false/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
