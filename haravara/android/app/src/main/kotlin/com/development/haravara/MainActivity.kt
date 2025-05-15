@@ -1,4 +1,4 @@
-package com.development.haravara
+package sk.kosiceregion.haravara
 
 import io.flutter.embedding.android.FlutterActivity
 
