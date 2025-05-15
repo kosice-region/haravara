@@ -34,9 +34,9 @@ class AuthService {
     ActionCodeSettings actionCodeSettings = ActionCodeSettings(
       url: 'https://haravara.page.link/XwD9?email=$email',
       handleCodeInApp: true,
-      androidPackageName: 'com.development.haravara',
+      androidPackageName: 'sk.kosiceregion.haravara',
       androidInstallApp: true,
-      iOSBundleId: 'com.example.yourapp',
+      iOSBundleId: 'sk.kosiceregion.haravara',
     );
 
     try {
