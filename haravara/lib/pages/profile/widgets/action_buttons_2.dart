@@ -140,6 +140,8 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
     ref.invalidate(userInfoProvider);
     await DatabaseService().clearRichedPlaces();
     await DatabaseService().clearUserAllAvatarsFromDatabase();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
       context,
       ScreenRouter().getScreenWidget(ScreenType.auth),
