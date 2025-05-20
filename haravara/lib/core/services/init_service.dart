@@ -83,7 +83,7 @@ class Init {
         print("Location When In Use permission denied.");
       }
     } else if (status.isPermanentlyDenied) {
-      await openAppSettings();
+      print("User chose not to grant Location permission.");
     } else {
       print("Location permission is in a restricted/limited state.");
     }
