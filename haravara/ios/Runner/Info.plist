@@ -72,9 +72,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Used to allow camera</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Used to provide geofence services in the background.</string>
+	<string>Potrebujeme neustály prístup k vašej polohe, aby sme vám umožnili zbierať pečiatky.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Used to collect location data in the background.</string>
+	<string>Potrebujeme vašu polohu, aby sme vám umožnili zbierať pečiatky.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Used to collect location data.</string>
 	<key>NSMotionUsageDescription</key>
