@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -124,6 +125,119 @@ class DatabaseRepository {
 
   }
 
+  Future<bool> removeUserCompletely(String userIdToRemove) async {
+    final FirebaseDatabase _database = FirebaseDatabase.instance;
+    final FirebaseStorage _storage = FirebaseStorage.instance;
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
+    if (userIdToRemove.isEmpty) {
+      print("Error: User ID cannot be empty.");
+      return false;
+    }
+
+    print("--- WARNING: Attempting to permanently delete user: $userIdToRemove ---");
+
+    String? userEmail;
+    String? base64Email;
+
+    try {
+      final userRef = _database.ref('users/$userIdToRemove');
+      final DataSnapshot userSnapshot = await userRef.get();
+
+      if (userSnapshot.exists && userSnapshot.value != null) {
+        Map<dynamic, dynamic>? userData = userSnapshot.value as Map?;
+        if (userData != null && userData.containsKey('email')) {
+          userEmail = userData['email'] as String?;
+          if (userEmail != null) {
+
+            base64Email = generateBase64(userEmail);
+            print("Found email: $userEmail, Base64: $base64Email for user $userIdToRemove");
+          } else {
+            print("User node exists for $userIdToRemove but email field is missing or null.");
+          }
+        } else {
+          print("User node exists for $userIdToRemove but email field is missing.");
+        }
+      } else {
+        print("User node 'users/$userIdToRemove' does not exist. Cannot fetch email.");
+      }
+
+      List<DatabaseReference> refsToRemove = [];
+
+      // Primary user data
+      refsToRemove.add(_database.ref('users/$userIdToRemove'));
+
+      // Username mapping
+      refsToRemove.add(_database.ref('usernames/$userIdToRemove'));
+
+      // Collected locations
+      refsToRemove.add(_database.ref('collectedLocationsByUsers/$userIdToRemove'));
+
+      // Active rewards
+      refsToRemove.add(_database.ref('userRewards/activeRewards/$userIdToRemove'));
+
+      // Claimed rewards
+      refsToRemove.add(_database.ref('userRewards/claimedRewards/$userIdToRemove'));
+
+
+      // Images
+      final ListResult result = await _storage.ref("images/users-avatars/$userIdToRemove").listAll();
+      for (final Reference ref in result.items) {
+        print("Deleting from Storage: ${ref.fullPath}");
+        await ref.delete();
+      }
+
+      // Email
+      if (base64Email != null) {
+        refsToRemove.add(_database.ref('userHashes/$base64Email'));
+        refsToRemove.add(_database.ref('userIds/$base64Email'));
+      } else {
+        print("Skipping removal of userHashes/userIds for $userIdToRemove because email/base64Email could not be determined.");
+      }
+
+
+
+      // 3. Perform deletions
+      for (DatabaseReference ref in refsToRemove) {
+        print("Attempting to remove: ${ref.path}");
+
+        await ref.remove();
+        _auth.currentUser?.delete();
+
+        print("Removed: ${ref.path}");
+
+      }
+
+      print("--- User removal process completed for: $userIdToRemove ---");
+      return true;
+    } catch (e) {
+      print("--- Error removing user $userIdToRemove: $e ---");
+      return false;
+    }
+  }
+
+  Future<String> getUserIdByEmail(String email) async {
+    final usersRef = FirebaseDatabase.instance.ref('users');
+    final snapshot = await usersRef.orderByChild('email').equalTo(email).get();
+    if (snapshot.exists && snapshot.children.isNotEmpty) {
+      final userKey = snapshot.children.first.key;
+
+      if (userKey != null) {
+        return userKey;
+      } else {
+        throw Exception('Found user for email $email, but failed to retrieve user ID (key was null).');
+      }
+    } else {
+      throw Exception('User not found for email: $email');
+    }
+  }
+
+  String generateBase64(String input) {
+    Codec<String, String> stringToBase64 = utf8.fuse(base64);
+    return stringToBase64.encode(input);
+  }
+
+
   static Map<String, dynamic> decodeJsonFromSnapshot(DataSnapshot snapshot) {
     Map<dynamic, dynamic> dataFromSnapshot =
         snapshot.value as Map<dynamic, dynamic>;
@@ -132,3 +246,5 @@ class DatabaseRepository {
     return jsonToReturn;
   }
 }
+
+

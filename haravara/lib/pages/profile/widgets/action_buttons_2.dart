@@ -1,11 +1,15 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/repositories/database_repository.dart';
 import '../../../router/router.dart';
 import '../../../router/screen_router.dart';
+
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:haravara/core/providers/login_provider.dart';
@@ -23,56 +27,83 @@ class ActionButtons2 extends ConsumerStatefulWidget {
 
 class _ActionButtonsState extends ConsumerState<ActionButtons2> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Column(
       children: [
-        Container(
-          width: 105.w,
-          height: 40.h,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 255, 190, 0),
-              foregroundColor: Colors.black,
-              side: BorderSide(
-                color: Colors.white,
-                width: 4,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Container(
+              width: 105.w,
+              height: 40.h,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 255, 190, 0),
+                  foregroundColor: Colors.black,
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 4,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.r),
+                  ),
+                  elevation: 3,
+                  shadowColor: Colors.black.withOpacity(0.3),
+                ),
+                onPressed: () {
+                  ref.read(routerProvider.notifier).changeScreen(ScreenType.bugreport);
+                  ScreenRouter().routeToNextScreen(
+                    context,
+                    ScreenRouter().getScreenWidget(ScreenType.bugreport),
+                  );
+                },
+                child: Text(
+                  'Nahlásiť\nproblem',
+                  style: GoogleFonts.titanOne(
+                    color: Colors.white,
+                    fontSize: 11.sp,
+                  ),
+                ),
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.r),
-              ),
-              elevation: 3,
-              shadowColor: Colors.black.withOpacity(0.3),
             ),
-            onPressed: () {
-
-              ref.read(routerProvider.notifier).changeScreen(ScreenType.bugreport);
-              ScreenRouter().routeToNextScreen(
-
-                context,
-                ScreenRouter().getScreenWidget(ScreenType.bugreport),
-              );
-            },
-            child: Text(
-              'Nahlásiť\nproblem',
-              style: GoogleFonts.titanOne(
-                color: Colors.white,
-                fontSize: 11.sp,
+            Container(
+              width: 105.w,
+              height: 40.h,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFFD584A),
+                  foregroundColor: Colors.black,
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 4,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.r),
+                  ),
+                  elevation: 3,
+                  shadowColor: Colors.black.withOpacity(0.3),
+                ),
+                onPressed: () async {
+                  await handleLogout(ref, context);
+                },
+                child: Text(
+                  'Odhlásiť',
+                  style: GoogleFonts.titanOne(
+                    color: Colors.white,
+                    fontSize: 13.sp,
+                  ),
+                ),
               ),
-            ),
-          ),
+            )
+          ],
         ),
+        SizedBox(height: 10.h),
         Container(
-          width: 105.w,
+          width: 220.w,
           height: 40.h,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFFD584A),
+              backgroundColor: Color.fromARGB(255, 228, 28, 10),
               foregroundColor: Colors.black,
               side: BorderSide(
                 color: Colors.white,
@@ -85,12 +116,12 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
               shadowColor: Colors.black.withOpacity(0.3),
             ),
             onPressed: () async {
-              handleLogout(ref, context);
+              await confirmAccountDeletion(context, ref);
             },
             child: Text(
-              'Odhlásiť',
+              'Vymazať účet',
               style: GoogleFonts.titanOne(
-                color: const Color.fromARGB(255, 255, 255, 255),
+                color: Colors.white,
                 fontSize: 13.sp,
               ),
             ),
@@ -109,7 +140,96 @@ class _ActionButtonsState extends ConsumerState<ActionButtons2> {
     ref.invalidate(userInfoProvider);
     await DatabaseService().clearRichedPlaces();
     await DatabaseService().clearUserAllAvatarsFromDatabase();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
     ScreenRouter().routeToNextScreenWithoutAllowingRouteBack(
-        context, ScreenRouter().getScreenWidget(ScreenType.auth));
+      context,
+      ScreenRouter().getScreenWidget(ScreenType.auth),
+    );
+  }
+
+  Future<void> confirmAccountDeletion(BuildContext context, WidgetRef ref) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Potvrdenie'),
+        content: Text('Naozaj chcete vymazať svoj účet?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Nie'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Áno'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+
+    final textController = TextEditingController();
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Zadajte potvrdenie'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Pre vymazanie účtu napíšte: \n"vymazat ucet"'),
+            TextField(
+              controller: textController,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Zrušiť'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (textController.text.trim().toLowerCase() == 'vymazat ucet') {
+                Navigator.pop(context, true);
+              } else {
+                Navigator.pop(context, false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Zle zadané potvrdenie')),
+                );
+              }
+            },
+            child: Text('Potvrdiť'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    // Simulate backend call
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => Center(child: CircularProgressIndicator()),
+    );
+
+    await Future.delayed(Duration(seconds: 2));
+
+    Navigator.pop(context); // close loading
+
+    // Call logout and cleanup
+
+    final databaseRepository = DatabaseRepository();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await databaseRepository.removeUserCompletely(prefs.getString('id')!);
+    await handleLogout(ref, context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Účet bol úspešne vymazaný')),
+    );
   }
 }

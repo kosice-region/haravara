@@ -254,7 +254,7 @@ class AuthService {
         ref.read(userInfoProvider.notifier).build();
         ref.read(userInfoProvider.notifier).updateUsername(storedUsername);
 
-        await prefs.clear();
+        // await prefs.clear();
 
         log('navigating to ScreenType.news');
         routeToNewsScreen();

@@ -59,17 +59,6 @@ class Init {
     var status = await Permission.location.status;
 
     if (status.isGranted) {
-      var alwaysStatus = await Permission.locationAlways.status;
-      if (!alwaysStatus.isGranted) {
-        var newAlwaysStatus = await Permission.locationAlways.request();
-        if (newAlwaysStatus.isGranted) {
-          print("Location Always permission granted.");
-        } else {
-          print("User chose not to grant Location Always permission.");
-        }
-      } else {
-        print("Already have Location Always permission.");
-      }
     } else if (status.isDenied) {
       var newStatus = await Permission.location.request();
       if (newStatus.isGranted) {

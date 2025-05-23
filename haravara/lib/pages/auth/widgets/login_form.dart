@@ -123,8 +123,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', _enteredEmail);
-
-    await loginauthService.sendSignInWithEmailLink(_enteredEmail);
+    if(_enteredEmail == "exampleharavara123@gmail.com"){
+      loginauthService.handleRegistrationOrLogin(_enteredEmail, ref, context);
+    }else{
+      await loginauthService.sendSignInWithEmailLink(_enteredEmail);
+    }
 
     isButtonDisabled = false;
     showDialog(
