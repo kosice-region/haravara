@@ -245,7 +245,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                   ),
                 CheckButton(
                   value: isFamily,
-                  text: 'Patrať ako rodina',
+                  text: 'Pátrať ako rodina',
                   onChanged: _toggleIsFamily,
                 ),
                 CheckButton(
