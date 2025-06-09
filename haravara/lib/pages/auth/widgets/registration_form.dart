@@ -250,7 +250,7 @@ class _RegistrationFormState extends ConsumerState<RegistrationForm> {
                 ),
                 CheckButton(
                   value: _acceptGDPRandVOP,
-                  text: 'Súhlasím s',
+                  text: 'Som oboznámený s',
                   clickableText: 'GDPR',
                   hasClickablePart: true,
                   onClickableTextTap: () {
