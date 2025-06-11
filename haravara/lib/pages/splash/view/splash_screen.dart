@@ -36,7 +36,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _animationController.forward();
 
     _performInitialChecks();
-
   }
 
   Future<void> _performInitialChecks() async {
@@ -47,7 +46,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       _isConnected = null;
     });
 
-    // Check internet connection
     bool hasInternet = await InternetConnection().hasInternetAccess;
 
     if (mounted) {
@@ -56,7 +54,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         _initialCheckDone = true;
       });
     }
-
   }
 
   @override
@@ -69,8 +66,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
 
-
     double progress = ref.watch(initializationProgressProvider) * 100;
+
+    Color backgroundColor = const Color(0xFFF2F3F4);
+    Color logoAccent = const Color(0xFFBC5FBE);
+    Color textColor = Colors.black87;
+    Color subTextColor = Colors.grey[800]!;
+    Color progressBackground = Colors.grey[300]!;
+    Color spinnerColor = logoAccent;
 
     Widget currentScreenStateContent;
 
@@ -79,25 +82,26 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
-            'assets/logo-haravara.png', // Ensure path is correct
+            'assets/logo-haravara.png',
             width: 150.w,
             height: 180.h,
           ),
           SizedBox(height: 20.h),
           Platform.isIOS
-              ? CupertinoActivityIndicator(radius: 12.r, color: Colors.white)
+              ? CupertinoActivityIndicator(radius: 12.r, color: spinnerColor)
               : SizedBox(
-            width: 24.w, // Slightly larger
-            height: 24.h,
-            child: const CircularProgressIndicator(
-              color: Colors.white,
-              strokeWidth: 3.0, // Slightly thicker
-            ),
-          ),
+                  width: 28.w,
+                  height: 28.h,
+                  child: CircularProgressIndicator(
+                    color: spinnerColor,
+                    strokeWidth: 3.0,
+                  ),
+                ),
           SizedBox(height: 15.h),
           Text(
-            "Kontrolujem pripojenie...", // "Checking connection..."
-            style: GoogleFonts.titanOne(fontSize: 16.sp, color: Colors.grey[400]),
+            "Kontrolujem pripojenie...",
+            style: GoogleFonts.titanOne(
+                fontSize: 16.sp, color: subTextColor, letterSpacing: 0.2),
           ),
         ],
       );
@@ -106,25 +110,29 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
-            'assets/logo-haravara.png', // Ensure path is correct
+            'assets/logo-haravara.png',
             width: 150.w,
             height: 180.h,
           ),
           SizedBox(height: 25.h),
-          Icon(Icons.signal_wifi_off_rounded, size: 50.r, color: Colors.redAccent[100]),
+          Icon(Icons.signal_wifi_off_rounded,
+              size: 50.r, color: Colors.red[400]),
           SizedBox(height: 15.h),
           Text(
-            'Žiadne internetové pripojenie', // "No Internet Connection"
+            'Žiadne internetové pripojenie',
             textAlign: TextAlign.center,
-            style: GoogleFonts.titanOne(fontSize: 18.sp, color: Colors.white),
+            style: GoogleFonts.titanOne(fontSize: 18.sp, color: textColor),
           ),
           SizedBox(height: 8.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Text(
-              'Skontrolujte pripojenie k sieti a skúste to znova.', // "Please check your network connection and try again."
+              'Skontrolujte pripojenie k sieti a skúste to znova.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.titanOne(fontSize: 14.sp, color: Colors.grey[500]),
+              style: GoogleFonts.titanOne(
+                  fontSize: 14.sp,
+                  color: subTextColor,
+                  fontWeight: FontWeight.w400),
             ),
           ),
           SizedBox(height: 30.h),
@@ -135,38 +143,35 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/logo-haravara.png', // Ensure path is correct
+            'assets/logo-haravara.png',
             width: 150.w,
             height: 180.h,
           ),
-          SizedBox(height: 5.h), // Adjusted spacing
+          SizedBox(height: 5.h),
           Text(
             "Inicializácia",
-            style: GoogleFonts.titanOne(fontSize: 20.sp, color: Colors.grey[400]),
+            style: GoogleFonts.titanOne(fontSize: 20.sp, color: subTextColor),
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: 14.h),
           Platform.isIOS
-              ? CupertinoActivityIndicator(
-            radius: 10.r,
-            color: Colors.white,
-          )
+              ? CupertinoActivityIndicator(radius: 12.r, color: spinnerColor)
               : SizedBox(
-            width: 20.w,
-            height: 20.h,
-            child: const CircularProgressIndicator(
-              color: Colors.white,
-              strokeWidth: 2.5,
-            ),
-          ),
-          SizedBox(height: 20.h),
+                  width: 28.w,
+                  height: 28.h,
+                  child: CircularProgressIndicator(
+                    color: spinnerColor,
+                    strokeWidth: 3.0,
+                  ),
+                ),
+          SizedBox(height: 24.h),
           Container(
             width: 204.w,
             height: 29.h,
             decoration: BoxDecoration(
               color: Colors.transparent,
               border: Border.all(
-                color: Colors.white.withOpacity(0.7), // Slightly transparent border
-                width: 2.5, // Adjusted border width
+                color: subTextColor,
+                width: 3.0,
               ),
               borderRadius: BorderRadius.circular(16.r),
             ),
@@ -175,8 +180,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 width: 200.w,
                 height: 25.h,
                 decoration: BoxDecoration(
-                  // Using a darker grey for better contrast if progress bar is light
-                  color: Colors.grey[700]?.withOpacity(0.5),
+                  color: progressBackground,
                   borderRadius: BorderRadius.circular(12.5.r),
                 ),
                 child: Stack(
@@ -187,23 +191,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       child: LinearProgressIndicator(
                         value: progress / 100,
                         minHeight: 25.h,
-                        backgroundColor: Colors.transparent, // Handled by container
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            const Color.fromARGB(255, 188, 95, 190).withOpacity(1)),
+                        backgroundColor: Colors.transparent,
+                        valueColor: AlwaysStoppedAnimation<Color>(logoAccent),
                       ),
                     ),
                     Text(
                       '${progress.toStringAsFixed(0)}%',
                       style: GoogleFonts.titanOne(
-                          fontSize: 16.sp,
-                          color: Colors.white,
-                          shadows: [ // Adding a subtle shadow for text readability
-                            Shadow(
-                              blurRadius: 2.0,
-                              color: Colors.black.withOpacity(0.5),
-                              offset: Offset(1.0, 1.0),
-                            ),
-                          ]),
+                        fontSize: 16.sp,
+                        color: textColor,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 1.0,
+                            color: Colors.white.withOpacity(0.2),
+                            offset: Offset(0.5, 0.5),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -214,54 +218,53 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       );
     }
 
-    // The main layout of the splash screen
     Widget screenLayout = Column(
       children: <Widget>[
         Expanded(
-          child: Center(child: currentScreenStateContent), // Content fills the expanded area
+          child: Center(child: currentScreenStateContent),
         ),
-        20.h.verticalSpace, // Space before company logos
-    Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [
-    SizedBox(
-      width: 55.w,
-      height: 55.h,
-      child: Image.asset(
-        'assets/company-logo/KSK_logo_hor_ver_inv.png', // Ensure path is correct
-        fit: BoxFit.contain,
+        20.h.verticalSpace,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: 55.w,
+              height: 55.h,
+              child: Image.asset(
+                'assets/company-logo/KSK_logo_hor_ver_b.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+            SizedBox(
+              width: 65.w,
+              height: 65.h,
+              child: Image.asset(
+                'assets/company-logo/Logo_KRT_SK_b.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+            SizedBox(
+              width: 30.w,
+              height: 30.h,
+              child: Image.asset(
+                'assets/company-logo/T_logo_rgb_p.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ],
         ),
-      ),
-    SizedBox(
-        width: 65.w,
-        height: 65.h,
-        child: Image.asset(
-          'assets/company-logo/Logo_KRT_SK_w.png', // Ensure path is correct
-          fit: BoxFit.contain,
-      ),
-    ),
-    SizedBox(
-      width: 30.w,
-      height: 30.h,
-      child: Image.asset(
-          'assets/company-logo/T_logo_rgb_p.png', // Ensure path is correct
-          fit: BoxFit.contain,
-        ),
-      ),
-    ],
-    ), // Company logos at the bottom
-        SizedBox(height: 20.h), // Padding at the very bottom
+        SizedBox(height: 20.h),
       ],
     );
 
     return Material(
-      color: Colors.black,
+      color: backgroundColor,
       child: AnimatedBuilder(
         animation: _fadeAnimation,
         builder: (context, child) {
           return Opacity(
             opacity: _fadeAnimation.value,
-            child: child, // Apply fade to the entire screenLayout
+            child: child,
           );
         },
         child: screenLayout,
