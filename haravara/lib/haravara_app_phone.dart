@@ -57,7 +57,8 @@ class _HaravaraAppState extends ConsumerState<HaravaraApp> {
   void handleDynamicLinks() async {
     final prefs = await SharedPreferences.getInstance();
 
-    FirebaseDynamicLinks.instance.onLink.listen((PendingDynamicLinkData? dynamicLink) async {
+    FirebaseDynamicLinks.instance.onLink
+        .listen((PendingDynamicLinkData? dynamicLink) async {
       final Uri? deepLink = dynamicLink?.link;
       log('Deep link received: $deepLink');
 
@@ -76,7 +77,8 @@ class _HaravaraAppState extends ConsumerState<HaravaraApp> {
       log('Dynamic link error: ${error.message}');
     });
 
-    final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
+    final PendingDynamicLinkData? initialLink =
+        await FirebaseDynamicLinks.instance.getInitialLink();
     if (initialLink?.link != null) {
       final Uri deepLink = initialLink!.link;
       String? email = prefs.getString('email');

@@ -244,10 +244,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               ),
             ),
             SizedBox(
-              width: 30.w,
-              height: 30.h,
+              width: 50.w,
+              height: 50.h,
               child: Image.asset(
-                'assets/company-logo/T_logo_rgb_p.png',
+                'assets/company-logo/DTITSO_rgb_m.png',
                 fit: BoxFit.contain,
               ),
             ),
