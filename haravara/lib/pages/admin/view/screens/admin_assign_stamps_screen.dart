@@ -367,8 +367,8 @@ class EmailSuggestionsList extends StatelessWidget {
                 itemCount: userEmails.length,
                 itemBuilder: (context, index) {
                   final email = userEmails[index];
-                  double dynamicFontSize = (18 - (email.length * 0.25))
-                      .clamp(6.0, 16.0); 
+                  double dynamicFontSize =
+                      (18 - (email.length * 0.25)).clamp(6.0, 16.0);
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 5.h),
                     child: Center(
@@ -377,14 +377,11 @@ class EmailSuggestionsList extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () => onEmailSelected(email),
                           child: Container(
-                            height: 45.h, 
+                            height: 45.h,
                             decoration: BoxDecoration(
                               color: Color(0xFF59B84A).withOpacity(0.9),
-                              borderRadius:
-                                  BorderRadius.circular(25), 
-                              border: Border.all(
-                                  color: Colors.white,
-                                  width: 4),
+                              borderRadius: BorderRadius.circular(25),
+                              border: Border.all(color: Colors.white, width: 4),
                             ),
                             child: Center(
                               child: Text(
@@ -594,6 +591,8 @@ class _LocationListState extends State<LocationList> {
   }
 
   void _confirmSelectedLocations() {
+    final Map<String, bool> originalStatus = Map.from(locationStatus);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -603,7 +602,7 @@ class _LocationListState extends State<LocationList> {
             style: GoogleFonts.titanOne(),
           ),
           content: Text(
-            'Si si istý že chceš uložiť tieto lokácie?',
+            'Si si istý, že chceš uložiť tieto lokácie?',
             style: GoogleFonts.titanOne(),
           ),
           actions: [
@@ -619,17 +618,49 @@ class _LocationListState extends State<LocationList> {
             TextButton(
               onPressed: () async {
                 final selectedPlaceIds = checkboxStatus.entries
-                    .where((entry) => entry.value)
-                    .map((entry) => entry.key)
+                    .where((e) => e.value)
+                    .map((e) => e.key)
                     .toList();
                 final unselectedPlaceIds = checkboxStatus.entries
-                    .where((entry) =>
-                        !entry.value && locationStatus[entry.key] == true)
-                    .map((entry) => entry.key)
+                    .where((e) => !e.value && originalStatus[e.key] == true)
+                    .map((e) => e.key)
                     .toList();
+
                 await addCollectedPlacesForUser(selectedPlaceIds);
                 await removeCollectedPlacesForUser(unselectedPlaceIds);
+
+                final addedCount = selectedPlaceIds
+                    .where((id) => originalStatus[id] == false)
+                    .length;
+
                 Navigator.of(context).pop();
+
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(
+                        'Hotovo',
+                        style: GoogleFonts.titanOne(),
+                      ),
+                      content: Text(
+                        'Úspešne pridaných pečiatok: $addedCount',
+                        style: GoogleFonts.titanOne(),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'OK',
+                            style: GoogleFonts.titanOne(),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               child: Text(
                 'Uložiť',
@@ -676,7 +707,9 @@ class _LocationListState extends State<LocationList> {
                       child: Text(
                         locationName,
                         style: GoogleFonts.titanOne(
-                          color: isCollected ? Color.fromARGB(255, 27, 218, 33) : Colors.white, 
+                          color: isCollected
+                              ? Color.fromARGB(255, 27, 218, 33)
+                              : Colors.white,
                           fontSize: 21.0,
                         ),
                       ),
