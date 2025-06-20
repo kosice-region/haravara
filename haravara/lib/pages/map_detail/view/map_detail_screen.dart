@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -193,49 +192,54 @@ class _MapDetailScreenState extends ConsumerState<MapDetailScreen> {
                 screenType: ScreenType.map,
                 shouldPop: true,
               ),
-            ),Positioned( //Info button
+            ),
+            Positioned(
+              //Info button
               top: 35.h,
               left: 20.w,
               child: IconButton(
-                icon: const Icon(Icons.info_outline, color: Colors.white, size: 65.0),
+                icon: const Icon(Icons.info_outline,
+                    color: Colors.white, size: 65.0),
                 onPressed: () {
                   showDialog(
                     context: context,
                     builder: (context) {
-                        return AlertDialog(
-                        backgroundColor: const Color.fromARGB(255, 224, 186, 60),
+                      return AlertDialog(
+                        backgroundColor:
+                            const Color.fromARGB(255, 224, 186, 60),
                         title: const Text(
                           'POZOR!',
                           style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 25.0,
-                          fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         content: const Text(
-                          'Google maps pomôžu s navigáciou na cestách. V teréne sa prosím orientuj lokálnym značením.\nKlikní na "Už som tu!" a aplikácia ti napovie, ako ďaleko si od miesta pečiatky.',
+                          'Google maps pomôžu s navigáciou na cestách. V teréne sa prosím orientuj lokálnym značením.\nKlikni na "Už som tu!" a aplikácia ti napovie, ako ďaleko si od miesta pečiatky.',
                           style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0, // Adjusted line height for smaller gap
+                            color: Colors.white,
+                            fontSize:
+                                18.0, // Adjusted line height for smaller gap
                           ),
                         ),
                         actions: [
                           TextButton(
-                          child: const Text(
-                            'OK',
-                            style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                          height: 0.5,
+                            child: const Text(
+                              'OK',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.bold,
+                                height: 0.5,
+                              ),
                             ),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
                           ),
                         ],
-                        );
+                      );
                     },
                   );
                 },
