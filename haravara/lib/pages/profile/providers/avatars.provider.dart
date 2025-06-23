@@ -32,22 +32,32 @@ class AvatarsNotifier extends ChangeNotifier {
 
   UserAvatar getCurrentAvatar() {
     final SharedPreferences pref = ref.read(sharedPreferencesProvider);
-    String currentAvatarId = pref.getString("profile_image") ?? '';
-    if (currentAvatarId.isEmpty) {
-      currentAvatarId = defaultId;
+    String currentAvatarId = pref.getString("profile_image") ?? defaultId;
+
+    if (avatars.isEmpty) {
+      return UserAvatar(
+        id: defaultId,
+        location: null,
+        isDefaultAvatar: true,
+      );
     }
 
-    final avatar = avatars.firstWhere(
-      (avatarImage) => avatarImage.id == currentAvatarId,
-      orElse: () =>
-          avatars.firstWhere((avatarImage) => avatarImage.id == defaultId),
-    );
-    return avatar;
+    final matchByCurrent = avatars.where((a) => a.id == currentAvatarId);
+    if (matchByCurrent.isNotEmpty) {
+      return matchByCurrent.first;
+    }
+
+    final matchByDefault = avatars.where((a) => a.id == defaultId);
+    if (matchByDefault.isNotEmpty) {
+      return matchByDefault.first;
+    }
+
+    return avatars.first;
   }
 
   void updateAvatar(String id) {
     final SharedPreferences pref = ref.read(sharedPreferencesProvider);
-    if (id.isEmpty) {
+    if (id.isEmpty || !avatars.any((a) => a.id == id)) {
       return;
     }
     pref.setString("profile_image", id);

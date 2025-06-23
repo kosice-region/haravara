@@ -14,13 +14,19 @@ class ChildrenCount extends StatefulWidget {
 class ChildrenCountState extends State<ChildrenCount> {
   final List<String> children =
       List.generate(5, (index) => index == 0 ? '1 dieťa' : '${index + 1} detí');
-  FocusNode _dropdownFocusNode = FocusNode();
+  final FocusNode _dropdownFocusNode = FocusNode();
   String? dropdownValue;
 
   @override
   void initState() {
-    dropdownValue = children[0];
     super.initState();
+    dropdownValue = children[0];
+
+    // ✅ Defer onChanged callback to after first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final defaultValue = dropdownValue!.split(' ').first;
+      widget.onChanged(defaultValue);
+    });
   }
 
   @override
@@ -30,7 +36,7 @@ class ChildrenCountState extends State<ChildrenCount> {
         canvasColor: const Color.fromARGB(255, 24, 191, 186),
         cardTheme: CardTheme(
           shape: RoundedRectangleBorder(
-            side: BorderSide(
+            side: const BorderSide(
               color: Colors.white,
               width: 2,
             ),
@@ -46,9 +52,14 @@ class ChildrenCountState extends State<ChildrenCount> {
           dropdownColor: const Color.fromARGB(255, 24, 191, 186),
           iconEnabledColor: Colors.white,
           onChanged: (String? newValue) {
-            setState(() {
-              dropdownValue = newValue!;
-            });
+            if (newValue != null) {
+              setState(() {
+                dropdownValue = newValue;
+              });
+
+              final extractedNumber = newValue.split(' ').first;
+              widget.onChanged(extractedNumber);
+            }
           },
           items: children.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
@@ -57,13 +68,13 @@ class ChildrenCountState extends State<ChildrenCount> {
             );
           }).toList(),
           decoration: InputDecoration(
-            enabledBorder: UnderlineInputBorder(
+            enabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.white,
                 width: 3,
               ),
             ),
-            focusedBorder: UnderlineInputBorder(
+            focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.white,
                 width: 3,
