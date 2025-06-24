@@ -459,6 +459,7 @@ class _LocationListState extends State<LocationList> {
   Map<String, bool> locationStatus = {};
   Map<String, bool> checkboxStatus = {};
   Map<String, String> locationNames = {};
+  Map<String, int> locationOrder = {};
   String? userId;
 
   @override
@@ -478,26 +479,46 @@ class _LocationListState extends State<LocationList> {
       return;
     }
     log("User ID found: $userId");
+
     try {
-      final data = await getAllLocationNamesWithCollectedStatus(userId!);
-      final names = await getLocationNames();
+      final collectedSnapshot = await FirebaseDatabase.instance
+          .ref('collectedLocationsByUsers')
+          .child(userId!)
+          .get();
+      final List<String> collectedIds =
+          (collectedSnapshot.exists && collectedSnapshot.value is List)
+              ? List<String>.from(collectedSnapshot.value as List)
+              : [];
 
-      int totalLocations = data.length;
-      int collectedLocations =
-          data.values.where((isCollected) => isCollected).length;
+      final locationsSnapshot =
+          await FirebaseDatabase.instance.ref('locations').get();
+      final locationsData =
+          (locationsSnapshot.value as Map<dynamic, dynamic>?) ?? {};
 
-      widget.onTotalCountFetched(totalLocations);
-      widget.onCollectedCountFetched(collectedLocations);
+      final Map<String, bool> statusMap = {};
+      final Map<String, String> namesMap = {};
+      final Map<String, int> orderMap = {};
 
-      setState(() {
-        locationStatus = data;
-        checkboxStatus = Map.from(data);
-        locationNames = names;
+      locationsData.forEach((rawId, rawData) {
+        final locId = rawId.toString();
+        final locData = rawData as Map<dynamic, dynamic>;
+        statusMap[locId] = collectedIds.contains(locId);
+        namesMap[locId] = locData['name'] as String;
+        orderMap[locId] = (locData['order'] as num).toInt();
       });
 
-      int initialSelectedCount =
-          checkboxStatus.values.where((isSelected) => isSelected).length;
-      widget.onSelectedLocationsCountFetched(initialSelectedCount);
+      setState(() {
+        locationStatus = statusMap;
+        checkboxStatus = Map.from(statusMap);
+        locationNames = namesMap;
+        locationOrder = orderMap;
+      });
+
+      widget.onTotalCountFetched(locationStatus.length);
+      widget.onCollectedCountFetched(
+          locationStatus.values.where((c) => c).length);
+      widget.onSelectedLocationsCountFetched(
+          checkboxStatus.values.where((s) => s).length);
     } catch (e) {
       log("Error fetching locations: $e");
     }
@@ -678,26 +699,31 @@ class _LocationListState extends State<LocationList> {
     if (locationStatus.isEmpty) {
       return Center(child: CircularProgressIndicator());
     }
+    final sortedIds = locationOrder.keys.toList()
+      ..sort((a, b) => locationOrder[a]!.compareTo(locationOrder[b]!));
+
     return Column(
       children: [
         Expanded(
           child: ListView.separated(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-            itemCount: locationStatus.length,
-            separatorBuilder: (context, index) => Divider(
+            itemCount: sortedIds.length,
+            separatorBuilder: (context, _) => Divider(
               color: Colors.white.withOpacity(0.5),
               thickness: 1.0,
             ),
             itemBuilder: (context, index) {
-              final locationId = locationStatus.keys.elementAt(index);
-              final locationName = locationNames[locationId] ?? '';
-              final isCollected = locationStatus[locationId] ?? false;
+              final locId = sortedIds[index];
+              final displayOrder = locationOrder[locId]!;
+              final locationName = locationNames[locId] ?? '';
+              final isCollected = locationStatus[locId] ?? false;
+
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6.0),
                 child: Row(
                   children: [
                     Text(
-                      '${index + 1}.   ',
+                      '$displayOrder.   ',
                       style: GoogleFonts.titanOne(
                         color: Colors.white,
                         fontSize: 25.0,
@@ -708,22 +734,22 @@ class _LocationListState extends State<LocationList> {
                         locationName,
                         style: GoogleFonts.titanOne(
                           color: isCollected
-                              ? Color.fromARGB(255, 27, 218, 33)
+                              ? const Color.fromARGB(255, 27, 218, 33)
                               : Colors.white,
                           fontSize: 21.0,
                         ),
                       ),
                     ),
                     Checkbox(
-                      value: checkboxStatus[locationId] ?? false,
+                      value: checkboxStatus[locId] ?? false,
                       onChanged: (value) {
                         setState(() {
-                          checkboxStatus[locationId] = value ?? false;
+                          checkboxStatus[locId] = value ?? false;
                         });
                         widget.onSelectedLocationsCountFetched(
-                            selectedLocationsCount);
+                            checkboxStatus.values.where((v) => v).length);
                       },
-                      activeColor: Color.fromARGB(255, 27, 199, 33),
+                      activeColor: const Color.fromARGB(255, 27, 199, 33),
                       checkColor: Colors.white,
                       side: BorderSide(
                         color: Colors.white.withOpacity(0.5),
