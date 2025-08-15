@@ -8,6 +8,7 @@ import 'package:haravara/core/widgets/close_button.dart';
 import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
+import '../../../main.dart';
 import '../leaderBoard.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
 
@@ -65,6 +66,10 @@ class LeaderBoardScreen extends ConsumerWidget {
               ],
             ),
           ),
+        (ref.read(sharedPreferencesProvider).getBool('isAdmin') ?? false)
+        ?
+          SizedBox()
+            :
           Positioned(
             left: 0,
             right: 0,

@@ -7,6 +7,8 @@ import 'package:haravara/pages/admin/FooterAdmin.dart';
 import 'package:haravara/pages/admin/view/screens/admin_confirm_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 
+import 'admin_menu_screen.dart';
+
 class AdminScreen extends ConsumerStatefulWidget {
   const AdminScreen({Key? key}) : super(key: key);
 
@@ -18,6 +20,7 @@ class _AdminScreenState extends ConsumerState<AdminScreen> {
   final TextEditingController _codeController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _isCodeIncorrect = false;
+  final bool showMenu = true;
 
   Future<void> _verifyCode(BuildContext context) async {
     final enteredCode = _codeController.text.trim();
@@ -194,7 +197,88 @@ class _AdminScreenState extends ConsumerState<AdminScreen> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: FooterAdmin(), // Place the Footer widget at the bottom
+            child: GestureDetector(
+    onTap: () {
+    if (showMenu) {
+    Navigator.of(context).push(
+    PageRouteBuilder(
+    pageBuilder: (_, __, ___) => const AdminMenu(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    return FadeTransition(
+    opacity: animation,
+    child: child,
+    );
+    },
+    transitionDuration: const Duration(milliseconds: 150),
+    ),
+    );
+    }
+    },
+    child: Container(
+    height: 50.h,
+    color: const Color.fromRGBO(41, 141, 116, 1),
+    child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+    Padding(
+    padding: const EdgeInsets.only(left: 4),
+    child: GestureDetector(
+    onTap: () {
+    Navigator.of(context).push(
+    PageRouteBuilder(
+    pageBuilder: (_, __, ___) => const AdminMenu(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    return FadeTransition(
+    opacity: animation,
+    child: child,
+    );
+    },
+    transitionDuration: const Duration(milliseconds: 150),
+    ),
+    );
+    },
+    child: Container(
+    padding: EdgeInsets.all(10.w),
+    color: Colors.transparent,
+    child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+    SizedBox(height: 3.5.h, width: 35.48.w, child: const ColoredBox(color: Colors.black)),
+    SizedBox(height: 8.h),
+    SizedBox(height: 3.5.h, width: 35.48.w, child: const ColoredBox(color: Colors.black)),
+    SizedBox(height: 8.h),
+    SizedBox(height: 3.5.h, width: 35.48.w, child: const ColoredBox(color: Colors.black)),
+    ],
+    ),
+    ),
+    ),
+    ),
+    Padding(
+    padding: EdgeInsets.only(right: 10.w),
+    child: ElevatedButton(
+    onPressed: () => _verifyCode(context),
+    style: ElevatedButton.styleFrom(
+    fixedSize: Size(100.w, 30.h), // Customize button size
+    backgroundColor: const Color(0xFF4CAF50),
+    shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(30),
+    ),
+    side: const BorderSide(color: Colors.white, width: 4),
+    ),
+    child: Text(
+    'Potvrď',
+    style: GoogleFonts.titanOne(
+    fontSize: 13.sp,
+    color: Colors.white,
+    ),
+    ),
+    ),
+    ),
+    ],
+    ),
+    ),
+    )
+
           ),
         ],
       ),

@@ -128,6 +128,7 @@ class PreviewBottomSheet extends StatelessWidget {
                   Column(
                     children: [
                       LocalButton(
+                        enabled: false,
                         name: 'Navigovať',
                         onPressed: () {
                           MapService().launchMap(context, pickedLocation);
@@ -135,9 +136,13 @@ class PreviewBottomSheet extends StatelessWidget {
                       ),
                       14.verticalSpace,
                       LocalButton(
+                        enabled: pickedLocation.isReached,
                         name: 'Už som tu!',
-                        onPressed: () {
-                          routeToCompassScreen();
+                        // Use a ternary operator to conditionally set onPressed
+                        onPressed: pickedLocation.isReached
+                            ? null // If the stamp is collected, onPressed is null, disabling the button.
+                            : () {
+                          routeToCompassScreen(); // Otherwise, provide the function to navigate.
                         },
                       ),
                     ],

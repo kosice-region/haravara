@@ -2,29 +2,28 @@ import 'dart:async';
 import 'dart:developer' as dev;
 import 'dart:math' as math;
 
-import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haravara/core/models/place.dart';
-import 'package:haravara/core/services/notification_service.dart';
-import 'package:haravara/core/services/database_service.dart';
-import 'package:haravara/pages/compass/distance_model.dart';
-import 'package:haravara/pages/compass/functions/compass_functions.dart';
+import 'package:geolocator/geolocator.dart';
+import '../../../core/models/place.dart';
+import '../../../core/services/database_service.dart';
+import '../../../router/router.dart';
+import '../functions/compass_functions.dart';
+import 'package:haravara/core/services/sync_service.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/widgets/close_button.dart';
-import '../../../router/router.dart';
 import '../../map_detail/map_detail.dart';
 import '../widgets/widgets.dart';
 
-List<DistanceModel> distances = [
-  DistanceModel(30.0, false, false, false),
-  DistanceModel(100.0, false, false, false),
-  DistanceModel(250.0, false, false, false),
-];
+
+final distanceAndBearingProvider = StateProvider<Map<String, double>>((ref) {
+  return {'distance': 0.0, 'bearing': 0.0};
+});
+
 
 class Compass extends ConsumerStatefulWidget {
   const Compass({super.key});
@@ -33,96 +32,177 @@ class Compass extends ConsumerStatefulWidget {
   ConsumerState<Compass> createState() => _CompassState();
 }
 
-class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
-  bool isPlaceReached = false;
-  bool isAppInBackgroundMode = false;
-  double? heading;
-  double? bearingToTarget;
-  double distanceToTarget = 0;
-  late Place pickedPlace;
-  late StreamSubscription<CompassEvent> compassSubscription;
-  late StreamSubscription<Position> positionStream;
-  DatabaseService placesService = DatabaseService();
-  Timer? _backgroundTimer;
+class _CompassState extends ConsumerState<Compass> {
+  double? _heading;
+  StreamSubscription<CompassEvent>? _compassSubscription;
+  StreamSubscription<Position>? _positionSubscription;
 
-  late double targetLat;
-  late double targetLng;
+  static const double kCollectionRadiusMeters = 30.0;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _initializeCompass();
     _initializeLocationStream();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _triggerSync();
+    });
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _setPickedPlace();
-  }
-
-  void _setPickedPlace() {
-    final pickedPlaceState = ref.watch(pickedPlaceProvider);
-    String id = pickedPlaceState.placeId;
-
-    if (id != 'null') {
-      pickedPlace = ref.watch(placesProvider.notifier).getPlaceById(id);
-      targetLat = pickedPlace.geoData.primary.coordinates[0];
-      targetLng = pickedPlace.geoData.primary.coordinates[1];
-    }
+  void dispose() {
+    _compassSubscription?.cancel();
+    _positionSubscription?.cancel();
+    super.dispose();
   }
 
   void _initializeCompass() {
-    compassSubscription = FlutterCompass.events!.listen((event) {
+    _compassSubscription = FlutterCompass.events?.listen((event) {
       if (mounted) {
-        setState(() => heading = event.heading);
+        setState(() => _heading = event.heading);
       }
     });
   }
 
   void _initializeLocationStream() {
-    positionStream = Geolocator.getPositionStream(
-        locationSettings: LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 1,
-    )).listen(
-      (position) {
-        _updateDistanceAndBearing(position);
-      },
-      onError: (e) {
-        dev.log('Error getting location: $e');
-      },
-    );
+    _positionSubscription = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 1,
+      ),
+    ).listen((position) {
+      final pickedPlaceId = ref.read(pickedPlaceProvider).placeId;
+
+      if (pickedPlaceId != 'null') {
+        final pickedPlace = ref.read(placesProvider.notifier).getPlaceById(pickedPlaceId);
+        _updateDistanceAndBearing(position, pickedPlace);
+      }
+    }, onError: (e) {
+      dev.log('Location Stream Error: $e');
+    });
   }
 
-  Future<void> _updateDistanceAndBearing(Position position) async {
-    double distance = Geolocator.distanceBetween(
-        position.latitude, position.longitude, targetLat, targetLng);
-    if (mounted) {
-      setState(() {
-        distanceToTarget = distance;
-        dev.log('distance ${distanceToTarget}');
-      });
+  void _updateDistanceAndBearing(Position currentUserPosition, Place targetPlace) {
+    if (targetPlace.isReached) {
+      if (mounted) {
+        ref.read(distanceAndBearingProvider.notifier).state = {
+          'distance': 0.0,
+          'bearing': 0.0,
+        };
+      }
+      return;
     }
-    bearingToTarget = calculateBearing(
-        position.latitude, position.longitude, targetLat, targetLng);
 
-    await checkDistance(distance);
+    final targetLat = targetPlace.geoData.primary.coordinates[0];
+    final targetLng = targetPlace.geoData.primary.coordinates[1];
+
+    final distance = Geolocator.distanceBetween(
+      currentUserPosition.latitude,
+      currentUserPosition.longitude,
+      targetLat,
+      targetLng,
+    );
+
+    final bearing = calculateBearing(
+      currentUserPosition.latitude,
+      currentUserPosition.longitude,
+      targetLat,
+      targetLng,
+    );
+
+    if (mounted) {
+      ref.read(distanceAndBearingProvider.notifier).state = {
+        'distance': distance,
+        'bearing': bearing,
+      };
+    }
+
+    _checkAndHandleCollection(distance, targetPlace);
   }
+
+  Future<void> _checkAndHandleCollection(double distance, Place placeToCollect) async {
+    if (distance <= kCollectionRadiusMeters && !placeToCollect.isReached) {
+      _positionSubscription?.pause();
+
+      showCongratulationsDialog(context, placeToCollect.name);
+
+
+        dev.log('User collected stamp for ${placeToCollect.name}');
+        await _addCollectionToPendingQueue(placeToCollect.id!);
+
+        final syncService = ref.read(syncServiceProvider);
+        final needsRefresh = await syncService.syncPendingCollections();
+
+        if (mounted && needsRefresh) {
+          await initPlaces();
+        }
+
+
+
+    }
+  }
+
+  Future<void> _addCollectionToPendingQueue(String placeId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> pending = prefs.getStringList('pending_collections') ?? [];
+
+    if (!pending.contains(placeId)) {
+      pending.add(placeId);
+      await prefs.setStringList('pending_collections', pending);
+      dev.log('Place $placeId saved to pending queue.');
+    }
+  }
+
+  Future<void> initPlaces() async {
+    final places = await DatabaseService().loadPlaces();
+    if (mounted) {
+      ref.read(placesProvider.notifier).addPlaces(places);
+    }
+  }
+
+  Future<void> _triggerSync() async {
+    dev.log("Compass: Kicking off sync.");
+    final syncService = ref.read(syncServiceProvider);
+    final needsRefresh = await syncService.syncPendingCollections();
+
+    if (mounted && needsRefresh) {
+      await initPlaces();
+    }
+  }
+
+  void showCongratulationsDialog(BuildContext context, String pickedPlaceName) =>
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return CongratulationsDialog(pickedPlaceName: pickedPlaceName);
+        },
+      );
 
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, designSize: const Size(255, 516));
 
-    double direction =
-        calculateCompassDirection(heading ?? 0, bearingToTarget ?? 0);
+    final pickedPlaceId = ref.watch(pickedPlaceProvider).placeId;
+
+    if (pickedPlaceId == 'null') {
+      return const Scaffold(
+        body: Center(child: Text("Please select a destination.")),
+      );
+    }
+
+    final distanceAndBearing = ref.watch(distanceAndBearingProvider);
+    final distanceToTarget = distanceAndBearing['distance'] ?? 0.0;
+
+
+    final bearingToTarget = distanceAndBearing['bearing'] ?? 0.0;
+    final direction = calculateCompassDirection(_heading ?? 0.0, bearingToTarget);
 
     return Scaffold(
       endDrawer: HeaderMenu(),
       body: Stack(
         children: [
-          BackgroundImage(
+          const BackgroundImage(
             image: 'assets/backgrounds/background_clouds.png',
           ),
           Center(
@@ -130,22 +210,19 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
               width: 230.w,
               height: 230.h,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  const Radius.circular(120).r,
-                ),
+                borderRadius: BorderRadius.all(const Radius.circular(120).r),
               ),
               child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  BuildCompass(),
-                  Center(
-                    child: Transform.rotate(
-                      angle: (direction * (math.pi / 180)),
-                      child: Image.asset(
-                        "assets/compass-fixed.png",
-                        scale: 1.1,
-                        width: 200.w,
-                        height: 300.h,
-                      ),
+                  const BuildCompass(), // The static compass rose background
+                  Transform.rotate(
+                    angle: (direction * (math.pi / 180)),
+                    child: Image.asset(
+                      "assets/compass-fixed.png",
+                      scale: 1.1,
+                      width: 200.w,
+                      height: 300.h,
                     ),
                   ),
                 ],
@@ -161,136 +238,10 @@ class _CompassState extends ConsumerState<Compass> with WidgetsBindingObserver {
             ),
           ),
           Distance(
-            distanceToTarget: this.distanceToTarget,
+            distanceToTarget: distanceToTarget,
           ),
         ],
       ),
     );
-  }
-
-  checkDistance(double distance) async {
-    if (distance > 250 || isPlaceReached) {
-      distances.forEach((element) => element.updateActive(false));
-      return;
-    }
-    if (distance <= 30 && !distances[0].isActive)
-      distances[0].updateActive(true);
-    else if ((distance > 30 && distance <= 100) && !distances[1].isActive)
-      distances[1].updateActive(true);
-    else if ((distance > 100 && distance <= 250) && !distances[2].isActive)
-      distances[2].updateActive(true);
-
-    if (isAppInBackgroundMode) {
-      await notificateAboutDistance();
-    } else {
-      await handleDistanceOnForeground();
-    }
-  }
-
-  notificateAboutDistance() async {
-    distances.forEach((model) {
-      if (model.isActive && !model.notificationSent) {
-        if (model.distance <= 30) {
-          NotificationService().sendNotification('Gratulujeme',
-              'Dosiahli ste miesto, prejdite do aplikácie a získajte odmenu');
-        } else {
-          NotificationService().sendNotification('Pozor',
-              'Zostáva už len trochu, choď ${model.distance.toStringAsFixed(0)} metrov a získaj odmenu.');
-        }
-        model.notificationSent = true;
-      }
-    });
-  }
-
-  handleDistanceOnForeground() async {
-    var distance = distances.firstWhere((model) => model.isActive).distance;
-    if (distance <= 30) {
-      showCongratulationsDialog(context, pickedPlace.name);
-      if (pickedPlace.isReached) {
-        return;
-      }
-      this.isPlaceReached = true;
-      await placesService.addPlaceToCollectedByUser(pickedPlace.id!);
-      await initPlaces();
-    }
-  }
-
-  initPlaces() async {
-    final places = await DatabaseService().loadPlaces();
-    ref.read(placesProvider.notifier).addPlaces(places);
-    for (var place in places) {
-      if (place.isReached) {
-        dev.log('=> place ${place.name} is Collected = ${place.isReached}');
-      }
-    }
-  }
-
-  void backgroundServiceStart() async {
-    final service = FlutterBackgroundService();
-    var isRunning = await service.isRunning();
-    if (isRunning) {
-      _backgroundTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (mounted) {
-          _initializeLocationStream();
-        }
-      });
-    } else {
-      await service.startService();
-      backgroundServiceStart();
-    }
-  }
-
-  void backgroundServiceStop() async {
-    FlutterBackgroundService().invoke("stopService");
-    dev.log('is running ${FlutterBackgroundService().isRunning()}');
-  }
-
-  void showCongratulationsDialog(
-          BuildContext context, String pickedPlaceName) =>
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CongratulationsDialog(pickedPlaceName: pickedPlaceName);
-        },
-      );
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    switch (state) {
-      case AppLifecycleState.resumed:
-        isAppInBackgroundMode = false;
-        if (_backgroundTimer?.isActive ?? false) {
-          _backgroundTimer?.cancel();
-        }
-        backgroundServiceStop();
-        dev.log("app in resumed");
-        break;
-      case AppLifecycleState.inactive:
-        isAppInBackgroundMode = true;
-        dev.log("app in inactive");
-        break;
-      case AppLifecycleState.paused:
-        isAppInBackgroundMode = true;
-        backgroundServiceStart();
-        dev.log("app in paused");
-        break;
-      case AppLifecycleState.detached:
-        isAppInBackgroundMode = true;
-        dev.log("app in detached");
-        break;
-      case AppLifecycleState.hidden:
-        isAppInBackgroundMode = true;
-        dev.log('app is hidden');
-        break;
-    }
-  }
-
-  @override
-  void dispose() {
-    compassSubscription.cancel();
-    positionStream.cancel();
-    _backgroundTimer?.cancel();
-    super.dispose();
   }
 }

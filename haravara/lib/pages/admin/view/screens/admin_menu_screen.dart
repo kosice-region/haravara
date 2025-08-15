@@ -12,6 +12,8 @@ import 'package:haravara/pages/admin/view/screens/admin_actual_rewards_screen.da
 import 'package:haravara/pages/admin/view/screens/admin_delete_user_screen.dart';
 import 'package:haravara/pages/admin/view/screens/special_rewards/special_reward_screen.dart';
 import 'package:haravara/pages/bug_reading/bug_reading.dart';
+import 'package:haravara/pages/leaderBoard/leaderBoard.dart';
+import 'package:haravara/pages/leaderBoardLevels/leaderBoardLevels.dart';
 import 'package:haravara/pages/map_detail/providers/collected_places_provider.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 import 'package:haravara/router/router.dart';
@@ -67,14 +69,21 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
               ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 22.h),
-            child: const Header(),
-          ),
+
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                SizedBox(height: 40.h),
+                buildResponsiveButton(
+                  context,
+                  'Rebríček',
+                  Colors.indigo,
+                  LeaderBoardLevelsScreen(),
+                  buttonWidth,
+                  buttonHeight,
+                ),
+                SizedBox(height: 20.h),
                 buildResponsiveButton(
                   context,
                   'Ceny',
@@ -96,7 +105,7 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
                 buildResponsiveButton(
                   context,
                   'Pridaj pečiatky',
-                  const Color(0xFF33C233),
+                  const Color(0xFF15DD15),
                   AdminAssignStampsScreen(),
                   buttonWidth,
                   buttonHeight,
@@ -113,7 +122,7 @@ class _AdminMenuScreenState extends ConsumerState<AdminMenu> {
                 SizedBox(height: 20.h),
                 buildResponsiveButton(
                   context,
-                  'Odstraniť použivateľa',
+                  'Upraviť použivateľa',
                   const Color(0xFFD50F27),
                   AdminDeleteUserScreen(),
                   buttonWidth,

@@ -6,9 +6,11 @@ class LocalButton extends StatelessWidget {
   final String name;
   final void Function()? onPressed;
   final bool isCompass;
+  final bool enabled;
 
   const LocalButton({
     super.key,
+    required this.enabled,
     required this.name,
     required this.onPressed,
     this.isCompass = false,
@@ -20,7 +22,7 @@ class LocalButton extends StatelessWidget {
       width: 90.w,
       height: 27.h,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 7, 22, 121),
+        color: enabled ?Colors.grey: Color.fromARGB(255, 7, 22, 121),
         borderRadius: BorderRadius.all(Radius.circular(15.r)),
         border: Border.all(
           color: Colors.white,

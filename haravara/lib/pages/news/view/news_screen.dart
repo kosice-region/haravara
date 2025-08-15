@@ -13,6 +13,9 @@ import 'package:haravara/pages/reward_menu/model/reward_model.dart';
 import 'package:haravara/pages/reward_menu/service/reward_service.dart';
 import 'package:haravara/pages/profile/providers/user_info_provider.dart';
 
+import '../../../core/services/sync_service.dart';
+import '../../../haravara_app_phone.dart';
+import '../../../main.dart';
 class NewsScreen extends ConsumerStatefulWidget {
   const NewsScreen({Key? key}) : super(key: key);
 
@@ -33,123 +36,171 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
   final RewardService rewardService = RewardService();
   final DatabaseService databaseService = DatabaseService();
 
+  final rewardsProvider = FutureProvider<List<Reward>>((ref) async {
+    final allPlaces = ref.watch(placesProvider);
+    final user = ref.watch(userInfoProvider);
+
+    final collectedStamps = allPlaces.where((place) => place.isReached).length;
+
+    final rewardService = RewardService();
+    return rewardService.generateUserRewards(user, collectedStamps);
+  });
+
   @override
   void initState() {
     super.initState();
     initPlaces();
+    _triggerSync();
+    if(ref.read(sharedPreferencesProvider).getBool('isAdmin') ?? false){
+      routeToAdminScreen();
+    }
+  }
+
+  Future<void> _triggerSync() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final syncService = ref.read(syncServiceProvider);
+      final needsRefresh = await syncService.syncPendingCollections();
+      await syncService.fetchUserDataAndUpdateProviders;
+      if (mounted && needsRefresh) {
+        await initPlaces();
+      }
+    });
+  }
+
+  void routeToAdminScreen() {
+    Future.doWhile(() async {
+      await Future.delayed(Duration(milliseconds: 200));
+      if (navigatorKey.currentState == null) {
+        return true;
+      }
+      navigatorKey.currentState!.pushReplacement(
+        MaterialPageRoute(
+          builder: (context) =>
+              ScreenRouter().getScreenWidget(ScreenType.admin),
+        ),
+      );
+      return false;
+    });
   }
 
   Future<void> initPlaces() async {
     final user = ref.read(userInfoProvider);
     await databaseService.getCollectedPlacesByUser(user.id);
-    final places = await databaseService.loadPlaces();
-    ref.read(placesProvider.notifier).addPlaces(places);
+    final newplaces = await databaseService.loadPlaces();
+    if(newplaces.isNotEmpty){
+      ref.read(placesProvider.notifier).replaceAllPlaces(newplaces);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     imageAssets.forEach((image) => precacheImage(AssetImage(image), context));
     ScreenUtil.init(context, designSize: const Size(255, 516));
+
+    final rewardsAsyncValue = ref.watch(rewardsProvider);
     final places = ref.watch(placesProvider);
     final collectedStamps = places.where((place) => place.isReached).length;
-    final user = ref.read(userInfoProvider);
 
-    return FutureBuilder<List<Reward>>(
-      future: rewardService.generateUserRewards(user, collectedStamps),
-      builder: (context, snapshot) {
-        final rewards = snapshot.data ?? [];
-        bool anyRewardAvailable =
-            rewards.any((reward) => reward.isUnlocked && !reward.isClaimed);
-
-        return Scaffold(
-          backgroundColor: Colors.black,
-          endDrawer: HeaderMenu(),
-          body: Stack(
+    return Scaffold(
+      backgroundColor: Colors.black,
+      endDrawer: HeaderMenu(),
+      body: Stack(
+        children: [
+          Column(
             children: [
-              Column(
-                children: [
-                  Expanded(
-                    child: Image.asset(
-                      'assets/haravara_1.jpg',
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      alignment: Alignment.center,
+              Expanded(
+                child: Image.asset(
+                  'assets/haravara_1.jpg',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                ),
+              ),
+              Footer(height: 50),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 8.h),
+            child: Column(
+              children: [
+                Header(),
+                15.verticalSpace,
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10.h),
+                  child: rewardsAsyncValue.when(
+                    data: (rewards) {
+                      final anyRewardAvailable = rewards.any((reward) => reward.isUnlocked && !reward.isClaimed);
+                      return anyRewardAvailable
+                          ? ElevatedButton(
+                        onPressed: () {
+                          final rewardMenuWidget = ScreenRouter().getScreenWidget(ScreenType.rewardMenu);
+                          ScreenRouter().routeToNextScreen(context, rewardMenuWidget);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: Size(145.w, 35.h),
+                          backgroundColor: const Color(0xFFF24811),
+                          side: const BorderSide(color: Colors.white, width: 4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: Text(
+                          'Vyzdvihni si cenu !',
+                          style: GoogleFonts.titanOne(
+                            fontSize: 11.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                          : SizedBox(
+                        height: 35.h,
+                        width: 145.w,
+                      );
+                    },
+                    error: (err, stack) => Text('Error loading rewards'),
+                    loading: () => SizedBox(
+                      height: 35.h,
+                      width: 145.w,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.0,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
-                  Footer(height: 50),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 8.h),
-                child: Column(
-                  children: [
-                    Header(),
-                    15.verticalSpace,
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 10.h),
-                      child: anyRewardAvailable
-                          ? ElevatedButton(
-                              onPressed: () {
-                                final rewardMenuWidget = ScreenRouter()
-                                    .getScreenWidget(ScreenType.rewardMenu);
-                                ScreenRouter().routeToNextScreen(
-                                    context, rewardMenuWidget);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                fixedSize: Size(145.w, 35.h),
-                                backgroundColor: const Color(0xFFF24811),
-                                side: const BorderSide(
-                                    color: Colors.white, width: 4),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: Text(
-                                'Vyzdvihni si cenu !',
-                                style: GoogleFonts.titanOne(
-                                  fontSize: 11.sp,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )
-                          : SizedBox(
-                              height: 35.h,
-                              width: 145.w,
-                            ),
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Column(
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      buildBox(),
+                      SizedBox(height: 10.h),
+                      Column(
                         children: [
-                          buildBox(),
+                          buildResponsiveButton(
+                            label: 'REBRÍČEK',
+                            color: const Color.fromARGB(255, 205, 105, 167),
+                            screen: ScreenType.leaderBoardLevels,
+                            ref: ref,
+                          ),
                           SizedBox(height: 10.h),
-                          Column(
-                            children: [
-                              buildResponsiveButton(
-                                label: 'REBRÍČEK',
-                                color: const Color.fromARGB(255, 205, 105, 167),
-                                screen: ScreenType.leaderBoardLevels,
-                                ref: ref,
-                              ),
-                              SizedBox(height: 10.h),
-                              buildResponsiveButton(
-                                label: 'PODMIENKY SÚŤAŽE',
-                                color: const Color.fromARGB(255, 60, 200, 90),
-                                screen: ScreenType.podmienky,
-                                ref: ref,
-                              ),
-                            ],
+                          buildResponsiveButton(
+                            label: 'PODMIENKY SÚŤAŽE',
+                            color: const Color.fromARGB(255, 60, 200, 90),
+                            screen: ScreenType.podmienky,
+                            ref: ref,
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -210,7 +261,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                 ),
                 SizedBox(height: 10.h),
                 Text(
-                  'Zober svojich rodičov a kamarátov na úžasnú cestu po krajine Haravara a získaj všetky Kaškove pečiatky!\nAktuálna sezóna Haravara Pátračky trvá do konca roka 2024!',
+                  'Zober svojich rodičov a kamarátov na úžasnú cestu po krajine Haravara a získaj všetky Kaškove pečiatky!\nAktuálna sezóna Haravara Pátračky trvá do konca roka 2025!',
                   style: GoogleFonts.titanOne(
                     color: const Color.fromARGB(255, 255, 255, 255),
                     fontSize: 9.sp,

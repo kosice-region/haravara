@@ -9,6 +9,7 @@ import 'package:haravara/core/widgets/header.dart';
 import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/pages/profile/widgets/searcher_level.dart';
 
+import '../../../core/services/sync_service.dart';
 import '../../../router/router.dart';
 import '../../map_detail/map_detail.dart';
 import '../widgets/widgets.dart';
@@ -25,13 +26,13 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
 
   @override
   void initState() {
+    _triggerSync();
     super.initState();
-    initPlaces();
   }
 
   initPlaces() async {
     final places = await DatabaseService().loadPlaces();
-    ref.read(placesProvider.notifier).addPlaces(places);
+    ref.read(placesProvider.notifier).replaceAllPlaces(places);
     setState(() {
       isInit = true;
     });
@@ -89,5 +90,16 @@ class _AchievementsScreenState extends ConsumerState<AchievementsScreen> {
         ],
       ),
     );
+  }
+  Future<void> _triggerSync() async {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final syncService = ref.read(syncServiceProvider);
+      final needsRefresh = await syncService.syncPendingCollections();
+
+      if (mounted && needsRefresh) {
+        await initPlaces();
+      }
+    });
   }
 }

@@ -107,6 +107,35 @@ class AuthRepository {
     newUserNameRef.set(updatedData);
   }
 
+  Future<Map<String, dynamic>?> getUserProfile(String userId) async {
+    try {
+      final DataSnapshot snapshot = await usersRef.child(userId).get();
+
+      if (snapshot.exists && snapshot.value != null) {
+        // Cast the snapshot's value to a generic Map.
+        final userData = snapshot.value as Map;
+
+        // Safely access the 'profile' object from the user data.
+        final profileData = userData['profile'];
+
+        // IMPORTANT: Check if profileData is a Map and then CONVERT it.
+        if (profileData is Map) {
+          // This creates a new map with the correct types, preventing the crash.
+          return Map<String, dynamic>.from(profileData);
+        }
+      }
+
+      // Return null if user was not found or if the profile data is missing/malformed.
+      print('User or profile data not found.');
+      return null;
+    } catch (e) {
+      // This will now catch other errors, not the type cast error.
+      print('Error fetching user profile: $e');
+      return null;
+    }
+  }
+
+
   Future<void> updateUserProfile(String userId, String avatarId,
       String profileType, String location, int children) async {
     Map<String, dynamic> updatedData = {

@@ -167,11 +167,10 @@ class AuthService {
       String email, WidgetRef ref, BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final isAdmin = await DatabaseService().isAdmin(email);
+    prefs.setBool('isAdmin', isAdmin);
+    log("isAdmin"+prefs.getBool('isAdmin').toString());
     log('Admin check result for $email: $isAdmin');
-    if (isAdmin) {
-      routeToAdminScreen();
-      return;
-    }
+
 
     final userId = await findUserByEmail(email);
     log('$userId');
@@ -202,8 +201,16 @@ class AuthService {
           .read(userInfoProvider.notifier)
           .updateUsername(authState.enteredUsername!);
 
-      log('navigating to ScreenType.news');
-      routeToNewsScreen();
+      if (isAdmin) {
+        log('navigating to Admin Screen');
+        routeToAdminScreen();
+        return;
+      }
+      else{
+        log('navigating to User Screen');
+        routeToNewsScreen();
+        return;
+      }
     } else {
       final storedEmail = prefs.getString('email');
       if (storedEmail == email) {
@@ -257,7 +264,12 @@ class AuthService {
         // await prefs.clear();
 
         log('navigating to ScreenType.news');
-        routeToNewsScreen();
+        if(isAdmin){
+          routeToAdminScreen();
+        }
+        else{
+          routeToNewsScreen();
+        }
       } else {
         log('No stored data found for $email, treating as new registration');
       }

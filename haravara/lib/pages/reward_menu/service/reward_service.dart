@@ -137,6 +137,7 @@ class RewardService {
     await userActiveRef.child(foundKey!).remove();
   }
 
+
   Future<String> _getOrGenerateCode(
     String userId,
     String rewardKey,

@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,7 +27,7 @@ class ActionButtons extends ConsumerStatefulWidget {
 class _ActionButtonsState extends ConsumerState<ActionButtons> {
   late String username;
   late String newUsername = '';
-  late String userId;
+  late String userId = "";
   String selectedCity = '';
 
   Future<bool> _updateUsername() async {
@@ -59,7 +60,6 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
       return true;
     }
   }
-
   _updateUserLocation() async {
     if (selectedCity.isEmpty) {
       return;
@@ -77,7 +77,6 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
   void initState() {
     super.initState();
   }
-
   /// Determines the correct badge image based on the user's stamp count
   String getBadgeImageForUser(int stamps) {
     for (final level in levels) {
@@ -245,6 +244,8 @@ class _ActionButtonsState extends ConsumerState<ActionButtons> {
               ElevatedButton(
                 onPressed: () async {
                   if (await _updateUsername()) {
+                    // final int newCount = _selectedChildrenCount ?? 0;
+                    // updateChildrenCount(newCount);
                     _updateUserLocation();
                     Navigator.of(context).pop();
                   }

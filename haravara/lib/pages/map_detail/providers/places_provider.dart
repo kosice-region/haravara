@@ -12,6 +12,14 @@ class PlacesNotifier extends StateNotifier<List<Place>> {
     state = [...places];
   }
 
+  void clear() {
+    state = [];
+  }
+
+  void replaceAllPlaces(List<Place> newPlaces) {
+    state = newPlaces;
+  }
+
   Place getPlaceById(String id) {
     return state.firstWhere(
       (place) => place.id == id,

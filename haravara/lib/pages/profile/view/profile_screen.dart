@@ -9,6 +9,7 @@ import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/router/router.dart';
 
+import '../../../core/services/sync_service.dart';
 import '../../../core/widgets/close_button.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -22,6 +23,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    final syncService = ref.read(syncServiceProvider);
+    syncService.fetchUserDataAndUpdateProviders;
   }
 
   @override

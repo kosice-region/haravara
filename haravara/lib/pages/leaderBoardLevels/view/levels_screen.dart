@@ -11,6 +11,7 @@ import 'package:haravara/pages/header_menu/view/header_menu_screen.dart';
 import 'package:haravara/core/widgets/footer.dart';
 import 'package:haravara/pages/leaderBoard/view/people_screen.dart';
 import 'package:haravara/pages/profile/providers/avatars.provider.dart';
+import '../../../main.dart';
 import '../../../router/router.dart';
 import '../leaderBoardLevels.dart';
 
@@ -153,6 +154,10 @@ class LeaderBoardLevelsScreen extends ConsumerWidget {
           ),
     ),
           // Footer positioned at the bottom
+          (ref.read(sharedPreferencesProvider).getBool('isAdmin') ?? false)
+              ?
+          SizedBox()
+              :
           Positioned(
             left: 0,
             right: 0,
