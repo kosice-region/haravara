@@ -1,1 +1,0 @@
-export './avatars.provider.dart';
